@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.27" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.2.11" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FrotaGo.Application\FrotaGo.Application.csproj" />
+    <ProjectReference Include="..\FrotaGo.Infrastructure\FrotaGo.Infrastructure.csproj" />
+    <ProjectReference Include="..\FrotaGo.Shared\FrotaGo.Shared.csproj" />
+  </ItemGroup>
+
+</Project>

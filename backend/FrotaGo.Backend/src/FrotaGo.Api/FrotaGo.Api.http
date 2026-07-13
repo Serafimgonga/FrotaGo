@@ -1,0 +1,6 @@
+@FrotaGo.Api_HostAddress = http://localhost:5073
+
+GET {{FrotaGo.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

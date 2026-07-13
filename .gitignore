@@ -1,0 +1,49 @@
+### ============================
+### Backend (.NET / ASP.NET Core)
+### ============================
+backend/**/bin/
+backend/**/obj/
+backend/**/*.user
+backend/**/appsettings.Development.json
+backend/**/appsettings.Local.json
+*.suo
+*.userosscache
+*.sln.docstates
+.vs/
+
+### ============================
+### Frontend (Angular)
+### ============================
+frontend/**/node_modules/
+frontend/**/dist/
+frontend/**/.angular/
+frontend/**/*.log
+frontend/npm-debug.log*
+frontend/**/.env
+frontend/**/.env.local
+
+### ============================
+### Mobile (ajusta se for Flutter/Ionic/React Native)
+### ============================
+mobile/**/node_modules/
+mobile/**/build/
+mobile/**/.gradle/
+mobile/**/Pods/
+mobile/**/*.apk
+mobile/**/*.ipa
+
+### ============================
+### Geral / IDE / SO
+### ============================
+.DS_Store
+Thumbs.db
+*.log
+.env
+.env.*
+!.env.example
+
+### ============================
+### Antigravity / Agentes AI
+### ============================
+# Mantemos .agents e AGENTS.md versionados de propósito (contexto do projecto)
+# Se algum dia guardares segredos em skills/rules, exclui aqui explicitamente.
