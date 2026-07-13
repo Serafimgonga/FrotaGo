@@ -1,0 +1,76 @@
+<div class="dashboard-wrapper">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <mat-icon class="brand-icon">directions_car</mat-icon>
+      <span class="brand-name">FrotaGo</span>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a routerLink="/dashboard/vehicles" routerLinkActive="active-link" class="nav-item">
+        <mat-icon>directions_car</mat-icon>
+        <span>Veículos</span>
+      </a>
+
+      <!-- Other modules as placeholders in the nav to show completion -->
+      <a class="nav-item disabled-link">
+        <mat-icon>people</mat-icon>
+        <span>Instrutores</span>
+      </a>
+      <a class="nav-item disabled-link">
+        <mat-icon>school</mat-icon>
+        <span>Alunos</span>
+      </a>
+      <a class="nav-item disabled-link">
+        <mat-icon>event</mat-icon>
+        <span>Aulas Práticas</span>
+      </a>
+      <a class="nav-item disabled-link">
+        <mat-icon>build</mat-icon>
+        <span>Manutenção</span>
+      </a>
+      <a class="nav-item disabled-link">
+        <mat-icon>local_gas_station</mat-icon>
+        <span>Combustível</span>
+      </a>
+      <a class="nav-item disabled-link">
+        <mat-icon>description</mat-icon>
+        <span>Documentação</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="user-info">
+        <div class="user-avatar">
+          <mat-icon>account_circle</mat-icon>
+        </div>
+        <div class="user-details">
+          <span class="user-name">{{ authService.currentUser()?.name }}</span>
+          <span class="user-role">{{ authService.currentUser()?.role }}</span>
+        </div>
+      </div>
+      <button mat-icon-button color="warn" (click)="logout()" title="Terminar Sessão">
+        <mat-icon>logout</mat-icon>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main Content Area -->
+  <div class="main-area">
+    <header class="header">
+      <div class="header-left">
+        <h1>Painel de Controle</h1>
+      </div>
+      <div class="header-right">
+        <div class="status-indicator">
+          <span class="dot"></span>
+          <span>Angola Compliance Ok</span>
+        </div>
+      </div>
+    </header>
+
+    <main class="content-container">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>

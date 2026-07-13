@@ -1,0 +1,184 @@
+<div class="vehicles-page">
+  <!-- Status alerts -->
+  <div class="alert error-alert" *ngIf="errorMessage()">
+    <mat-icon>error_outline</mat-icon>
+    <span>{{ errorMessage() }}</span>
+    <button mat-icon-button (click)="errorMessage.set(null)" class="close-alert-btn">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+  <div class="alert success-alert" *ngIf="successMessage()">
+    <mat-icon>check_circle_outline</mat-icon>
+    <span>{{ successMessage() }}</span>
+    <button mat-icon-button (click)="successMessage.set(null)" class="close-alert-btn">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <!-- Header with action -->
+  <div class="page-header">
+    <div class="title-desc">
+      <h2>Frota de Veículos</h2>
+      <p>Gerencie todos os veículos da sua escola de condução, monitore manutenção e combustível.</p>
+    </div>
+    <button mat-flat-button color="primary" class="add-btn" (click)="toggleForm()">
+      <mat-icon>add</mat-icon>
+      Registar Veículo
+    </button>
+  </div>
+
+  <!-- Cards for Statistics -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon icon-total">
+        <mat-icon>directions_car</mat-icon>
+      </div>
+      <div class="stat-details">
+        <span class="stat-value">{{ totalVehicles() }}</span>
+        <span class="stat-label">Total de Veículos</span>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon icon-available">
+        <mat-icon>check_circle</mat-icon>
+      </div>
+      <div class="stat-details">
+        <span class="stat-value">{{ availableVehicles() }}</span>
+        <span class="stat-label">Disponíveis</span>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon icon-maintenance">
+        <mat-icon>build</mat-icon>
+      </div>
+      <div class="stat-details">
+        <span class="stat-value">{{ maintenanceVehicles() }}</span>
+        <span class="stat-label">Em Manutenção</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide-over drawer form -->
+  <div class="drawer-backdrop" *ngIf="showForm()" (click)="toggleForm()"></div>
+  <div class="drawer" [class.drawer-open]="showForm()">
+    <div class="drawer-header">
+      <h3>Registar Novo Veículo</h3>
+      <button mat-icon-button (click)="toggleForm()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+
+    <form [formGroup]="vehicleForm" (ngSubmit)="onSubmit()" class="drawer-form">
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Matrícula (Ex: LD-12-34-AA)</mat-label>
+        <input matInput formControlName="licensePlate" placeholder="LD-00-00-XX" required />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Marca</mat-label>
+        <input matInput formControlName="brand" placeholder="Ex: Toyota" required />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Modelo</mat-label>
+        <input matInput formControlName="model" placeholder="Ex: Yaris" required />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Número de Chassis</mat-label>
+        <input matInput formControlName="chassis" placeholder="Ex: 9TB123..." required />
+      </mat-form-field>
+
+      <div class="form-row">
+        <mat-form-field appearance="outline">
+          <mat-label>Ano</mat-label>
+          <input matInput type="number" formControlName="year" required />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Quilometragem Inicial (km)</mat-label>
+          <input matInput type="number" formControlName="odometer" required />
+        </mat-form-field>
+      </div>
+
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Combustível</mat-label>
+        <mat-select formControlName="fuel">
+          <mat-option [value]="1">Gasolina</mat-option>
+          <mat-option [value]="2">Gasóleo (Diesel)</mat-option>
+          <mat-option [value]="3">GPL</mat-option>
+          <mat-option [value]="4">Híbrido</mat-option>
+          <mat-option [value]="5">Elétrico</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Caixa de Velocidades</mat-label>
+        <mat-select formControlName="transmission">
+          <mat-option [value]="1">Manual</mat-option>
+          <mat-option [value]="2">Automática</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <div class="drawer-footer">
+        <button type="button" mat-stroked-button (click)="toggleForm()">Cancelar</button>
+        <button type="submit" mat-flat-button color="primary" [disabled]="vehicleForm.invalid"
+          class="submit-drawer-btn">Registar</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Vehicles Table/List -->
+  <div class="table-card">
+    <div class="table-container" *ngIf="vehicles().length > 0; else noVehicles">
+      <table>
+        <thead>
+          <tr>
+            <th>Veículo</th>
+            <th>Matrícula</th>
+            <th>Ano</th>
+            <th>Quilometragem</th>
+            <th>Chassis</th>
+            <th>Combustível / Caixa</th>
+            <th>Estado</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let vehicle of vehicles()">
+            <td>
+              <div class="vehicle-identity">
+                <span class="vehicle-name">{{ vehicle.brand }} {{ vehicle.model }}</span>
+              </div>
+            </td>
+            <td><span class="plate-badge">{{ vehicle.licensePlate }}</span></td>
+            <td>{{ vehicle.year }}</td>
+            <td>{{ vehicle.odometer | number }} km</td>
+            <td><code class="chassis-code">{{ vehicle.chassis }}</code></td>
+            <td>
+              <div class="tech-info">
+                <span>{{ getFuelLabel(vehicle.fuel) }}</span>
+                <span class="tech-dot">•</span>
+                <span>{{ getTransmissionLabel(vehicle.transmission) }}</span>
+              </div>
+            </td>
+            <td>
+              <span class="status-badge" [ngClass]="getStatusClass(vehicle.status)">
+                {{ getStatusLabel(vehicle.status) }}
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <ng-template #noVehicles>
+      <div class="empty-state">
+        <mat-icon class="empty-icon">directions_car</mat-icon>
+        <h4>Nenhum veículo registado</h4>
+        <p>Comece por registar os veículos da sua frota utilizando o botão acima.</p>
+      </div>
+    </ng-template>
+  </div>
+</div>

@@ -1,0 +1,142 @@
+<div class="login-container">
+  <!-- Dynamic Glowing Background Blur Orbs -->
+  <div class="glow glow-1"></div>
+  <div class="glow glow-2"></div>
+  <div class="glow glow-3"></div>
+
+  <div class="login-card">
+    <!-- Premium Interactive Branding Section -->
+    <div class="branding-section">
+      <div class="brand-header-group">
+        <div class="logo-wrapper">
+          <div class="logo-icon-container">
+            <mat-icon class="logo-icon">directions_car</mat-icon>
+          </div>
+          <span class="logo-text">FrotaGo<span class="logo-dot">.</span></span>
+        </div>
+        <div class="badge-group">
+          <span class="badge badge-primary">ERP Escolas</span>
+          <span class="badge badge-accent">Conformidade Legal</span>
+        </div>
+      </div>
+
+      <div class="branding-content">
+        <h2>Simplifique a gestão da sua <span class="gradient-text">Escola de Condução</span> em Angola.</h2>
+        
+        <!-- Interactive Floating Glass Feature Cards -->
+        <div class="feature-cards">
+          <div class="feature-glass-card">
+            <mat-icon class="card-icon">verified_user</mat-icon>
+            <div class="card-text">
+              <h4>Conformidade Legal</h4>
+              <p>Controle automático e alertas de DUA, seguros e inspeções.</p>
+            </div>
+          </div>
+          
+          <div class="feature-glass-card">
+            <mat-icon class="card-icon">people</mat-icon>
+            <div class="card-text">
+              <h4>Instrutores e Alunos</h4>
+              <p>Agendamento otimizado de aulas práticas e gestão de progresso.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="brand-footer">
+        <span>© 2026 FrotaGo ERP. Todos os direitos reservados.</span>
+      </div>
+    </div>
+
+    <!-- Slick Glassmorphism Form Section -->
+    <div class="form-section">
+      <div class="form-header">
+        <span class="form-subtitle">ÁREA DE ACESSO</span>
+        <h1>{{ isRegister() ? 'Criar Conta' : 'Boas-vindas!' }}</h1>
+        <p>{{ isRegister() ? 'Registe a sua escola de condução em poucos segundos.' : 'Insira as suas credenciais para aceder ao ERP.' }}</p>
+      </div>
+
+      <form [formGroup]="isRegister() ? registerForm : loginForm" (ngSubmit)="onSubmit()" class="auth-form">
+        <!-- Modern Alert Messages -->
+        <div class="alert error-alert" *ngIf="errorMessage()">
+          <div class="alert-icon-wrapper">
+            <mat-icon>error_outline</mat-icon>
+          </div>
+          <div class="alert-content">
+            <span class="alert-title">Ups! Algo correu mal</span>
+            <span class="alert-desc">{{ errorMessage() }}</span>
+          </div>
+        </div>
+
+        <div class="alert success-alert" *ngIf="successMessage()">
+          <div class="alert-icon-wrapper">
+            <mat-icon>check_circle_outline</mat-icon>
+          </div>
+          <div class="alert-content">
+            <span class="alert-title">Sucesso</span>
+            <span class="alert-desc">{{ successMessage() }}</span>
+          </div>
+        </div>
+
+        <!-- Inputs Container -->
+        <div class="inputs-container">
+          <!-- Name Input (Register Only) -->
+          <div class="form-group-custom" *ngIf="isRegister()">
+            <label class="input-label">Nome da Escola / Administrador</label>
+            <mat-form-field appearance="outline" class="w-full">
+              <input matInput formControlName="name" placeholder="Ex: Escola de Condução Luanda" required />
+              <mat-icon matSuffix>business</mat-icon>
+            </mat-form-field>
+          </div>
+
+          <!-- Email Input -->
+          <div class="form-group-custom">
+            <label class="input-label">E-mail Corporativo</label>
+            <mat-form-field appearance="outline" class="w-full">
+              <input matInput type="email" formControlName="email" placeholder="nome@escola.ao" required />
+              <mat-icon matSuffix>mail_outline</mat-icon>
+            </mat-form-field>
+          </div>
+
+          <!-- Password Input -->
+          <div class="form-group-custom">
+            <label class="input-label">Palavra-passe</label>
+            <mat-form-field appearance="outline" class="w-full">
+              <input matInput [type]="hidePassword() ? 'password' : 'text'" formControlName="password" placeholder="••••••••" required />
+              <button type="button" mat-icon-button matSuffix (click)="hidePassword.set(!hidePassword())" class="password-toggle-btn">
+                <mat-icon>{{ hidePassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+              </button>
+            </mat-form-field>
+          </div>
+
+          <!-- Role Selector (Register Only) -->
+          <div class="form-group-custom" *ngIf="isRegister()">
+            <label class="input-label">Perfil do Utilizador</label>
+            <mat-form-field appearance="outline" class="w-full">
+              <mat-select formControlName="role">
+                <mat-option [value]="1">Administrador</mat-option>
+                <mat-option [value]="2">Instrutor</mat-option>
+                <mat-option [value]="3">Rececionista</mat-option>
+              </mat-select>
+              <mat-icon matSuffix>people_outline</mat-icon>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <button mat-flat-button type="submit" class="submit-btn" [disabled]="isRegister() ? registerForm.invalid : loginForm.invalid">
+          <span>{{ isRegister() ? 'Registar Escola' : 'Entrar na Plataforma' }}</span>
+          <mat-icon class="btn-arrow">arrow_forward</mat-icon>
+        </button>
+
+        <!-- Toggle Mode Trigger -->
+        <div class="toggle-mode">
+          <span>{{ isRegister() ? 'Já faz parte da nossa rede?' : 'Novo no FrotaGo?' }}</span>
+          <button type="button" mat-button class="toggle-action-btn" (click)="toggleMode()">
+            {{ isRegister() ? 'Iniciar Sessão' : 'Criar Conta Gratuita' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
