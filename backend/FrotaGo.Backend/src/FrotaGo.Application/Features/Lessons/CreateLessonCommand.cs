@@ -37,6 +37,36 @@ public class CreateLessonCommandHandler : IRequestHandler<CreateLessonCommand, G
             throw new Exception("Este veículo não está disponível para aulas práticas de condução.");
         }
 
+        // Verificar sobreposição de horários
+        var existingLessons = await _lessonRepository.GetAllAsync();
+        var newStart = request.ScheduledDate.ToUniversalTime();
+        var newEnd = newStart.AddMinutes(request.DurationMinutes);
+
+        foreach (var l in existingLessons)
+        {
+            if (l.Status != LessonStatus.Agendada) continue;
+
+            var existingStart = l.ScheduledDate;
+            var existingEnd = existingStart.AddMinutes(l.DurationMinutes);
+
+            bool isOverlapping = newStart < existingEnd && newEnd > existingStart;
+            if (isOverlapping)
+            {
+                if (l.VehicleId == request.VehicleId)
+                {
+                    throw new Exception("O veículo já tem outra aula prática agendada para este período.");
+                }
+                if (l.InstructorId == request.InstructorId)
+                {
+                    throw new Exception("O instrutor selecionado já tem outra aula prática agendada para este período.");
+                }
+                if (l.StudentId == request.StudentId)
+                {
+                    throw new Exception("O aluno já tem outra aula prática agendada para este período.");
+                }
+            }
+        }
+
         var lesson = new Lesson
         {
             Id = Guid.NewGuid(),
