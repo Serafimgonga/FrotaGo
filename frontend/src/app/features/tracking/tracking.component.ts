@@ -41,6 +41,9 @@ export class TrackingComponent implements OnInit, OnDestroy, AfterViewInit {
   isLoading = signal(true);
   connectionStatus = signal<'Connected' | 'Disconnected' | 'Connecting'>('Disconnected');
   isTransmitting = signal<string | null>(null); // Armazena a matrícula do veículo em transmissão
+  transmissionTime = signal<string>('00:00.000');
+  private transmissionInterval: any = null;
+  private startTime: number = 0;
   Math = Math;
 
   // Rota de Simulação em Luanda (Marginal -> Kinaxixi -> Maianga)
@@ -276,6 +279,20 @@ export class TrackingComponent implements OnInit, OnDestroy, AfterViewInit {
     this.stopDeviceTracking();
 
     this.isTransmitting.set(state.vehicle.licensePlate);
+    this.startTime = Date.now();
+    this.transmissionTime.set('00:00.000');
+
+    this.transmissionInterval = setInterval(() => {
+      const elapsed = Date.now() - this.startTime;
+      const minutes = Math.floor(elapsed / 60000);
+      const seconds = Math.floor((elapsed % 60000) / 1000);
+      const milliseconds = elapsed % 1000;
+      
+      const padZero = (num: number, size = 2) => num.toString().padStart(size, '0');
+      this.transmissionTime.set(
+        `${padZero(minutes)}:${padZero(seconds)}.${padZero(milliseconds, 3)}`
+      );
+    }, 33);
 
     this.watchId = navigator.geolocation.watchPosition(
       (position) => {
@@ -314,6 +331,11 @@ export class TrackingComponent implements OnInit, OnDestroy, AfterViewInit {
       navigator.geolocation.clearWatch(this.watchId);
       this.watchId = null;
     }
+    if (this.transmissionInterval) {
+      clearInterval(this.transmissionInterval);
+      this.transmissionInterval = null;
+    }
+    this.transmissionTime.set('00:00.000');
     this.isTransmitting.set(null);
   }
 

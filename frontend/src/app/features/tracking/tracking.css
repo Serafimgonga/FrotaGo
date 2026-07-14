@@ -703,3 +703,26 @@
   color: #3b82f6;
   font-weight: 600;
 }
+
+.transmission-timer {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(59, 130, 246, 0.1);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  border-radius: 30px;
+  padding: 0.4rem 1rem;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #60a5fa;
+  text-shadow: 0 0 8px rgba(96, 165, 250, 0.3);
+  margin-top: 0.5rem;
+}
+
+.transmission-timer mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  color: #60a5fa;
+}
