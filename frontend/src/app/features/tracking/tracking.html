@@ -89,6 +89,17 @@
               </div>
             </div>
 
+            <div class="coordinates-box">
+              <div class="coord-item">
+                <span class="coord-label">Latitude:</span>
+                <span class="coord-value">{{ getTransmittingVehicleState()?.latitude || 'A obter...' }}</span>
+              </div>
+              <div class="coord-item">
+                <span class="coord-label">Longitude:</span>
+                <span class="coord-value">{{ getTransmittingVehicleState()?.longitude || 'A obter...' }}</span>
+              </div>
+            </div>
+
             <p class="transmission-note">Mantenha esta janela aberta no browser do seu telemóvel durante o trajeto da aula.</p>
 
             <button mat-flat-button color="warn" class="btn-stop-transmission" (click)="stopDeviceTracking()">
