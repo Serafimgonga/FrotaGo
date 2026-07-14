@@ -56,6 +56,13 @@ export class FuelComponent implements OnInit {
     this.vehicleService.getVehicles().subscribe({
       next: (data) => this.vehicles.set(data)
     });
+
+    this.fuelForm.get('vehicleId')?.valueChanges.subscribe(vehicleId => {
+      const selected = this.vehicles().find(v => v.id === vehicleId);
+      if (selected) {
+        this.fuelForm.patchValue({ odometer: selected.odometer });
+      }
+    });
   }
 
   loadFuelRecords(): void {

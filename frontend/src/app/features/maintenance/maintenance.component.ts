@@ -56,6 +56,13 @@ export class MaintenanceComponent implements OnInit {
     this.vehicleService.getVehicles().subscribe({
       next: (data) => this.vehicles.set(data)
     });
+
+    this.maintenanceForm.get('vehicleId')?.valueChanges.subscribe(vehicleId => {
+      const selected = this.vehicles().find(v => v.id === vehicleId);
+      if (selected) {
+        this.maintenanceForm.patchValue({ odometer: selected.odometer });
+      }
+    });
   }
 
   loadMaintenances(): void {
