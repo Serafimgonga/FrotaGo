@@ -1,0 +1,92 @@
+<div class="tracking-container">
+  <!-- Sidebar de Controlo de Frota -->
+  <div class="tracking-sidebar">
+    <div class="sidebar-header">
+      <div class="header-title-row">
+        <h2>Rastreio de Frota</h2>
+        <span class="status-indicator" [ngClass]="{
+          'status-connected': connectionStatus() === 'Connected',
+          'status-connecting': connectionStatus() === 'Connecting',
+          'status-disconnected': connectionStatus() === 'Disconnected'
+        }">
+          <span class="pulse-dot"></span>
+          {{ connectionStatus() === 'Connected' ? 'Ligado' : connectionStatus() === 'Connecting' ? 'A conectar...' : 'Desligado' }}
+        </span>
+      </div>
+      <p>Acompanhe a movimentação das viaturas em tempo real pelas coordenadas GPS.</p>
+    </div>
+
+    <!-- Loading State -->
+    @if (isLoading()) {
+      <div class="loading-state">
+        <mat-spinner diameter="40"></mat-spinner>
+        <p>A carregar veículos...</p>
+      </div>
+    } @else {
+      <!-- Vehicle List -->
+      <div class="vehicles-list">
+        @for (state of vehiclesState(); track state.vehicle.id) {
+          <div class="vehicle-card" 
+               [class.active]="selectedVehicle()?.vehicle?.id === state.vehicle.id"
+               (click)="selectVehicle(state)">
+            <div class="card-top">
+              <div class="vehicle-info">
+                <span class="vehicle-name">{{ state.vehicle.brand }} {{ state.vehicle.model }}</span>
+                <span class="plate-badge">{{ state.vehicle.licensePlate }}</span>
+              </div>
+              <span class="status-badge" [ngClass]="{
+                'status-available': state.vehicle.status === 1,
+                'status-in-use': state.vehicle.status === 2 || state.latitude != null,
+                'status-maintenance': state.vehicle.status === 3
+              }">
+                {{ state.latitude != null ? 'Em Aula' : getStatusLabel(state.vehicle.status) }}
+              </span>
+            </div>
+
+            <!-- GPS/Telemetry info if available -->
+            @if (state.latitude) {
+              <div class="telemetry-info">
+                <div class="telemetry-item">
+                  <mat-icon>speed</mat-icon>
+                  <span>{{ Math.round(state.speed || 0) }} km/h</span>
+                </div>
+                <div class="telemetry-item">
+                  <mat-icon>place</mat-icon>
+                  <span>{{ state.latitude | number:'1.4-4' }}, {{ state.longitude | number:'1.4-4' }}</span>
+                </div>
+              </div>
+            } @else {
+              <div class="no-telemetry">
+                <mat-icon>gps_off</mat-icon>
+                <span>Sem sinal GPS ativo</span>
+              </div>
+            }
+
+            <!-- Simulation Controls -->
+            <div class="card-actions" (click)="$event.stopPropagation()">
+              @if (state.isSimulating) {
+                <button mat-flat-button color="warn" class="btn-simulation" (click)="stopSimulation()">
+                  <mat-icon>stop</mat-icon> Parar Teste
+                </button>
+              } @else {
+                <button mat-stroked-button class="btn-simulation" (click)="startSimulation(state)">
+                  <mat-icon>play_arrow</mat-icon> Simular Rota
+                </button>
+              }
+            </div>
+          </div>
+        } @empty {
+          <div class="empty-state">
+            <mat-icon>directions_car</mat-icon>
+            <p>Nenhum veículo registado.</p>
+          </div>
+        }
+      </div>
+    }
+  </div>
+
+  <!-- Contentor do Mapa Leaflet -->
+  <div class="map-wrapper">
+    <div id="map"></div>
+  </div>
+</div>

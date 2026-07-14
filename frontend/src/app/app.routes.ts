@@ -8,6 +8,7 @@ import { LessonsComponent } from './features/lessons/lessons.component';
 import { MaintenanceComponent } from './features/maintenance/maintenance.component';
 import { FuelComponent } from './features/fuel/fuel.component';
 import { DocumentsComponent } from './features/documents/documents.component';
+import { TrackingComponent } from './features/tracking/tracking.component';
 import { LandingComponent } from './features/landing/landing.component';
 import { authGuard } from './core/guards/auth.guard';
 
@@ -26,6 +27,7 @@ export const routes: Routes = [
       { path: 'maintenance', component: MaintenanceComponent },
       { path: 'fuel', component: FuelComponent },
       { path: 'documents', component: DocumentsComponent },
+      { path: 'tracking', component: TrackingComponent },
       { path: '', redirectTo: 'vehicles', pathMatch: 'full' }
     ]
   },

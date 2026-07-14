@@ -18,6 +18,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<Maintenance> Maintenances => Set<Maintenance>();
     public DbSet<FuelRecord> FuelRecords => Set<FuelRecord>();
     public DbSet<VehicleDocument> VehicleDocuments => Set<VehicleDocument>();
+    public DbSet<VehicleLocation> VehicleLocations => Set<VehicleLocation>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -123,6 +124,20 @@ public class ApplicationDbContext : DbContext
             entity.Property(e => e.DocumentNumber).IsRequired().HasMaxLength(100);
             entity.Property(e => e.Type).HasConversion<int>();
             entity.Property(e => e.FileUrl).HasMaxLength(500);
+
+            entity.HasOne(e => e.Vehicle)
+                .WithMany()
+                .HasForeignKey(e => e.VehicleId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<VehicleLocation>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Latitude).IsRequired();
+            entity.Property(e => e.Longitude).IsRequired();
+            entity.Property(e => e.Speed).IsRequired();
+            entity.Property(e => e.Timestamp).IsRequired();
 
             entity.HasOne(e => e.Vehicle)
                 .WithMany()
