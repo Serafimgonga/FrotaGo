@@ -19,7 +19,7 @@ export interface MaintenanceRecord {
   providedIn: 'root'
 })
 export class MaintenanceService {
-  private readonly apiUrl = `http://${window.location.hostname}:5073/api/maintenance`;
+  private readonly apiUrl = '/api/maintenance';
 
   constructor(private http: HttpClient) {}
 

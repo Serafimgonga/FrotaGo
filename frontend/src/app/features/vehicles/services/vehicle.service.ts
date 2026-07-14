@@ -20,7 +20,7 @@ export interface Vehicle {
   providedIn: 'root'
 })
 export class VehicleService {
-  private readonly apiUrl = `http://${window.location.hostname}:5073/api/vehicles`;
+  private readonly apiUrl = '/api/vehicles';
 
   constructor(private http: HttpClient) {}
 

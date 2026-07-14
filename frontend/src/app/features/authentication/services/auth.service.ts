@@ -20,7 +20,7 @@ export interface LoginResponse {
   providedIn: 'root'
 })
 export class AuthService {
-  private readonly apiUrl = `http://${window.location.hostname}:5073/api/auth`;
+  private readonly apiUrl = '/api/auth';
   
   readonly token = signal<string | null>(localStorage.getItem('token'));
   readonly currentUser = signal<User | null>(this.getUserFromStorage());

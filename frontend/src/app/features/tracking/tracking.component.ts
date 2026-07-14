@@ -119,7 +119,7 @@ export class TrackingComponent implements OnInit, OnDestroy, AfterViewInit {
   private connectSignalR(): void {
     this.connectionStatus.set('Connecting');
     this.hubConnection = new signalR.HubConnectionBuilder()
-      .withUrl(`http://${window.location.hostname}:5073/hubs/gps`)
+      .withUrl('/hubs/gps')
       .withAutomaticReconnect()
       .build();
 
@@ -272,7 +272,7 @@ export class TrackingComponent implements OnInit, OnDestroy, AfterViewInit {
           speed: speedKmh
         };
 
-        this.http.post(`http://${window.location.hostname}:5073/api/gps/track`, payload).subscribe({
+        this.http.post('/api/gps/track', payload).subscribe({
           next: () => {
             console.log('GPS do telemóvel enviado com sucesso:', payload);
           },
@@ -318,7 +318,7 @@ export class TrackingComponent implements OnInit, OnDestroy, AfterViewInit {
     };
 
     // Submete via HTTP POST para o endpoint REST que faz o broadcast SignalR e salva histórico
-    this.http.post(`http://${window.location.hostname}:5073/api/gps/track`, payload).subscribe({
+    this.http.post('/api/gps/track', payload).subscribe({
       next: () => {
         // Sucesso, a atualização virá pelo WebSocket Hub
       },
