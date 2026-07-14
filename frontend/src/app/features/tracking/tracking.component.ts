@@ -33,11 +33,13 @@ export class TrackingComponent implements OnInit, OnDestroy, AfterViewInit {
   private map!: L.Map;
   private hubConnection!: signalR.HubConnection;
   private simulationIntervalId: any = null;
+  private watchId: any = null;
 
   vehiclesState = signal<VehicleTrackerState[]>([]);
   selectedVehicle = signal<VehicleTrackerState | null>(null);
   isLoading = signal(true);
   connectionStatus = signal<'Connected' | 'Disconnected' | 'Connecting'>('Disconnected');
+  isTransmitting = signal<string | null>(null); // Armazena a matrícula do veículo em transmissão
   Math = Math;
 
   // Rota de Simulação em Luanda (Marginal -> Kinaxixi -> Maianga)
@@ -75,6 +77,7 @@ export class TrackingComponent implements OnInit, OnDestroy, AfterViewInit {
       this.hubConnection.stop();
     }
     this.stopSimulation();
+    this.stopDeviceTracking();
   }
 
   private initMap(): void {
@@ -213,6 +216,7 @@ export class TrackingComponent implements OnInit, OnDestroy, AfterViewInit {
 
   startSimulation(state: VehicleTrackerState): void {
     this.stopSimulation(); // Limpa simulação anterior ativa
+    this.stopDeviceTracking(); // Limpa rastreio de telemóvel ativo
     
     // Resetar flags de simulação
     const states = this.vehiclesState();
@@ -245,6 +249,57 @@ export class TrackingComponent implements OnInit, OnDestroy, AfterViewInit {
       current.isSimulating = false;
       this.selectedVehicle.set({ ...current });
     }
+  }
+
+  startDeviceTracking(state: VehicleTrackerState): void {
+    if (!navigator.geolocation) {
+      alert('O seu dispositivo ou navegador não suporta geolocalização.');
+      return;
+    }
+
+    this.stopSimulation();
+    this.stopDeviceTracking();
+
+    this.isTransmitting.set(state.vehicle.licensePlate);
+
+    this.watchId = navigator.geolocation.watchPosition(
+      (position) => {
+        const speedKmh = position.coords.speed ? (position.coords.speed * 3.6) : 0;
+        const payload = {
+          licensePlate: state.vehicle.licensePlate,
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+          speed: speedKmh
+        };
+
+        this.http.post('http://localhost:5073/api/gps/track', payload).subscribe({
+          next: () => {
+            console.log('GPS do telemóvel enviado com sucesso:', payload);
+          },
+          error: (err) => {
+            console.error('Erro ao enviar localização do telemóvel', err);
+          }
+        });
+      },
+      (err) => {
+        console.error('Erro ao obter coordenadas do telemóvel', err);
+        alert('Erro de GPS: ' + err.message);
+        this.stopDeviceTracking();
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0
+      }
+    );
+  }
+
+  stopDeviceTracking(): void {
+    if (this.watchId !== null) {
+      navigator.geolocation.clearWatch(this.watchId);
+      this.watchId = null;
+    }
+    this.isTransmitting.set(null);
   }
 
   private sendSimulatedLocation(state: VehicleTrackerState): void {

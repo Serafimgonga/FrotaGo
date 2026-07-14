@@ -62,15 +62,22 @@
               </div>
             }
 
-            <!-- Simulation Controls -->
-            <div class="card-actions" (click)="$event.stopPropagation()">
+            <!-- Simulation & Live Device Controls -->
+            <div class="card-actions-grid" (click)="$event.stopPropagation()">
               @if (state.isSimulating) {
-                <button mat-flat-button color="warn" class="btn-simulation" (click)="stopSimulation()">
+                <button mat-flat-button color="warn" class="btn-action" (click)="stopSimulation()">
                   <mat-icon>stop</mat-icon> Parar Teste
                 </button>
+              } @else if (isTransmitting() === state.vehicle.licensePlate) {
+                <button mat-flat-button class="btn-action pulse-accent" (click)="stopDeviceTracking()">
+                  <mat-icon>portable_wifi_off</mat-icon> Parar GPS
+                </button>
               } @else {
-                <button mat-stroked-button class="btn-simulation" (click)="startSimulation(state)">
-                  <mat-icon>play_arrow</mat-icon> Simular Rota
+                <button mat-stroked-button class="btn-action" (click)="startSimulation(state)" [disabled]="isTransmitting() !== null">
+                  <mat-icon>play_arrow</mat-icon> Simular
+                </button>
+                <button mat-stroked-button class="btn-action" (click)="startDeviceTracking(state)" [disabled]="isTransmitting() !== null">
+                  <mat-icon>phone_android</mat-icon> GPS Celular
                 </button>
               }
             </div>

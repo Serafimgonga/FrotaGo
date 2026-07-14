@@ -227,12 +227,20 @@
   height: 16px;
 }
 
-/* Simulation Buttons */
-.card-actions {
-  display: flex;
+/* Simulation & Live GPS Grid Controls */
+.card-actions-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
 }
 
-.btn-simulation {
+.card-actions-grid:has(.pulse-accent),
+.card-actions-grid:has(button[color="warn"]) {
+  grid-template-columns: 1fr;
+}
+
+.btn-action {
   width: 100%;
   height: 34px !important;
   font-size: 0.78rem !important;
@@ -241,10 +249,29 @@
   gap: 0.25rem;
 }
 
-.btn-simulation mat-icon {
+.btn-action mat-icon {
   font-size: 16px !important;
   width: 16px !important;
   height: 16px !important;
+}
+
+.pulse-accent {
+  background: linear-gradient(135deg, #e11d48 0%, #be123c 100%) !important;
+  color: white !important;
+  border: none !important;
+  animation: pulse-accent-glow 2s infinite;
+}
+
+@keyframes pulse-accent-glow {
+  0% {
+    box-shadow: 0 0 0 0 rgba(225, 29, 72, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(225, 29, 72, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(225, 29, 72, 0);
+  }
 }
 
 /* Empty State */
