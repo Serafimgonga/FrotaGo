@@ -42,6 +42,10 @@ public class GpsController : ControllerBase
             return NotFound(new { message = $"Veículo com a matrícula {request.LicensePlate} não foi encontrado." });
         }
 
+        Console.ForegroundColor = ConsoleColor.Green;
+        Console.WriteLine($"\n>>> [GPS RECEBIDO] Viatura {request.LicensePlate} -> Lat: {request.Latitude:F5}, Lng: {request.Longitude:F5}, Vel: {request.Speed:0.0} km/h");
+        Console.ResetColor();
+
         var location = new VehicleLocation
         {
             Id = Guid.NewGuid(),
