@@ -1,0 +1,142 @@
+<div class="crud-page">
+  <div class="alert error-alert" *ngIf="errorMessage()">
+    <mat-icon>error_outline</mat-icon>
+    <span>{{ errorMessage() }}</span>
+    <button mat-icon-button (click)="errorMessage.set(null)" class="close-alert-btn"><mat-icon>close</mat-icon></button>
+  </div>
+  <div class="alert success-alert" *ngIf="successMessage()">
+    <mat-icon>check_circle_outline</mat-icon>
+    <span>{{ successMessage() }}</span>
+    <button mat-icon-button (click)="successMessage.set(null)" class="close-alert-btn"><mat-icon>close</mat-icon></button>
+  </div>
+
+  <div class="page-header">
+    <div class="title-desc">
+      <h2>Manutenção</h2>
+      <p>Registe e acompanhe todas as manutenções preventivas e corretivas dos veículos.</p>
+    </div>
+    <button mat-flat-button color="primary" class="add-btn" (click)="toggleForm()">
+      <mat-icon>add</mat-icon>
+      Registar Manutenção
+    </button>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon icon-total"><mat-icon>build</mat-icon></div>
+      <div class="stat-details">
+        <span class="stat-value">{{ totalMaintenances() }}</span>
+        <span class="stat-label">Total de Manutenções</span>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon icon-maintenance"><mat-icon>pending_actions</mat-icon></div>
+      <div class="stat-details">
+        <span class="stat-value">{{ pendingMaintenances() }}</span>
+        <span class="stat-label">Pendentes</span>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon icon-cost"><mat-icon>payments</mat-icon></div>
+      <div class="stat-details">
+        <span class="stat-value">{{ totalCost() | number:'1.0-0' }} Kz</span>
+        <span class="stat-label">Custo Total</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="drawer-backdrop" *ngIf="showForm()" (click)="toggleForm()"></div>
+  <div class="drawer" [class.drawer-open]="showForm()">
+    <div class="drawer-header">
+      <h3>Registar Manutenção</h3>
+      <button mat-icon-button (click)="toggleForm()"><mat-icon>close</mat-icon></button>
+    </div>
+    <form [formGroup]="maintenanceForm" (ngSubmit)="onSubmit()" class="drawer-form">
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Veículo</mat-label>
+        <mat-select formControlName="vehicleId">
+          <mat-option *ngFor="let v of vehicles()" [value]="v.id">{{ v.brand }} {{ v.model }} ({{ v.licensePlate }})</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Descrição do Serviço</mat-label>
+        <input matInput formControlName="description" placeholder="Ex: Troca de óleo e filtros" required />
+      </mat-form-field>
+      <div class="form-row">
+        <mat-form-field appearance="outline">
+          <mat-label>Custo (Kz)</mat-label>
+          <input matInput type="number" formControlName="cost" required />
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Quilometragem</mat-label>
+          <input matInput type="number" formControlName="odometer" required />
+        </mat-form-field>
+      </div>
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Data</mat-label>
+        <input matInput type="date" formControlName="maintenanceDate" required />
+      </mat-form-field>
+      <div class="form-row">
+        <mat-form-field appearance="outline">
+          <mat-label>Tipo</mat-label>
+          <mat-select formControlName="type">
+            <mat-option [value]="1">Preventiva</mat-option>
+            <mat-option [value]="2">Corretiva</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Estado</mat-label>
+          <mat-select formControlName="status">
+            <mat-option [value]="1">Agendada</mat-option>
+            <mat-option [value]="2">Em Progresso</mat-option>
+            <mat-option [value]="3">Concluída</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="drawer-footer">
+        <button type="button" mat-stroked-button (click)="toggleForm()">Cancelar</button>
+        <button type="submit" mat-flat-button color="primary" [disabled]="maintenanceForm.invalid" class="submit-drawer-btn">Registar</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="table-card">
+    <div class="table-container" *ngIf="maintenances().length > 0; else noData">
+      <table>
+        <thead>
+          <tr>
+            <th>Veículo</th>
+            <th>Descrição</th>
+            <th>Tipo</th>
+            <th>Data</th>
+            <th>Custo</th>
+            <th>Km</th>
+            <th>Estado</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let m of maintenances()">
+            <td><span class="plate-badge" *ngIf="m.vehicle">{{ m.vehicle.licensePlate }}</span></td>
+            <td><span class="primary-text">{{ m.description }}</span></td>
+            <td>{{ getTypeLabel(m.type) }}</td>
+            <td>{{ m.maintenanceDate | date:'dd/MM/yyyy' }}</td>
+            <td>{{ m.cost | number:'1.0-0' }} Kz</td>
+            <td>{{ m.odometer | number }} km</td>
+            <td>
+              <span class="status-badge" [ngClass]="getStatusClass(m.status)">
+                {{ getStatusLabel(m.status) }}
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <ng-template #noData>
+      <div class="empty-state">
+        <mat-icon class="empty-icon">build</mat-icon>
+        <h4>Nenhuma manutenção registada</h4>
+        <p>Comece por registar as manutenções dos veículos utilizando o botão acima.</p>
+      </div>
+    </ng-template>
+  </div>
+</div>

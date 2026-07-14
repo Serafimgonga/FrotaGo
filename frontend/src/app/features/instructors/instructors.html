@@ -1,0 +1,127 @@
+<div class="crud-page">
+  <!-- Status alerts -->
+  <div class="alert error-alert" *ngIf="errorMessage()">
+    <mat-icon>error_outline</mat-icon>
+    <span>{{ errorMessage() }}</span>
+    <button mat-icon-button (click)="errorMessage.set(null)" class="close-alert-btn">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+  <div class="alert success-alert" *ngIf="successMessage()">
+    <mat-icon>check_circle_outline</mat-icon>
+    <span>{{ successMessage() }}</span>
+    <button mat-icon-button (click)="successMessage.set(null)" class="close-alert-btn">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <!-- Header -->
+  <div class="page-header">
+    <div class="title-desc">
+      <h2>Instrutores</h2>
+      <p>Gerencie os instrutores da escola de condução, seus contactos e licenças.</p>
+    </div>
+    <button mat-flat-button color="primary" class="add-btn" (click)="toggleForm()">
+      <mat-icon>add</mat-icon>
+      Registar Instrutor
+    </button>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon icon-total">
+        <mat-icon>people</mat-icon>
+      </div>
+      <div class="stat-details">
+        <span class="stat-value">{{ totalInstructors() }}</span>
+        <span class="stat-label">Total de Instrutores</span>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon icon-available">
+        <mat-icon>check_circle</mat-icon>
+      </div>
+      <div class="stat-details">
+        <span class="stat-value">{{ activeInstructors() }}</span>
+        <span class="stat-label">Activos</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Drawer form -->
+  <div class="drawer-backdrop" *ngIf="showForm()" (click)="toggleForm()"></div>
+  <div class="drawer" [class.drawer-open]="showForm()">
+    <div class="drawer-header">
+      <h3>Registar Novo Instrutor</h3>
+      <button mat-icon-button (click)="toggleForm()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+
+    <form [formGroup]="instructorForm" (ngSubmit)="onSubmit()" class="drawer-form">
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Nome Completo</mat-label>
+        <input matInput formControlName="name" placeholder="Ex: João Silva" required />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Email</mat-label>
+        <input matInput type="email" formControlName="email" placeholder="instrutor@email.com" required />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Telefone</mat-label>
+        <input matInput formControlName="phoneNumber" placeholder="+244 9XX XXX XXX" required />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Nº da Carta de Condução</mat-label>
+        <input matInput formControlName="licenseNumber" placeholder="Ex: AO-12345" required />
+      </mat-form-field>
+
+      <div class="drawer-footer">
+        <button type="button" mat-stroked-button (click)="toggleForm()">Cancelar</button>
+        <button type="submit" mat-flat-button color="primary" [disabled]="instructorForm.invalid" class="submit-drawer-btn">Registar</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Table -->
+  <div class="table-card">
+    <div class="table-container" *ngIf="instructors().length > 0; else noData">
+      <table>
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>Email</th>
+            <th>Telefone</th>
+            <th>Nº Carta</th>
+            <th>Estado</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let inst of instructors()">
+            <td><span class="primary-text">{{ inst.name }}</span></td>
+            <td>{{ inst.email }}</td>
+            <td>{{ inst.phoneNumber }}</td>
+            <td><code class="code-badge">{{ inst.licenseNumber }}</code></td>
+            <td>
+              <span class="status-badge" [ngClass]="inst.isActive !== false ? 'status-available' : 'status-out-service'">
+                {{ inst.isActive !== false ? 'Activo' : 'Inactivo' }}
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <ng-template #noData>
+      <div class="empty-state">
+        <mat-icon class="empty-icon">people</mat-icon>
+        <h4>Nenhum instrutor registado</h4>
+        <p>Comece por registar os instrutores da sua escola utilizando o botão acima.</p>
+      </div>
+    </ng-template>
+  </div>
+</div>

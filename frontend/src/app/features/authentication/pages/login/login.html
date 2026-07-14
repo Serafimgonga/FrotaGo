@@ -5,47 +5,12 @@
   <div class="glow glow-3"></div>
 
   <div class="login-card">
-    <!-- Premium Interactive Branding Section -->
-    <div class="branding-section">
-      <div class="brand-header-group">
-        <div class="logo-wrapper">
-          <div class="logo-icon-container">
-            <mat-icon class="logo-icon">directions_car</mat-icon>
-          </div>
-          <span class="logo-text">FrotaGo<span class="logo-dot">.</span></span>
-        </div>
-        <div class="badge-group">
-          <span class="badge badge-primary">ERP Escolas</span>
-          <span class="badge badge-accent">Conformidade Legal</span>
-        </div>
+    <!-- Premium Interactive Branding Header inside the Card -->
+    <div class="logo-wrapper">
+      <div class="logo-icon-container">
+        <mat-icon class="logo-icon">directions_car</mat-icon>
       </div>
-
-      <div class="branding-content">
-        <h2>Simplifique a gestão da sua <span class="gradient-text">Escola de Condução</span> em Angola.</h2>
-        
-        <!-- Interactive Floating Glass Feature Cards -->
-        <div class="feature-cards">
-          <div class="feature-glass-card">
-            <mat-icon class="card-icon">verified_user</mat-icon>
-            <div class="card-text">
-              <h4>Conformidade Legal</h4>
-              <p>Controle automático e alertas de DUA, seguros e inspeções.</p>
-            </div>
-          </div>
-          
-          <div class="feature-glass-card">
-            <mat-icon class="card-icon">people</mat-icon>
-            <div class="card-text">
-              <h4>Instrutores e Alunos</h4>
-              <p>Agendamento otimizado de aulas práticas e gestão de progresso.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      <div class="brand-footer">
-        <span>© 2026 FrotaGo ERP. Todos os direitos reservados.</span>
-      </div>
+      <span class="logo-text">FrotaGo<span class="logo-dot">.</span></span>
     </div>
 
     <!-- Slick Glassmorphism Form Section -->
@@ -84,8 +49,8 @@
           <div class="form-group-custom" *ngIf="isRegister()">
             <label class="input-label">Nome da Escola / Administrador</label>
             <mat-form-field appearance="outline" class="w-full">
+              <mat-icon matPrefix class="input-icon">business</mat-icon>
               <input matInput formControlName="name" placeholder="Ex: Escola de Condução Luanda" required />
-              <mat-icon matSuffix>business</mat-icon>
             </mat-form-field>
           </div>
 
@@ -93,8 +58,8 @@
           <div class="form-group-custom">
             <label class="input-label">E-mail Corporativo</label>
             <mat-form-field appearance="outline" class="w-full">
+              <mat-icon matPrefix class="input-icon">mail_outline</mat-icon>
               <input matInput type="email" formControlName="email" placeholder="nome@escola.ao" required />
-              <mat-icon matSuffix>mail_outline</mat-icon>
             </mat-form-field>
           </div>
 
@@ -102,9 +67,10 @@
           <div class="form-group-custom">
             <label class="input-label">Palavra-passe</label>
             <mat-form-field appearance="outline" class="w-full">
+              <mat-icon matPrefix class="input-icon">lock_outline</mat-icon>
               <input matInput [type]="hidePassword() ? 'password' : 'text'" formControlName="password" placeholder="••••••••" required />
               <button type="button" mat-icon-button matSuffix (click)="hidePassword.set(!hidePassword())" class="password-toggle-btn">
-                <mat-icon>{{ hidePassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+                <mat-icon class="toggle-icon">{{ hidePassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
               </button>
             </mat-form-field>
           </div>
@@ -113,12 +79,12 @@
           <div class="form-group-custom" *ngIf="isRegister()">
             <label class="input-label">Perfil do Utilizador</label>
             <mat-form-field appearance="outline" class="w-full">
+              <mat-icon matPrefix class="input-icon">people_outline</mat-icon>
               <mat-select formControlName="role">
                 <mat-option [value]="1">Administrador</mat-option>
                 <mat-option [value]="2">Instrutor</mat-option>
                 <mat-option [value]="3">Rececionista</mat-option>
               </mat-select>
-              <mat-icon matSuffix>people_outline</mat-icon>
             </mat-form-field>
           </div>
         </div>
@@ -138,5 +104,10 @@
         </div>
       </form>
     </div>
+  </div>
+
+  <!-- Minimal footer outside the main card -->
+  <div class="auth-footer">
+    <span>© 2026 FrotaGo ERP. Todos os direitos reservados.</span>
   </div>
 </div>

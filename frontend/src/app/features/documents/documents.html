@@ -1,0 +1,128 @@
+<div class="crud-page">
+  <div class="alert error-alert" *ngIf="errorMessage()">
+    <mat-icon>error_outline</mat-icon>
+    <span>{{ errorMessage() }}</span>
+    <button mat-icon-button (click)="errorMessage.set(null)" class="close-alert-btn"><mat-icon>close</mat-icon></button>
+  </div>
+  <div class="alert success-alert" *ngIf="successMessage()">
+    <mat-icon>check_circle_outline</mat-icon>
+    <span>{{ successMessage() }}</span>
+    <button mat-icon-button (click)="successMessage.set(null)" class="close-alert-btn"><mat-icon>close</mat-icon></button>
+  </div>
+
+  <div class="page-header">
+    <div class="title-desc">
+      <h2>Documentação de Veículos</h2>
+      <p>Gerencie seguros, inspecções, DUA e licenças dos veículos. Conformidade legal angolana.</p>
+    </div>
+    <button mat-flat-button color="primary" class="add-btn" (click)="toggleForm()">
+      <mat-icon>add</mat-icon>
+      Registar Documento
+    </button>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon icon-total"><mat-icon>description</mat-icon></div>
+      <div class="stat-details">
+        <span class="stat-value">{{ totalDocuments() }}</span>
+        <span class="stat-label">Total de Documentos</span>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon icon-danger"><mat-icon>warning</mat-icon></div>
+      <div class="stat-details">
+        <span class="stat-value">{{ expiredDocuments() }}</span>
+        <span class="stat-label">Expirados</span>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon icon-maintenance"><mat-icon>schedule</mat-icon></div>
+      <div class="stat-details">
+        <span class="stat-value">{{ expiringDocuments() }}</span>
+        <span class="stat-label">A Expirar (30 dias)</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="drawer-backdrop" *ngIf="showForm()" (click)="toggleForm()"></div>
+  <div class="drawer" [class.drawer-open]="showForm()">
+    <div class="drawer-header">
+      <h3>Registar Documento</h3>
+      <button mat-icon-button (click)="toggleForm()"><mat-icon>close</mat-icon></button>
+    </div>
+    <form [formGroup]="documentForm" (ngSubmit)="onSubmit()" class="drawer-form">
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Veículo</mat-label>
+        <mat-select formControlName="vehicleId">
+          <mat-option *ngFor="let v of vehicles()" [value]="v.id">{{ v.brand }} {{ v.model }} ({{ v.licensePlate }})</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Tipo de Documento</mat-label>
+        <mat-select formControlName="type">
+          <mat-option [value]="1">Seguro</mat-option>
+          <mat-option [value]="2">Inspecção</mat-option>
+          <mat-option [value]="3">DUA</mat-option>
+          <mat-option [value]="4">Licença</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Nº do Documento</mat-label>
+        <input matInput formControlName="documentNumber" placeholder="Ex: SEG-2024-001" required />
+      </mat-form-field>
+      <div class="form-row">
+        <mat-form-field appearance="outline">
+          <mat-label>Data de Emissão</mat-label>
+          <input matInput type="date" formControlName="issueDate" required />
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Data de Expiração</mat-label>
+          <input matInput type="date" formControlName="expiryDate" required />
+        </mat-form-field>
+      </div>
+      <div class="drawer-footer">
+        <button type="button" mat-stroked-button (click)="toggleForm()">Cancelar</button>
+        <button type="submit" mat-flat-button color="primary" [disabled]="documentForm.invalid" class="submit-drawer-btn">Registar</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="table-card">
+    <div class="table-container" *ngIf="documents().length > 0; else noData">
+      <table>
+        <thead>
+          <tr>
+            <th>Veículo</th>
+            <th>Tipo</th>
+            <th>Nº Documento</th>
+            <th>Emissão</th>
+            <th>Expiração</th>
+            <th>Validade</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let d of documents()">
+            <td><span class="plate-badge" *ngIf="d.vehicle">{{ d.vehicle.licensePlate }}</span></td>
+            <td><span class="primary-text">{{ getTypeLabel(d.type) }}</span></td>
+            <td><code class="code-badge">{{ d.documentNumber }}</code></td>
+            <td>{{ d.issueDate | date:'dd/MM/yyyy' }}</td>
+            <td>{{ d.expiryDate | date:'dd/MM/yyyy' }}</td>
+            <td>
+              <span class="status-badge" [ngClass]="getExpiryClass(d.expiryDate)">
+                {{ getExpiryStatus(d.expiryDate) }}
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <ng-template #noData>
+      <div class="empty-state">
+        <mat-icon class="empty-icon">description</mat-icon>
+        <h4>Nenhum documento registado</h4>
+        <p>Comece por registar seguros, inspecções e licenças dos veículos.</p>
+      </div>
+    </ng-template>
+  </div>
+</div>
