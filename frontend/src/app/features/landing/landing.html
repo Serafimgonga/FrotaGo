@@ -1,0 +1,231 @@
+<div class="landing-container">
+  <!-- Header -->
+  <header class="header" [class.scrolled]="scrolled()">
+    <div class="header-content">
+      <div class="logo-area" (click)="scrollTo('hero')">
+        <span class="logo-icon"><span class="material-icons">directions_car</span></span>
+        <span class="logo-text">Frota<span>Go</span></span>
+      </div>
+      <nav class="desktop-nav">
+        <a (click)="scrollTo('hero')">Início</a>
+        <a (click)="scrollTo('features')">Funcionalidades</a>
+        <a (click)="scrollTo('workflow')">Como Funciona</a>
+        <a (click)="scrollTo('testimonials')">Depoimentos</a>
+      </nav>
+      <div class="cta-area">
+        <button class="btn btn-secondary" (click)="navigateToLogin()">Entrar</button>
+        <button class="btn btn-primary" (click)="navigateToLogin()">Criar Conta</button>
+      </div>
+      <button class="mobile-menu-btn" (click)="toggleMenu()">
+        <span class="material-icons">{{ menuOpen() ? 'close' : 'menu' }}</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Mobile Nav Overlay -->
+  <div class="mobile-nav" [class.open]="menuOpen()">
+    <a (click)="scrollTo('hero')">Início</a>
+    <a (click)="scrollTo('features')">Funcionalidades</a>
+    <a (click)="scrollTo('workflow')">Como Funciona</a>
+    <a (click)="scrollTo('testimonials')">Depoimentos</a>
+    <div class="mobile-cta">
+      <button class="btn btn-secondary w-full" (click)="navigateToLogin()">Entrar</button>
+      <button class="btn btn-primary w-full" (click)="navigateToLogin()">Criar Conta</button>
+    </div>
+  </div>
+
+  <!-- Hero Section -->
+  <section id="hero" class="hero-section">
+    <div class="grid-bg"></div>
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    
+    <div class="hero-content">
+      <span class="badge-tag"><span class="material-icons">verified_user</span> Conformidade Legal Angolana</span>
+      <h1>Simplifique a Gestão da sua <span>Escola de Condução</span></h1>
+      <p class="hero-subtitle">
+        Controle veículos, instrutores, agendamento de aulas práticas, combustíveis e manutenção numa plataforma web premium concebida especialmente para o mercado de Angola.
+      </p>
+      <div class="hero-buttons">
+        <button class="btn btn-lg btn-primary" (click)="navigateToLogin()">
+          Iniciar Teste Gratuito <span class="material-icons">arrow_forward</span>
+        </button>
+        <button class="btn btn-lg btn-secondary" (click)="scrollTo('features')">
+          Ver Funcionalidades
+        </button>
+      </div>
+
+      <!-- Glassmorphic Mockup -->
+      <div class="mockup-container">
+        <div class="mockup-frame">
+          <div class="mockup-header">
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="mockup-title">FrotaGo ERP Dashboard</span>
+          </div>
+          <div class="mockup-body">
+            <!-- Simulated UI Grid -->
+            <div class="sim-sidebar">
+              <div class="sim-logo"><span class="material-icons">directions_car</span></div>
+              <div class="sim-nav-item active"><span class="material-icons">dashboard</span></div>
+              <div class="sim-nav-item"><span class="material-icons">people</span></div>
+              <div class="sim-nav-item"><span class="material-icons">event</span></div>
+              <div class="sim-nav-item"><span class="material-icons">build</span></div>
+              <div class="sim-nav-item"><span class="material-icons">local_gas_station</span></div>
+            </div>
+            <div class="sim-main">
+              <div class="sim-topbar"></div>
+              <div class="sim-cards">
+                <div class="sim-card">
+                  <div class="sim-card-header"><span class="material-icons" style="color: #6366f1;">directions_car</span></div>
+                  <div class="sim-card-val">24</div>
+                  <div class="sim-card-lbl">Veículos Disponíveis</div>
+                </div>
+                <div class="sim-card">
+                  <div class="sim-card-header"><span class="material-icons" style="color: #22d3ee;">build</span></div>
+                  <div class="sim-card-val">3</div>
+                  <div class="sim-card-lbl">Em Manutenção</div>
+                </div>
+                <div class="sim-card">
+                  <div class="sim-card-header"><span class="material-icons" style="color: #f59e0b;">warning</span></div>
+                  <div class="sim-card-val">2</div>
+                  <div class="sim-card-lbl">Documentos a Expirar</div>
+                </div>
+              </div>
+              <div class="sim-table">
+                <div class="sim-table-row header-row">
+                  <div>Veículo</div><div>Ocupação</div><div>Status</div>
+                </div>
+                <div class="sim-table-row">
+                  <div>Toyota Hilux (LD-12-34)</div><div>90%</div><div class="badge green">Disponível</div>
+                </div>
+                <div class="sim-table-row">
+                  <div>Hyundai i20 (LD-77-88)</div><div>—</div><div class="badge blue">Em Aula</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Metrics Section -->
+  <section class="metrics-section">
+    <div class="metrics-grid">
+      <div class="metric-card" *ngFor="let stat of stats">
+        <div class="metric-icon"><span class="material-icons">{{ stat.icon }}</span></div>
+        <div class="metric-value">{{ stat.value }}{{ stat.suffix }}</div>
+        <div class="metric-label">{{ stat.label }}</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Bento Section -->
+  <section id="features" class="features-section">
+    <div class="section-header">
+      <span class="section-tag">Funcionalidades</span>
+      <h2>Gestão Inteligente de Ponta a Ponta</h2>
+      <p>Desenvolvemos soluções para resolver os desafios reais do dia-a-dia de uma escola de condução.</p>
+    </div>
+
+    <div class="features-grid">
+      <div class="feature-card" *ngFor="let f of features">
+        <div class="feature-icon-wrapper" [style.background-color]="f.color + '20'" [style.color]="f.color">
+          <span class="material-icons">{{ f.icon }}</span>
+        </div>
+        <h3>{{ f.title }}</h3>
+        <p>{{ f.description }}</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works Section -->
+  <section id="workflow" class="workflow-section">
+    <div class="section-header">
+      <span class="section-tag">Workflow</span>
+      <h2>Como Funciona o FrotaGo?</h2>
+      <p>Instale de forma simples e organize os seus processos operacionais de forma totalmente intuitiva.</p>
+    </div>
+
+    <div class="workflow-grid">
+      <div class="workflow-card" *ngFor="let w of workflow">
+        <div class="workflow-step">{{ w.step }}</div>
+        <div class="workflow-icon"><span class="material-icons">{{ w.icon }}</span></div>
+        <h3>{{ w.title }}</h3>
+        <p>{{ w.description }}</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials Section -->
+  <section id="testimonials" class="testimonials-section">
+    <div class="section-header">
+      <span class="section-tag">Depoimentos</span>
+      <h2>O que dizem os nossos clientes</h2>
+      <p>Escolas de condução de norte a sul de Angola já utilizam a nossa plataforma.</p>
+    </div>
+
+    <div class="testimonials-grid">
+      <div class="testimonial-card" *ngFor="let t of testimonials">
+        <div class="testimonial-header">
+          <div class="avatar">{{ t.avatar }}</div>
+          <div class="user-meta">
+            <h4>{{ t.name }}</h4>
+            <span>{{ t.role }}</span>
+          </div>
+        </div>
+        <p class="testimonial-text">"{{ t.text }}"</p>
+        <div class="stars">
+          <span class="material-icons" *ngFor="let i of [1,2,3,4,5]">star</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Final CTA Section -->
+  <section class="final-cta-section">
+    <div class="cta-glow"></div>
+    <div class="cta-content">
+      <h2>Pronto para elevar a gestão da sua escola de condução?</h2>
+      <p>Junte-se a dezenas de escolas de condução em Angola que já digitalizaram a sua operação com o FrotaGo.</p>
+      <button class="btn btn-lg btn-primary" (click)="navigateToLogin()">
+        Criar Minha Conta Agora <span class="material-icons">arrow_forward</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-left">
+        <div class="logo-area">
+          <span class="logo-icon"><span class="material-icons">directions_car</span></span>
+          <span class="logo-text">Frota<span>Go</span></span>
+        </div>
+        <p>A primeira plataforma ERP inteligente de gestão de frota integrada e conformidade legal para escolas de condução em Angola.</p>
+      </div>
+      <div class="footer-links">
+        <div>
+          <h4>Produto</h4>
+          <a (click)="scrollTo('features')">Funcionalidades</a>
+          <a (click)="scrollTo('workflow')">Como Funciona</a>
+        </div>
+        <div>
+          <h4>Legal</h4>
+          <a href="#">Termos de Uso</a>
+          <a href="#">Privacidade</a>
+        </div>
+        <div>
+          <h4>Contacto</h4>
+          <a href="#">suporte&#64;frotago.co.ao</a>
+          <a href="#">Luanda, Angola</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 FrotaGo ERP. Feito com amor em Angola. Todos os direitos reservados.</p>
+    </div>
+  </footer>
+</div>

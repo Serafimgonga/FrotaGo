@@ -8,9 +8,11 @@ import { LessonsComponent } from './features/lessons/lessons.component';
 import { MaintenanceComponent } from './features/maintenance/maintenance.component';
 import { FuelComponent } from './features/fuel/fuel.component';
 import { DocumentsComponent } from './features/documents/documents.component';
+import { LandingComponent } from './features/landing/landing.component';
 import { authGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
+  { path: '', component: LandingComponent },
   { path: 'login', component: LoginComponent },
   {
     path: 'dashboard',
@@ -27,6 +29,5 @@ export const routes: Routes = [
       { path: '', redirectTo: 'vehicles', pathMatch: 'full' }
     ]
   },
-  { path: '', redirectTo: '/login', pathMatch: 'full' },
-  { path: '**', redirectTo: '/login' }
+  { path: '**', redirectTo: '' }
 ];
