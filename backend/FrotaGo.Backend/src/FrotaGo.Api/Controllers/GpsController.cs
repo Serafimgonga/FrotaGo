@@ -62,6 +62,10 @@ public class GpsController : ControllerBase
         // Broadcast a atualização em tempo real via SignalR
         await _hubContext.Clients.All.SendAsync("LocationUpdated", vehicle.Id, request.Latitude, request.Longitude, request.Speed);
 
+        Console.ForegroundColor = ConsoleColor.Cyan;
+        Console.WriteLine($"    [SIGNALR BROADCAST] VehicleId: {vehicle.Id} -> Lat: {request.Latitude:F5}, Lng: {request.Longitude:F5}");
+        Console.ResetColor();
+
         return Ok(new { message = "Coordenadas GPS registadas e transmitidas com sucesso.", vehicleId = vehicle.Id });
     }
 

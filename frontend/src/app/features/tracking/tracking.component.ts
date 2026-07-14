@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, signal, AfterViewInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, signal, AfterViewInit, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { VehicleService, Vehicle } from '../vehicles/services/vehicle.service';
@@ -66,7 +66,8 @@ export class TrackingComponent implements OnInit, OnDestroy, AfterViewInit {
   constructor(
     private vehicleService: VehicleService,
     private http: HttpClient,
-    public authService: AuthService
+    public authService: AuthService,
+    private ngZone: NgZone
   ) {}
 
   getTransmittingVehicleName(): string {
@@ -139,25 +140,48 @@ export class TrackingComponent implements OnInit, OnDestroy, AfterViewInit {
     this.hubConnection = new signalR.HubConnectionBuilder()
       .withUrl('/hubs/gps')
       .withAutomaticReconnect()
+      .configureLogging(signalR.LogLevel.Information)
       .build();
 
     this.hubConnection.on('LocationUpdated', (vehicleId: string, lat: number, lng: number, speed: number) => {
-      this.handleLocationUpdate(vehicleId, lat, lng, speed);
+      console.log('[SignalR] LocationUpdated recebido:', { vehicleId, lat, lng, speed });
+      this.ngZone.run(() => {
+        this.handleLocationUpdate(vehicleId, lat, lng, speed);
+      });
     });
 
     this.hubConnection.start()
       .then(() => {
+        console.log('[SignalR] Conexão estabelecida com sucesso!');
         this.connectionStatus.set('Connected');
       })
       .catch((err) => {
-        console.error('Erro ao conectar ao SignalR', err);
+        console.error('[SignalR] Erro ao conectar:', err);
         this.connectionStatus.set('Disconnected');
       });
+
+    this.hubConnection.onreconnecting(() => {
+      console.log('[SignalR] A reconectar...');
+      this.connectionStatus.set('Connecting');
+    });
+
+    this.hubConnection.onreconnected(() => {
+      console.log('[SignalR] Reconectado!');
+      this.connectionStatus.set('Connected');
+    });
+
+    this.hubConnection.onclose(() => {
+      console.log('[SignalR] Conexão fechada.');
+      this.connectionStatus.set('Disconnected');
+    });
   }
 
   private handleLocationUpdate(vehicleId: string, lat: number, lng: number, speed: number): void {
     const states = this.vehiclesState();
-    const index = states.findIndex(s => s.vehicle.id === vehicleId);
+    const vid = vehicleId.toString().toLowerCase();
+    const index = states.findIndex(s => (s.vehicle.id || '').toLowerCase() === vid);
+
+    console.log('[SignalR] Procurando veículo:', vid, '| Encontrado no índice:', index, '| Total veículos:', states.length);
 
     if (index !== -1) {
       const state = states[index];
