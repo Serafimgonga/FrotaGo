@@ -18,7 +18,7 @@ export interface VehicleDocument {
   providedIn: 'root'
 })
 export class DocumentService {
-  private readonly apiUrl = 'http://localhost:5073/api/documents';
+  private readonly apiUrl = `http://${window.location.hostname}:5073/api/documents`;
 
   constructor(private http: HttpClient) {}
 

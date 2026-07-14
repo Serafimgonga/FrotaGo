@@ -19,7 +19,7 @@ export interface FuelRecord {
   providedIn: 'root'
 })
 export class FuelService {
-  private readonly apiUrl = 'http://localhost:5073/api/fuel';
+  private readonly apiUrl = `http://${window.location.hostname}:5073/api/fuel`;
 
   constructor(private http: HttpClient) {}
 

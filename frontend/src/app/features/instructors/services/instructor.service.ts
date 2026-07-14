@@ -16,7 +16,7 @@ export interface Instructor {
   providedIn: 'root'
 })
 export class InstructorService {
-  private readonly apiUrl = 'http://localhost:5073/api/instructors';
+  private readonly apiUrl = `http://${window.location.hostname}:5073/api/instructors`;
 
   constructor(private http: HttpClient) {}
 
