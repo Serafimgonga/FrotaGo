@@ -5,6 +5,7 @@ import { VehicleService, Vehicle } from '../vehicles/services/vehicle.service';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { AuthService } from '../authentication/services/auth.service';
 import * as signalR from '@microsoft/signalr';
 import * as L from 'leaflet';
 
@@ -61,8 +62,22 @@ export class TrackingComponent implements OnInit, OnDestroy, AfterViewInit {
 
   constructor(
     private vehicleService: VehicleService,
-    private http: HttpClient
+    private http: HttpClient,
+    public authService: AuthService
   ) {}
+
+  getTransmittingVehicleName(): string {
+    const plate = this.isTransmitting();
+    if (!plate) return '';
+    const state = this.vehiclesState().find(s => s.vehicle.licensePlate === plate);
+    return state ? `${state.vehicle.brand} ${state.vehicle.model}` : '';
+  }
+
+  getTransmittingVehicleState(): VehicleTrackerState | undefined {
+    const plate = this.isTransmitting();
+    if (!plate) return undefined;
+    return this.vehiclesState().find(s => s.vehicle.licensePlate === plate);
+  }
 
   ngOnInit(): void {
     this.loadVehiclesAndConnect();
