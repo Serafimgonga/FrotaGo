@@ -46,7 +46,19 @@ public class TrackingHeartbeatWorker : BackgroundService
                 _logger.LogError(ex, "Erro ao validar batimentos cardíacos (heartbeat) de telemetria.");
             }
 
-            await Task.Delay(_checkInterval, stoppingToken);
+            if (stoppingToken.IsCancellationRequested)
+            {
+                break;
+            }
+
+            try
+            {
+                await Task.Delay(_checkInterval, stoppingToken);
+            }
+            catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
+            {
+                break;
+            }
         }
 
         _logger.LogInformation("TrackingHeartbeatWorker parado.");

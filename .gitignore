@@ -23,14 +23,21 @@ frontend/**/.env
 frontend/**/.env.local
 
 ### ============================
-### Mobile (ajusta se for Flutter/Ionic/React Native)
+### Mobile (.NET MAUI)
 ### ============================
-mobile/**/node_modules/
-mobile/**/build/
+mobile/**/bin/
+mobile/**/obj/
+mobile/**/.vs/
+mobile/**/*.user
+mobile/**/*.suo
 mobile/**/.gradle/
-mobile/**/Pods/
 mobile/**/*.apk
 mobile/**/*.ipa
+mobile/**/build/
+mobile/**/Pods/
+mobile/**/*.log
+mobile/**/.env
+mobile/**/.env.local
 
 ### ============================
 ### Geral / IDE / SO

@@ -31,10 +31,10 @@ public class GpsController : ControllerBase
         _hubContext = hubContext;
     }
 
-    public record TrackLocationRequest(string LicensePlate, double Latitude, double Longitude, double Speed);
+    public record TrackVehicleLocationRequest(string LicensePlate, double Latitude, double Longitude, double Speed);
 
     [HttpPost("track")]
-    public async Task<IActionResult> TrackLocation([FromBody] TrackLocationRequest request)
+    public async Task<IActionResult> TrackLocation([FromBody] TrackVehicleLocationRequest request)
     {
         var vehicle = await _vehicleRepository.GetByLicensePlateAsync(request.LicensePlate);
         if (vehicle == null)

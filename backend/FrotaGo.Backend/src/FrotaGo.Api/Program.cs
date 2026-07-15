@@ -11,7 +11,10 @@ builder.WebHost.UseUrls("http://*:5073");
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.CustomSchemaIds(type => $"{type.Namespace}.{type.Name}");
+});
 builder.Services.AddSignalR();
 builder.Services.AddSingleton<FrotaGo.Application.Interfaces.ITrackingHubContext, TrackingHubContext>();
 
