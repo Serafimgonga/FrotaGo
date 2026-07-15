@@ -6,9 +6,10 @@
   relatórios). CRUD simples pode ser directo via repositório.
 - Entity Framework Core apenas na camada `Infrastructure`. `Domain` não
   conhece EF Core.
-- Autenticação: JWT com roles = Administrador, Instrutor, Rececionista,
-  Mecânico. Nunca misturar permissões entre roles sem confirmação.
-- Nunca sugerir NoSQL/MongoDB — a base de dados é SQL Server.
+- Autenticação & Autorização: JWT baseado no modelo **RBAC (Role-Based Access Control)** com suporte para permissões dinâmicas: Utilizador (`Users`) -> Perfil (`Roles`) -> Permissões (`Permissions` via `RolePermissions`).
+- Multi-Tenancy (SaaS): Todo o sistema deve ser isolado por escola. Entidades de domínio pertencentes a uma escola devem conter uma chave estrangeira `SchoolId`, garantindo isolamento total de dados na base de dados (SQL Server).
+- Perfis Iniciais (MVP): Focar estritamente em **Admin** (Administrador da Escola), **Rececionista**, **Instrutor** e **Gestor de Frota**. Perfis pós-MVP (Super Admin, Mecânico, Contabilista, Aluno) serão adicionados posteriormente.
+- Nunca sugerir NoSQL/MongoDB — a base de dados oficial e exclusiva é o SQL Server.
 - Toda a nova funcionalidade de frota (veículos, manutenção, combustível)
   deve considerar o módulo de alertas automáticos (ex: troca de óleo,
   vencimento de seguro) como parte do desenho, não como extra opcional.

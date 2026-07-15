@@ -163,3 +163,70 @@ A base de dados (SQL Server) mantém-se unificada, rastreando através do `Devic
 ### V3 — Futuro (Integração de Hardware)
 * **GPS Físico no Veículo:** Integração de hardware OBD-II/Teltonika direto no carro.
 * **Foco:** Transmissão via protocolo de telemetria direto para a API do FrotaGo, tornando o rastreamento independente do telemóvel do instrutor.
+
+---
+
+## 7. Modelo de Autorização e Multi-Tenancy
+
+O FrotaGo foi concebido para ser uma plataforma SaaS escalável (Multi-Tenant) com um sistema granular de controlo de acessos baseado em perfis e permissões.
+
+### 7.1. Multi-Tenancy (Isolamento por Escola)
+Desde a fundação, todas as tabelas de dados de negócio estão associadas a uma escola específica através de um identificador unificado:
+* **Conceito:** Cada escola de condução é um "Tenant" independente.
+* **BD Schema:** Entidades como `User`, `Vehicle`, `Lesson`, `Student` e `TrackingSession` possuem um campo `SchoolId`.
+* **Isolamento:** Toda e qualquer consulta/comando na API deve obrigatoriamente filtrar pelo `SchoolId` do utilizador autenticado (obtido do token JWT).
+
+### 7.2. Estrutura de Perfis e Permissões (RBAC)
+Para dar flexibilidade às escolas na personalização de acessos futuros, a autorização não se limita a "roles" rígidas, mas sim a perfis associados a permissões granulares:
+
+```
+  [User] ──► [SchoolId] (Tenant)
+    │
+    ▼
+  [Role] (ex: Admin, Instructor)
+    │
+    └──► [RolePermissions] (Tabela de Associação)
+             │
+             ▼
+       [Permission] (ex: VEHICLE_CREATE, GPS_VIEW)
+```
+
+#### Modelo Físico da Base de Dados:
+* **Users:** `Id`, `Name`, `Email`, `PasswordHash`, `RoleId`, `SchoolId`
+* **Roles:** `Id`, `Name` (ex: Admin, Receptionist, Instructor, FleetManager)
+* **Permissions:** `Id`, `Code` (ex: `VEHICLE_CREATE`, `VEHICLE_VIEW`, `GPS_VIEW`, `LESSON_CREATE`, `PAYMENT_CREATE`)
+* **RolePermissions:** `RoleId`, `PermissionId`
+
+---
+
+### 7.3. Matriz de Permissões (MVP)
+
+Abaixo está definida a matriz inicial de controlo de acessos para os perfis do MVP:
+
+| Funcionalidade | Admin | Gestor de Frota | Rececionista | Instrutor |
+| :--- | :---: | :---: | :---: | :---: |
+| **Utilizadores** | ✅ (Criar/Editar) | ❌ (Sem Acesso) | ❌ (Sem Acesso) | ❌ (Sem Acesso) |
+| **Veículos** | ✅ (Criar/Editar) | ✅ (Criar/Editar) | 👁 (Apenas Visualizar) | ❌ (Sem Acesso) |
+| **GPS Tempo Real** | ✅ (Criar/Editar) | ✅ (Criar/Editar) | ❌ (Sem Acesso) | **Próprio** (Visualiza o seu) |
+| **Alunos** | ✅ (Criar/Editar) | ❌ (Sem Acesso) | ✅ (Criar/Editar) | **Próprios** (Apenas atribuídos) |
+| **Aulas** | ✅ (Criar/Editar) | ❌ (Sem Acesso) | ✅ (Criar/Editar) | **Próprias** (Da sua agenda) |
+| **Manutenção** | ✅ (Criar/Editar) | ✅ (Criar/Editar) | ❌ (Sem Acesso) | ❌ (Sem Acesso) |
+| **Combustível** | ✅ (Criar/Editar) | ✅ (Criar/Editar) | ❌ (Sem Acesso) | ❌ (Sem Acesso) |
+| **Pagamentos** | ✅ (Criar/Editar) | ❌ (Sem Acesso) | ✅ (Criar/Editar) | ❌ (Sem Acesso) |
+| **Relatórios** | ✅ (Acesso Total) | ✅ (Acesso Frota) | **Limitado** (Recibos/Faturas) | ❌ (Sem Acesso) |
+
+---
+
+### 7.4. Roadmap de Perfis
+
+1. **Fase Inicial (MVP):**
+   * **Admin (Administrador da Escola):** Controlo total dos dados da escola.
+   * **Rececionista:** Foco no atendimento, marcações, matrículas e emissão de recibos.
+   * **Instrutor:** Uso exclusivo das suas aulas e partilha de GPS na app mobile.
+   * **Gestor de Frota:** Gestão técnica e operacional dos veículos.
+2. **Fase Futura (SaaS & Operações Complexas):**
+   * **Super Admin:** Utilizador global do FrotaGo (gere escolas, faturação SaaS, logs gerais).
+   * **Mecânico:** Focado estritamente nas ordens de trabalho de manutenção.
+   * **Contabilista:** Acesso financeiro puro e reconciliação bancária.
+   * **Aluno:** Portal para o aluno visualizar a sua agenda e pagamentos.
+
