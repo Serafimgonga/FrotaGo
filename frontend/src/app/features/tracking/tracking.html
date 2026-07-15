@@ -155,11 +155,12 @@
                   <span class="plate-badge">{{ state.vehicle.licensePlate }}</span>
                 </div>
                 <span class="status-badge" [ngClass]="{
-                  'status-available': state.vehicle.status === 1,
-                  'status-in-use': state.vehicle.status === 2 || state.latitude != null,
-                  'status-maintenance': state.vehicle.status === 3
+                  'status-available': state.vehicle.status === 1 && (!state.status || state.status === 'Offline'),
+                  'status-in-use': state.status === 'Active' || state.status === 'Starting',
+                  'status-lost-signal': state.status === 'LostConnection',
+                  'status-maintenance': state.vehicle.status === 3 && (!state.status || state.status === 'Offline')
                 }">
-                  {{ state.latitude != null ? 'Em Aula' : getStatusLabel(state.vehicle.status) }}
+                  {{ state.status === 'Active' ? 'Em Aula (Direto)' : state.status === 'Starting' ? 'A ligar...' : state.status === 'LostConnection' ? 'Sem Sinal' : getStatusLabel(state.vehicle.status) }}
                 </span>
               </div>
 
@@ -188,16 +189,24 @@
                   <button mat-flat-button color="warn" class="btn-action" (click)="stopSimulation()">
                     <mat-icon>stop</mat-icon> Parar Teste
                   </button>
-                } @else if (isTransmitting() === state.vehicle.licensePlate) {
-                  <button mat-flat-button class="btn-action pulse-accent" (click)="stopDeviceTracking()">
-                    <mat-icon>portable_wifi_off</mat-icon> Parar GPS
-                  </button>
+                } @else if (state.status === 'Active') {
+                  <div class="live-indicator-badge">
+                    <span class="live-dot"></span>
+                    <span>📡 EM DIRETO</span>
+                  </div>
+                } @else if (state.status === 'Starting') {
+                  <div class="live-indicator-badge starting">
+                    <span class="live-dot starting"></span>
+                    <span>⏳ A INICIAR</span>
+                  </div>
+                } @else if (state.status === 'LostConnection') {
+                  <div class="live-indicator-badge lost">
+                    <span class="live-dot lost"></span>
+                    <span>🟡 SEM SINAL</span>
+                  </div>
                 } @else {
                   <button mat-stroked-button class="btn-action" (click)="startSimulation(state)" [disabled]="isTransmitting() !== null">
                     <mat-icon>play_arrow</mat-icon> Simular
-                  </button>
-                  <button mat-stroked-button class="btn-action" (click)="startDeviceTracking(state)" [disabled]="isTransmitting() !== null">
-                    <mat-icon>phone_android</mat-icon> GPS Celular
                   </button>
                 }
               </div>

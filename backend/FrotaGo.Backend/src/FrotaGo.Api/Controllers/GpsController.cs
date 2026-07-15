@@ -69,6 +69,37 @@ public class GpsController : ControllerBase
         return Ok(new { message = "Coordenadas GPS registadas e transmitidas com sucesso.", vehicleId = vehicle.Id });
     }
 
+    [HttpGet("latest")]
+    public async Task<IActionResult> GetLatestLocations()
+    {
+        // Obter a última localização registada de cada viatura de forma compatível com EF Core
+        var latestLocations = await _context.Vehicles
+            .Select(v => _context.VehicleLocations
+                .Where(vl => vl.VehicleId == v.Id)
+                .OrderByDescending(vl => vl.Timestamp)
+                .FirstOrDefault())
+            .Where(vl => vl != null)
+            .Select(vl => new {
+                vl.Id,
+                vl.VehicleId,
+                vl.Latitude,
+                vl.Longitude,
+                vl.Speed,
+                vl.Timestamp
+            })
+            .ToListAsync();
+
+        return Ok(latestLocations);
+    }
+
+    [HttpPost("stop/{vehicleId}")]
+    public async Task<IActionResult> StopTracking(Guid vehicleId)
+    {
+        // Notificar via SignalR que a partilha deste veículo foi interrompida
+        await _hubContext.Clients.All.SendAsync("TrackingStopped", vehicleId);
+        return Ok(new { message = "Transmissão encerrada com sucesso." });
+    }
+
     [HttpGet("history/{vehicleId}")]
     public async Task<IActionResult> GetHistory(Guid vehicleId)
     {

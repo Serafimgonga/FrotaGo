@@ -13,6 +13,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSignalR();
+builder.Services.AddSingleton<FrotaGo.Application.Interfaces.ITrackingHubContext, TrackingHubContext>();
 
 // Clean Architecture registrations
 builder.Services.AddApplication();
@@ -60,7 +61,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+// HttpsRedirection removido — causa falha no WebSocket SignalR quando
+// o Angular dev proxy conecta via HTTP. Em produção, usar HTTPS no reverse proxy.
 
 app.UseCors("AllowAngular");
 

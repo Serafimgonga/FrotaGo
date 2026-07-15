@@ -27,6 +27,8 @@ public static class DependencyInjection
         services.AddScoped<IVehicleDocumentRepository, VehicleDocumentRepository>();
         services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
 
+        services.AddHostedService<FrotaGo.Infrastructure.BackgroundServices.TrackingHeartbeatWorker>();
+
         return services;
     }
 }

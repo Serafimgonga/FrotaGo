@@ -19,6 +19,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<FuelRecord> FuelRecords => Set<FuelRecord>();
     public DbSet<VehicleDocument> VehicleDocuments => Set<VehicleDocument>();
     public DbSet<VehicleLocation> VehicleLocations => Set<VehicleLocation>();
+    public DbSet<TrackingSession> TrackingSessions => Set<TrackingSession>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -131,6 +132,29 @@ public class ApplicationDbContext : DbContext
                 .OnDelete(DeleteBehavior.Cascade);
         });
 
+        modelBuilder.Entity<TrackingSession>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Status).HasConversion<int>();
+            entity.Property(e => e.Provider).IsRequired().HasMaxLength(50);
+            entity.Property(e => e.StartedAt).IsRequired();
+
+            entity.HasOne(e => e.Vehicle)
+                .WithMany()
+                .HasForeignKey(e => e.VehicleId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.Instructor)
+                .WithMany()
+                .HasForeignKey(e => e.InstructorId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            entity.HasOne(e => e.Lesson)
+                .WithMany()
+                .HasForeignKey(e => e.LessonId)
+                .OnDelete(DeleteBehavior.SetNull);
+        });
+
         modelBuilder.Entity<VehicleLocation>(entity =>
         {
             entity.HasKey(e => e.Id);
@@ -142,6 +166,11 @@ public class ApplicationDbContext : DbContext
             entity.HasOne(e => e.Vehicle)
                 .WithMany()
                 .HasForeignKey(e => e.VehicleId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.TrackingSession)
+                .WithMany(s => s.Locations)
+                .HasForeignKey(e => e.TrackingSessionId)
                 .OnDelete(DeleteBehavior.Cascade);
         });
     }
