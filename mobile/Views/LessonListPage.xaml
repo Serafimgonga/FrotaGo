@@ -2,19 +2,104 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="FrotaGo.Mobile.Views.LessonListPage"
-             Title="Aulas Agendadas">
-  <CollectionView x:Name="LessonsView">
-    <CollectionView.ItemTemplate>
-      <DataTemplate>
-        <Frame Margin="8" Padding="12">
-          <VerticalStackLayout>
-            <Label Text="{Binding StudentName}" FontAttributes="Bold"/>
-            <Label Text="{Binding Vehicle}" />
-            <Label Text="{Binding StartTime}" />
-            <Button Text="Ver detalhes" Clicked="OnDetailsClicked"/>
+             Title="Aulas Agendadas"
+             BackgroundColor="{StaticResource Surface}">
+  
+  <Grid RowDefinitions="Auto,*,Auto" ColumnDefinitions="*">
+    <!-- Header -->
+    <VerticalStackLayout Grid.Row="0" BackgroundColor="{StaticResource Primary}" Padding="16" Spacing="8">
+      <Label Text="Aulas Agendadas" 
+             FontSize="20" 
+             FontAttributes="Bold"
+             TextColor="White"/>
+      <Label x:Name="InstructorLabel" 
+             FontSize="12"
+             TextColor="White"
+             Opacity="0.9"/>
+    </VerticalStackLayout>
+
+    <!-- Lista de Aulas -->
+    <RefreshView Grid.Row="1" x:Name="RefreshView" Command="{Binding RefreshCommand}">
+      <CollectionView x:Name="LessonsView" Padding="16" SelectionMode="Single">
+        <CollectionView.ItemTemplate>
+          <DataTemplate>
+            <Frame Style="{StaticResource CardStyle}" Margin="0,8">
+              <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto" ColumnSpacing="12">
+                
+                <!-- Student & Subject -->
+                <VerticalStackLayout Grid.Row="0" Grid.Column="0" Spacing="4">
+                  <Label Text="{Binding Student.Name}" 
+                         Style="{StaticResource SectionTitleStyle}"
+                         Margin="0"/>
+                  <Label Text="{Binding Topic}" 
+                         Style="{StaticResource CaptionStyle}"
+                         Margin="0"/>
+                </VerticalStackLayout>
+
+                <!-- Status Badge -->
+                <Frame Grid.Row="0" Grid.Column="1" 
+                       BackgroundColor="{StaticResource Primary}"
+                       CornerRadius="12"
+                       Padding="8,4"
+                       HasShadow="False">
+                  <Label Text="Agendada" 
+                         FontSize="10"
+                         TextColor="White"
+                         FontAttributes="Bold"/>
+                </Frame>
+
+                <!-- Vehicle Info -->
+                <VerticalStackLayout Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Spacing="2" Margin="0,8,0,0">
+                  <Label Text="{StringFormat='Viatura: {0}', Binding Vehicle.LicensePlate}" 
+                         Style="{StaticResource CaptionStyle}"/>
+                  <Label Text="{StringFormat='Data: {0:dd/MM/yyyy HH:mm}', Binding ScheduledDate}" 
+                         Style="{StaticResource CaptionStyle}"/>
+                  <Label Text="{StringFormat='Duração: {0} min', Binding DurationMinutes}" 
+                         Style="{StaticResource CaptionStyle}"/>
+                </VerticalStackLayout>
+
+                <!-- Action Button -->
+                <Button Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"
+                        Text="Ver Detalhes"
+                        Clicked="OnDetailsClicked"
+                        Style="{StaticResource PrimaryButtonStyle}"
+                        Margin="0,8,0,0"
+                        CommandParameter="{Binding .}"/>
+              </Grid>
+            </Frame>
+          </DataTemplate>
+        </CollectionView.ItemTemplate>
+
+        <!-- Empty State -->
+        <CollectionView.EmptyView>
+          <VerticalStackLayout Padding="32" Spacing="16" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
+            <Label Text="Sem aulas agendadas"
+                   FontSize="16"
+                   FontAttributes="Bold"
+                   TextColor="{StaticResource TextSecondary}"
+                   HorizontalOptions="Center"/>
+            <Label Text="Você não tem aulas agendadas no momento"
+                   FontSize="12"
+                   TextColor="{StaticResource TextSecondary}"
+                   HorizontalOptions="Center"
+                   HorizontalTextAlignment="Center"/>
           </VerticalStackLayout>
-        </Frame>
-      </DataTemplate>
-    </CollectionView.ItemTemplate>
-  </CollectionView>
+        </CollectionView.EmptyView>
+      </CollectionView>
+    </RefreshView>
+
+    <!-- Loading Indicator -->
+    <ActivityIndicator Grid.Row="1"
+                       x:Name="LoadingIndicator"
+                       IsRunning="False"
+                       IsVisible="False"
+                       Color="{StaticResource Primary}"/>
+
+    <!-- Bottom Logout Button -->
+    <Button Grid.Row="2"
+            Text="Sair"
+            Clicked="OnLogoutClicked"
+            Style="{StaticResource SecondaryButtonStyle}"/>
+  </Grid>
+
 </ContentPage>

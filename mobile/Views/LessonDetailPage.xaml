@@ -2,17 +2,123 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="FrotaGo.Mobile.Views.LessonDetailPage"
-             Title="Detalhes da Aula">
-  <ScrollView>
-    <VerticalStackLayout Padding="20" Spacing="12">
-      <Label x:Name="TitleLabel" FontSize="22" />
-      <Label x:Name="StudentLabel" />
-      <Label x:Name="VehicleLabel" />
-      <Label x:Name="StatusLabel" />
-      <HorizontalStackLayout Spacing="12">
-        <Button Text="Iniciar Aula" Clicked="OnStartLessonClicked"/>
-        <Button Text="Finalizar Aula" Clicked="OnStopLessonClicked" />
-      </HorizontalStackLayout>
+             Title="Detalhes da Aula"
+             BackgroundColor="{StaticResource Surface}">
+  
+  <Grid RowDefinitions="Auto,*" ColumnDefinitions="*">
+    <!-- Header -->
+    <VerticalStackLayout Grid.Row="0" BackgroundColor="{StaticResource Primary}" Padding="16" Spacing="8">
+      <Label Text="Detalhes da Aula" 
+             FontSize="20" 
+             FontAttributes="Bold"
+             TextColor="White"/>
     </VerticalStackLayout>
-  </ScrollView>
+
+    <!-- Content -->
+    <ScrollView Grid.Row="1" Padding="0">
+      <VerticalStackLayout Padding="16" Spacing="16">
+        
+        <!-- Aluno Card -->
+        <Frame Style="{StaticResource CardStyle}">
+          <VerticalStackLayout Spacing="8">
+            <Label Text="Aluno" Style="{StaticResource SectionTitleStyle}" Margin="0"/>
+            <Label x:Name="StudentNameLabel" Style="{StaticResource BodyTextStyle}"/>
+            <Label x:Name="StudentEmailLabel" Style="{StaticResource CaptionStyle}"/>
+            <Label x:Name="StudentPhoneLabel" Style="{StaticResource CaptionStyle}"/>
+          </VerticalStackLayout>
+        </Frame>
+
+        <!-- Viatura Card -->
+        <Frame Style="{StaticResource CardStyle}">
+          <VerticalStackLayout Spacing="8">
+            <Label Text="Viatura" Style="{StaticResource SectionTitleStyle}" Margin="0"/>
+            <Label x:Name="VehicleLabel" Style="{StaticResource BodyTextStyle}"/>
+            <Label x:Name="LicensePlateLabel" Style="{StaticResource CaptionStyle}"/>
+            <Label x:Name="FuelTypeLabel" Style="{StaticResource CaptionStyle}"/>
+          </VerticalStackLayout>
+        </Frame>
+
+        <!-- Instrutor Card -->
+        <Frame Style="{StaticResource CardStyle}">
+          <VerticalStackLayout Spacing="8">
+            <Label Text="Instrutor" Style="{StaticResource SectionTitleStyle}" Margin="0"/>
+            <Label x:Name="InstructorLabel" Style="{StaticResource BodyTextStyle}"/>
+            <Label x:Name="InstructorLicenseLabel" Style="{StaticResource CaptionStyle}"/>
+          </VerticalStackLayout>
+        </Frame>
+
+        <!-- Aula Details Card -->
+        <Frame Style="{StaticResource CardStyle}">
+          <VerticalStackLayout Spacing="8">
+            <Label Text="Informações da Aula" Style="{StaticResource SectionTitleStyle}" Margin="0"/>
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="12" RowSpacing="8">
+              <VerticalStackLayout Grid.Column="0" Spacing="2">
+                <Label Text="Data/Hora" Style="{StaticResource CaptionStyle}" Margin="0"/>
+                <Label x:Name="DateTimeLabel" Style="{StaticResource BodyTextStyle}" Margin="0"/>
+              </VerticalStackLayout>
+              <VerticalStackLayout Grid.Column="1" Spacing="2">
+                <Label Text="Duração" Style="{StaticResource CaptionStyle}" Margin="0"/>
+                <Label x:Name="DurationLabel" Style="{StaticResource BodyTextStyle}" Margin="0"/>
+              </VerticalStackLayout>
+            </Grid>
+            <VerticalStackLayout Spacing="2" Margin="0,8,0,0">
+              <Label Text="Tópico" Style="{StaticResource CaptionStyle}" Margin="0"/>
+              <Label x:Name="TopicLabel" Style="{StaticResource BodyTextStyle}" Margin="0"/>
+            </VerticalStackLayout>
+            <VerticalStackLayout Spacing="2" Margin="0,8,0,0">
+              <Label Text="Observações" Style="{StaticResource CaptionStyle}" Margin="0"/>
+              <Label x:Name="ObservationsLabel" Style="{StaticResource BodyTextStyle}" Margin="0"/>
+            </VerticalStackLayout>
+          </VerticalStackLayout>
+        </Frame>
+
+        <!-- Status Card -->
+        <Frame Style="{StaticResource CardStyle}">
+          <VerticalStackLayout Spacing="8">
+            <Label Text="Status" Style="{StaticResource SectionTitleStyle}" Margin="0"/>
+            <Label x:Name="StatusLabel" 
+                   Style="{StaticResource BodyTextStyle}"
+                   Margin="0"/>
+            <ActivityIndicator x:Name="TrackingIndicator"
+                               IsRunning="False"
+                               IsVisible="False"
+                               Color="{StaticResource Primary}"
+                               Margin="0,8,0,0"/>
+          </VerticalStackLayout>
+        </Frame>
+
+        <!-- Action Buttons -->
+        <VerticalStackLayout Spacing="8" Margin="0,8">
+          <Button x:Name="StartLessonButton"
+                  Text="Iniciar Aula"
+                  Clicked="OnStartLessonClicked"
+                  Style="{StaticResource PrimaryButtonStyle}"/>
+          <Button x:Name="StopLessonButton"
+                  Text="Finalizar Aula"
+                  Clicked="OnStopLessonClicked"
+                  Style="{StaticResource DangerButtonStyle}"
+                  IsEnabled="False"
+                  IsVisible="False"/>
+          <Button x:Name="BackButton"
+                  Text="Voltar"
+                  Clicked="OnBackClicked"
+                  Style="{StaticResource SecondaryButtonStyle}"/>
+        </VerticalStackLayout>
+
+        <!-- Error Messages -->
+        <Label x:Name="ErrorLabel"
+               TextColor="{StaticResource Error}"
+               FontSize="12"
+               IsVisible="False"
+               HorizontalTextAlignment="Center"/>
+
+        <Label x:Name="SuccessLabel"
+               TextColor="{StaticResource Success}"
+               FontSize="12"
+               IsVisible="False"
+               HorizontalTextAlignment="Center"/>
+      </VerticalStackLayout>
+    </ScrollView>
+  </Grid>
+
 </ContentPage>
