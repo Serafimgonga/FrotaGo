@@ -1,13 +1,13 @@
 using Microsoft.Maui.Controls;
 using FrotaGo.Mobile.Models;
 using FrotaGo.Mobile.Services;
-using Microsoft.Maui.Storage;
 
 namespace FrotaGo.Mobile.Views;
 
 public partial class LessonDetailPage : ContentPage
 {
     private readonly Lesson _lesson;
+    private TrackingService? _trackingService;
 
     public LessonDetailPage(Lesson lesson)
     {
@@ -19,18 +19,14 @@ public partial class LessonDetailPage : ContentPage
         StatusLabel.Text = $"Estado: {_lesson.Status}";
     }
 
-    private TrackingService? _trackingService;
-
     private async void OnStartLessonClicked(object? sender, EventArgs e)
     {
-        // confirm vehicle/student already set by selection
         var confirm = await DisplayAlert("Confirmar", "Confirma iniciar a aula e ativar GPS?", "Sim", "Não");
         if (!confirm) return;
 
-        var token = Preferences.Get("frotago_auth_token", string.Empty);
+        var token = await AuthService.GetTokenAsync();
         var api = new ApiService(MobileConfig.BaseUrl, token);
 
-        // Start lesson on backend
         var ok = await api.StartLessonAsync(_lesson.Id);
         if (!ok)
         {
@@ -38,9 +34,9 @@ public partial class LessonDetailPage : ContentPage
             return;
         }
 
-        // start tracking
         _trackingService = new TrackingService(api);
-        var started = await _trackingService.StartAsync(_lesson.Id, vehicleId: 0, instructorId: 0);
+        // Usar os IDs reais vindos do modelo da aula
+        var started = await _trackingService.StartAsync(_lesson.Id, _lesson.VehicleId, _lesson.InstructorId);
         if (!started)
         {
             await DisplayAlert("Erro", "GPS não disponível ou permissões negadas. Ative o GPS e tente novamente.", "OK");
@@ -56,9 +52,9 @@ public partial class LessonDetailPage : ContentPage
         var confirm = await DisplayAlert("Finalizar", "Confirma finalizar a aula?", "Sim", "Não");
         if (!confirm) return;
 
-        var baseUrl = "https://api.example.com/"; // TODO: configurar
-        var token = Preferences.Get("frotago_auth_token", string.Empty);
-        var api = new ApiService(baseUrl, token);
+        // Usar sempre MobileConfig.BaseUrl — mesma config da app inteira
+        var token = await AuthService.GetTokenAsync();
+        var api = new ApiService(MobileConfig.BaseUrl, token);
 
         if (_trackingService != null)
         {
