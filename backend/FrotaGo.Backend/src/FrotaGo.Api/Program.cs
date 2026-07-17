@@ -2,8 +2,10 @@ using System.Text;
 using FrotaGo.Api.Hubs;
 using FrotaGo.Application;
 using FrotaGo.Infrastructure;
+using FrotaGo.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,12 +15,15 @@ builder.WebHost.UseUrls(builder.Configuration["ASPNETCORE_URLS"] ?? "http://*:50
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
+
 builder.Services.AddSwaggerGen(options =>
 {
     options.CustomSchemaIds(type => $"{type.Namespace}.{type.Name}");
 });
+
 builder.Services.AddSignalR();
 builder.Services.AddHealthChecks();
+
 builder.Services.AddSingleton<FrotaGo.Application.Interfaces.ITrackingHubContext, TrackingHubContext>();
 
 // Clean Architecture registrations
@@ -26,7 +31,9 @@ builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
 
 // Configure JWT Authentication
-var secret = builder.Configuration["JwtSettings:Secret"] ?? "super_secret_key_frotago_api_development_jwt_token_key";
+var secret = builder.Configuration["JwtSettings:Secret"] 
+             ?? "super_secret_key_frotago_api_development_jwt_token_key";
+
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -40,9 +47,12 @@ builder.Services.AddAuthentication(options =>
         ValidateAudience = true,
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
+
         ValidIssuer = builder.Configuration["JwtSettings:Issuer"] ?? "FrotaGoApi",
         ValidAudience = builder.Configuration["JwtSettings:Audience"] ?? "FrotaGoApp",
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret))
+
+        IssuerSigningKey = new SymmetricSecurityKey(
+            Encoding.UTF8.GetBytes(secret))
     };
 });
 
@@ -58,12 +68,24 @@ builder.Services.AddCors(options =>
     });
 });
 
+
 var app = builder.Build();
+
+
+// Apply EF Core migrations automatically on startup
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    db.Database.Migrate();
+}
+
 
 app.UseForwardedHeaders(new ForwardedHeadersOptions
 {
-    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+    ForwardedHeaders = ForwardedHeaders.XForwardedFor 
+                     | ForwardedHeaders.XForwardedProto
 });
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -72,13 +94,24 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+
 app.UseCors("AllowAngular");
+
 app.UseAuthentication();
 app.UseAuthorization();
 
+
 app.MapControllers();
+
 app.MapHealthChecks("/healthz");
-app.MapGet("/", () => Results.Ok(new { service = "FrotaGo API", status = "running" }));
+
+app.MapGet("/", () => Results.Ok(new
+{
+    service = "FrotaGo API",
+    status = "running"
+}));
+
 app.MapHub<GpsHub>("/hubs/gps");
+
 
 app.Run();
