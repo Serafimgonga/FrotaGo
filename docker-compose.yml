@@ -19,6 +19,7 @@ services:
     networks:
       - frotago
 
+
   postgres:
     image: postgres:16-alpine
     container_name: frotago-postgres
@@ -40,6 +41,16 @@ services:
     networks:
       - frotago
 
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: frotago-frontend
+    networks:
+      - frotago
+
+
   nginx:
     image: nginx:alpine
     container_name: frotago-nginx
@@ -49,11 +60,14 @@ services:
       - ./deploy/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
     depends_on:
       - api
+      - frontend
     networks:
       - frotago
 
+
 volumes:
   postgres_data:
+
 
 networks:
   frotago:
