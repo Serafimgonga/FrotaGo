@@ -1,0 +1,60 @@
+services:
+  api:
+    build:
+      context: ./backend/FrotaGo.Backend
+      dockerfile: Dockerfile
+    container_name: frotago-api
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://+:5073
+      ConnectionStrings__DefaultConnection: Host=postgres;Port=5432;Database=frotago_db;Username=frotago_user;Password=frotago_pass
+      JwtSettings__Secret: super_secret_key_frotago_api_development_jwt_token_key
+      JwtSettings__Issuer: FrotaGoApi
+      JwtSettings__Audience: FrotaGoApp
+    ports:
+      - "5073:5073"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - frotago
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: frotago-postgres
+    environment:
+      POSTGRES_DB: frotago_db
+      POSTGRES_USER: frotago_user
+      POSTGRES_PASSWORD: frotago_pass
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+      - ./backups:/backups
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks:
+      - frotago
+
+  nginx:
+    image: nginx:alpine
+    container_name: frotago-nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./deploy/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - api
+    networks:
+      - frotago
+
+volumes:
+  postgres_data:
+
+networks:
+  frotago:
+    driver: bridge

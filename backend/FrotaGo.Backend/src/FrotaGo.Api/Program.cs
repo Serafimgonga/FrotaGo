@@ -1,12 +1,14 @@
 using System.Text;
+using FrotaGo.Api.Hubs;
 using FrotaGo.Application;
 using FrotaGo.Infrastructure;
-using FrotaGo.Api.Hubs;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.WebHost.UseUrls("http://*:5073");
+
+builder.WebHost.UseUrls(builder.Configuration["ASPNETCORE_URLS"] ?? "http://*:5073");
 
 // Add services to the container.
 builder.Services.AddControllers();
@@ -16,6 +18,7 @@ builder.Services.AddSwaggerGen(options =>
     options.CustomSchemaIds(type => $"{type.Namespace}.{type.Name}");
 });
 builder.Services.AddSignalR();
+builder.Services.AddHealthChecks();
 builder.Services.AddSingleton<FrotaGo.Application.Interfaces.ITrackingHubContext, TrackingHubContext>();
 
 // Clean Architecture registrations
@@ -57,6 +60,11 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
+app.UseForwardedHeaders(new ForwardedHeadersOptions
+{
+    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+});
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -64,15 +72,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-// HttpsRedirection removido — causa falha no WebSocket SignalR quando
-// o Angular dev proxy conecta via HTTP. Em produção, usar HTTPS no reverse proxy.
-
 app.UseCors("AllowAngular");
-
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapHealthChecks("/healthz");
+app.MapGet("/", () => Results.Ok(new { service = "FrotaGo API", status = "running" }));
 app.MapHub<GpsHub>("/hubs/gps");
 
 app.Run();
