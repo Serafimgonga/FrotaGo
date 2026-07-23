@@ -21,7 +21,7 @@
       <h2>Frota de Veículos</h2>
       <p>Gerencie todos os veículos da sua escola de condução, monitore manutenção e combustível.</p>
     </div>
-    <button mat-flat-button color="primary" class="add-btn" (click)="toggleForm()">
+    <button mat-flat-button color="primary" class="add-btn" (click)="openCreateForm()" *ngIf="authService.hasPermission('Vehicles.Manage')">
       <mat-icon>add</mat-icon>
       Registar Veículo
     </button>
@@ -61,11 +61,11 @@
   </div>
 
   <!-- Slide-over drawer form -->
-  <div class="drawer-backdrop" *ngIf="showForm()" (click)="toggleForm()"></div>
+  <div class="drawer-backdrop" *ngIf="showForm()" (click)="closeForm()"></div>
   <div class="drawer" [class.drawer-open]="showForm()">
     <div class="drawer-header">
-      <h3>Registar Novo Veículo</h3>
-      <button mat-icon-button (click)="toggleForm()">
+      <h3>{{ editingVehicleId() ? 'Editar Veículo' : 'Registar Novo Veículo' }}</h3>
+      <button mat-icon-button (click)="closeForm()">
         <mat-icon>close</mat-icon>
       </button>
     </div>
@@ -98,7 +98,7 @@
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>Quilometragem Inicial (km)</mat-label>
+          <mat-label>Quilometragem (km)</mat-label>
           <input matInput type="number" formControlName="odometer" required />
         </mat-form-field>
       </div>
@@ -122,10 +122,21 @@
         </mat-select>
       </mat-form-field>
 
+      <mat-form-field appearance="outline" class="w-full" *ngIf="editingVehicleId()">
+        <mat-label>Estado do Veículo</mat-label>
+        <mat-select formControlName="status">
+          <mat-option [value]="1">Disponível</mat-option>
+          <mat-option [value]="2">Em Aula</mat-option>
+          <mat-option [value]="3">Em Manutenção</mat-option>
+          <mat-option [value]="4">Acidentado</mat-option>
+          <mat-option [value]="5">Fora de Serviço</mat-option>
+        </mat-select>
+      </mat-form-field>
+
       <div class="drawer-footer">
-        <button type="button" mat-stroked-button (click)="toggleForm()">Cancelar</button>
+        <button type="button" mat-stroked-button (click)="closeForm()">Cancelar</button>
         <button type="submit" mat-flat-button color="primary" [disabled]="vehicleForm.invalid"
-          class="submit-drawer-btn">Registar</button>
+          class="submit-drawer-btn">{{ editingVehicleId() ? 'Guardar' : 'Registar' }}</button>
       </div>
     </form>
   </div>
@@ -143,6 +154,7 @@
             <th>Chassis</th>
             <th>Combustível / Caixa</th>
             <th>Estado</th>
+            <th style="text-align: right;" *ngIf="authService.hasPermission('Vehicles.Manage')">Ações</th>
           </tr>
         </thead>
         <tbody>
@@ -167,6 +179,14 @@
               <span class="status-badge" [ngClass]="getStatusClass(vehicle.status)">
                 {{ getStatusLabel(vehicle.status) }}
               </span>
+            </td>
+            <td style="text-align: right;" *ngIf="authService.hasPermission('Vehicles.Manage')">
+              <button mat-icon-button color="primary" (click)="openEditForm(vehicle)" title="Editar">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button color="warn" (click)="deleteVehicle(vehicle)" title="Eliminar">
+                <mat-icon>delete</mat-icon>
+              </button>
             </td>
           </tr>
         </tbody>

@@ -28,6 +28,7 @@ export class DocumentsComponent implements OnInit {
   vehicles = signal<Vehicle[]>([]);
   documentForm: FormGroup;
   showForm = signal(false);
+  editingId = signal<string | null>(null);
   errorMessage = signal<string | null>(null);
   successMessage = signal<string | null>(null);
 
@@ -76,13 +77,35 @@ export class DocumentsComponent implements OnInit {
     });
   }
 
-  toggleForm(): void {
-    this.showForm.update(val => !val);
+  openCreateForm(): void {
+    this.editingId.set(null);
+    this.documentForm.reset({ type: 1 });
+    this.showForm.set(true);
     this.errorMessage.set(null);
     this.successMessage.set(null);
-    if (!this.showForm()) {
-      this.documentForm.reset({ type: 1 });
-    }
+  }
+
+  openEditForm(doc: VehicleDocument): void {
+    if (!doc.id) return;
+    this.editingId.set(doc.id);
+    const issueDateFormatted = doc.issueDate ? new Date(doc.issueDate).toISOString().split('T')[0] : '';
+    const expiryDateFormatted = doc.expiryDate ? new Date(doc.expiryDate).toISOString().split('T')[0] : '';
+    this.documentForm.patchValue({
+      vehicleId: doc.vehicleId,
+      type: doc.type,
+      documentNumber: doc.documentNumber,
+      issueDate: issueDateFormatted,
+      expiryDate: expiryDateFormatted
+    });
+    this.showForm.set(true);
+    this.errorMessage.set(null);
+    this.successMessage.set(null);
+  }
+
+  closeForm(): void {
+    this.showForm.set(false);
+    this.editingId.set(null);
+    this.documentForm.reset({ type: 1 });
   }
 
   onSubmit(): void {
@@ -90,16 +113,47 @@ export class DocumentsComponent implements OnInit {
     this.errorMessage.set(null);
     this.successMessage.set(null);
 
-    this.documentService.createDocument(this.documentForm.value).subscribe({
-      next: () => {
-        this.successMessage.set('Documento registado com sucesso!');
-        this.toggleForm();
-        this.loadDocuments();
-      },
-      error: (err) => {
-        this.errorMessage.set(err.error?.message || 'Erro ao criar documento.');
-      }
-    });
+    const formData = this.documentForm.value;
+    const currentId = this.editingId();
+
+    if (currentId) {
+      this.documentService.updateDocument(currentId, { ...formData, id: currentId }).subscribe({
+        next: () => {
+          this.successMessage.set('Documento atualizado com sucesso!');
+          this.closeForm();
+          this.loadDocuments();
+        },
+        error: (err) => {
+          this.errorMessage.set(err.error?.message || 'Erro ao atualizar documento.');
+        }
+      });
+    } else {
+      this.documentService.createDocument(formData).subscribe({
+        next: () => {
+          this.successMessage.set('Documento registado com sucesso!');
+          this.closeForm();
+          this.loadDocuments();
+        },
+        error: (err) => {
+          this.errorMessage.set(err.error?.message || 'Erro ao criar documento.');
+        }
+      });
+    }
+  }
+
+  deleteDocument(doc: VehicleDocument): void {
+    if (!doc.id) return;
+    if (confirm(`Tem certeza que deseja eliminar o documento ${doc.documentNumber}?`)) {
+      this.documentService.deleteDocument(doc.id).subscribe({
+        next: () => {
+          this.successMessage.set('Documento eliminado com sucesso!');
+          this.loadDocuments();
+        },
+        error: (err) => {
+          this.errorMessage.set(err.error?.message || 'Erro ao eliminar documento.');
+        }
+      });
+    }
   }
 
   getTypeLabel(type: number): string {

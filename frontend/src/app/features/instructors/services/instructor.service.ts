@@ -24,7 +24,19 @@ export class InstructorService {
     return this.http.get<Instructor[]>(this.apiUrl);
   }
 
+  getInstructorById(id: string): Observable<Instructor> {
+    return this.http.get<Instructor>(`${this.apiUrl}/${id}`);
+  }
+
   createInstructor(instructor: Instructor): Observable<any> {
     return this.http.post(this.apiUrl, instructor);
+  }
+
+  updateInstructor(id: string, instructor: Instructor): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${id}`, instructor);
+  }
+
+  deleteInstructor(id: string): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/${id}`);
   }
 }

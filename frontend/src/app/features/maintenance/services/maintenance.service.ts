@@ -27,7 +27,19 @@ export class MaintenanceService {
     return this.http.get<MaintenanceRecord[]>(this.apiUrl);
   }
 
+  getMaintenanceById(id: string): Observable<MaintenanceRecord> {
+    return this.http.get<MaintenanceRecord>(`${this.apiUrl}/${id}`);
+  }
+
   createMaintenance(maintenance: any): Observable<any> {
     return this.http.post(this.apiUrl, maintenance);
+  }
+
+  updateMaintenance(id: string, maintenance: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${id}`, maintenance);
+  }
+
+  deleteMaintenance(id: string): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/${id}`);
   }
 }

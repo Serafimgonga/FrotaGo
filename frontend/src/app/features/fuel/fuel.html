@@ -15,7 +15,7 @@
       <h2>Combustível</h2>
       <p>Registe e acompanhe os abastecimentos de combustível de toda a frota.</p>
     </div>
-    <button mat-flat-button color="primary" class="add-btn" (click)="toggleForm()">
+    <button mat-flat-button color="primary" class="add-btn" (click)="openCreateForm()">
       <mat-icon>add</mat-icon>
       Registar Abastecimento
     </button>
@@ -45,11 +45,11 @@
     </div>
   </div>
 
-  <div class="drawer-backdrop" *ngIf="showForm()" (click)="toggleForm()"></div>
+  <div class="drawer-backdrop" *ngIf="showForm()" (click)="closeForm()"></div>
   <div class="drawer" [class.drawer-open]="showForm()">
     <div class="drawer-header">
-      <h3>Registar Abastecimento</h3>
-      <button mat-icon-button (click)="toggleForm()"><mat-icon>close</mat-icon></button>
+      <h3>{{ editingId() ? 'Editar Abastecimento' : 'Registar Abastecimento' }}</h3>
+      <button mat-icon-button (click)="closeForm()"><mat-icon>close</mat-icon></button>
     </div>
     <form [formGroup]="fuelForm" (ngSubmit)="onSubmit()" class="drawer-form">
       <mat-form-field appearance="outline" class="w-full">
@@ -87,8 +87,10 @@
         <input matInput formControlName="location" placeholder="Ex: Pumangol Viana" required />
       </mat-form-field>
       <div class="drawer-footer">
-        <button type="button" mat-stroked-button (click)="toggleForm()">Cancelar</button>
-        <button type="submit" mat-flat-button color="primary" [disabled]="fuelForm.invalid" class="submit-drawer-btn">Registar</button>
+        <button type="button" mat-stroked-button (click)="closeForm()">Cancelar</button>
+        <button type="submit" mat-flat-button color="primary" [disabled]="fuelForm.invalid" class="submit-drawer-btn">
+          {{ editingId() ? 'Guardar' : 'Registar' }}
+        </button>
       </div>
     </form>
   </div>
@@ -105,6 +107,7 @@
             <th>Total</th>
             <th>Km</th>
             <th>Posto</th>
+            <th style="text-align: right;">Ações</th>
           </tr>
         </thead>
         <tbody>
@@ -116,6 +119,14 @@
             <td><span class="primary-text">{{ f.totalCost | number:'1.0-0' }} Kz</span></td>
             <td>{{ f.odometer | number }} km</td>
             <td>{{ f.location }}</td>
+            <td style="text-align: right;">
+              <button mat-icon-button color="primary" (click)="openEditForm(f)" title="Editar">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button color="warn" (click)="deleteRecord(f)" title="Eliminar">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </td>
           </tr>
         </tbody>
       </table>

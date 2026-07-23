@@ -15,7 +15,7 @@
       <h2>Documentação de Veículos</h2>
       <p>Gerencie seguros, inspecções, DUA e licenças dos veículos. Conformidade legal angolana.</p>
     </div>
-    <button mat-flat-button color="primary" class="add-btn" (click)="toggleForm()">
+    <button mat-flat-button color="primary" class="add-btn" (click)="openCreateForm()">
       <mat-icon>add</mat-icon>
       Registar Documento
     </button>
@@ -45,11 +45,11 @@
     </div>
   </div>
 
-  <div class="drawer-backdrop" *ngIf="showForm()" (click)="toggleForm()"></div>
+  <div class="drawer-backdrop" *ngIf="showForm()" (click)="closeForm()"></div>
   <div class="drawer" [class.drawer-open]="showForm()">
     <div class="drawer-header">
-      <h3>Registar Documento</h3>
-      <button mat-icon-button (click)="toggleForm()"><mat-icon>close</mat-icon></button>
+      <h3>{{ editingId() ? 'Editar Documento' : 'Registar Documento' }}</h3>
+      <button mat-icon-button (click)="closeForm()"><mat-icon>close</mat-icon></button>
     </div>
     <form [formGroup]="documentForm" (ngSubmit)="onSubmit()" class="drawer-form">
       <mat-form-field appearance="outline" class="w-full">
@@ -82,8 +82,10 @@
         </mat-form-field>
       </div>
       <div class="drawer-footer">
-        <button type="button" mat-stroked-button (click)="toggleForm()">Cancelar</button>
-        <button type="submit" mat-flat-button color="primary" [disabled]="documentForm.invalid" class="submit-drawer-btn">Registar</button>
+        <button type="button" mat-stroked-button (click)="closeForm()">Cancelar</button>
+        <button type="submit" mat-flat-button color="primary" [disabled]="documentForm.invalid" class="submit-drawer-btn">
+          {{ editingId() ? 'Guardar' : 'Registar' }}
+        </button>
       </div>
     </form>
   </div>
@@ -99,6 +101,7 @@
             <th>Emissão</th>
             <th>Expiração</th>
             <th>Validade</th>
+            <th style="text-align: right;">Ações</th>
           </tr>
         </thead>
         <tbody>
@@ -112,6 +115,14 @@
               <span class="status-badge" [ngClass]="getExpiryClass(d.expiryDate)">
                 {{ getExpiryStatus(d.expiryDate) }}
               </span>
+            </td>
+            <td style="text-align: right;">
+              <button mat-icon-button color="primary" (click)="openEditForm(d)" title="Editar">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button color="warn" (click)="deleteDocument(d)" title="Eliminar">
+                <mat-icon>delete</mat-icon>
+              </button>
             </td>
           </tr>
         </tbody>

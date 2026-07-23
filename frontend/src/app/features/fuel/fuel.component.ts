@@ -28,6 +28,7 @@ export class FuelComponent implements OnInit {
   vehicles = signal<Vehicle[]>([]);
   fuelForm: FormGroup;
   showForm = signal(false);
+  editingId = signal<string | null>(null);
   errorMessage = signal<string | null>(null);
   successMessage = signal<string | null>(null);
 
@@ -58,9 +59,19 @@ export class FuelComponent implements OnInit {
     });
 
     this.fuelForm.get('vehicleId')?.valueChanges.subscribe(vehicleId => {
-      const selected = this.vehicles().find(v => v.id === vehicleId);
-      if (selected) {
-        this.fuelForm.patchValue({ odometer: selected.odometer });
+      if (!this.editingId()) {
+        const selected = this.vehicles().find(v => v.id === vehicleId);
+        if (selected) {
+          this.fuelForm.patchValue({ odometer: selected.odometer });
+        }
+      }
+    });
+
+    // Auto calculate totalCost if litres and costPerLitre change
+    this.fuelForm.valueChanges.subscribe(val => {
+      if (val.litres && val.costPerLitre && (!val.totalCost || val.totalCost === 0)) {
+        const calculated = Math.round(val.litres * val.costPerLitre);
+        this.fuelForm.patchValue({ totalCost: calculated }, { emitEvent: false });
       }
     });
   }
@@ -79,13 +90,36 @@ export class FuelComponent implements OnInit {
     });
   }
 
-  toggleForm(): void {
-    this.showForm.update(val => !val);
+  openCreateForm(): void {
+    this.editingId.set(null);
+    this.fuelForm.reset({ litres: 0, costPerLitre: 0, totalCost: 0, odometer: 0 });
+    this.showForm.set(true);
     this.errorMessage.set(null);
     this.successMessage.set(null);
-    if (!this.showForm()) {
-      this.fuelForm.reset({ litres: 0, costPerLitre: 0, totalCost: 0, odometer: 0 });
-    }
+  }
+
+  openEditForm(record: FuelRecord): void {
+    if (!record.id) return;
+    this.editingId.set(record.id);
+    const dateFormatted = record.date ? new Date(record.date).toISOString().split('T')[0] : '';
+    this.fuelForm.patchValue({
+      vehicleId: record.vehicleId,
+      litres: record.litres,
+      costPerLitre: record.costPerLitre,
+      totalCost: record.totalCost,
+      odometer: record.odometer,
+      date: dateFormatted,
+      location: record.location
+    });
+    this.showForm.set(true);
+    this.errorMessage.set(null);
+    this.successMessage.set(null);
+  }
+
+  closeForm(): void {
+    this.showForm.set(false);
+    this.editingId.set(null);
+    this.fuelForm.reset({ litres: 0, costPerLitre: 0, totalCost: 0, odometer: 0 });
   }
 
   onSubmit(): void {
@@ -93,15 +127,46 @@ export class FuelComponent implements OnInit {
     this.errorMessage.set(null);
     this.successMessage.set(null);
 
-    this.fuelService.createFuelRecord(this.fuelForm.value).subscribe({
-      next: () => {
-        this.successMessage.set('Abastecimento registado com sucesso!');
-        this.toggleForm();
-        this.loadFuelRecords();
-      },
-      error: (err) => {
-        this.errorMessage.set(err.error?.message || 'Erro ao registar abastecimento.');
-      }
-    });
+    const formData = this.fuelForm.value;
+    const currentId = this.editingId();
+
+    if (currentId) {
+      this.fuelService.updateFuelRecord(currentId, { ...formData, id: currentId }).subscribe({
+        next: () => {
+          this.successMessage.set('Abastecimento atualizado com sucesso!');
+          this.closeForm();
+          this.loadFuelRecords();
+        },
+        error: (err) => {
+          this.errorMessage.set(err.error?.message || 'Erro ao atualizar abastecimento.');
+        }
+      });
+    } else {
+      this.fuelService.createFuelRecord(formData).subscribe({
+        next: () => {
+          this.successMessage.set('Abastecimento registado com sucesso!');
+          this.closeForm();
+          this.loadFuelRecords();
+        },
+        error: (err) => {
+          this.errorMessage.set(err.error?.message || 'Erro ao registar abastecimento.');
+        }
+      });
+    }
+  }
+
+  deleteRecord(record: FuelRecord): void {
+    if (!record.id) return;
+    if (confirm(`Tem certeza que deseja eliminar o registo de abastecimento de ${record.litres}L em ${record.location}?`)) {
+      this.fuelService.deleteFuelRecord(record.id).subscribe({
+        next: () => {
+          this.successMessage.set('Abastecimento eliminado com sucesso!');
+          this.loadFuelRecords();
+        },
+        error: (err) => {
+          this.errorMessage.set(err.error?.message || 'Erro ao eliminar abastecimento.');
+        }
+      });
+    }
   }
 }

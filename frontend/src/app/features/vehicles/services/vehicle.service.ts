@@ -28,7 +28,19 @@ export class VehicleService {
     return this.http.get<Vehicle[]>(this.apiUrl);
   }
 
+  getVehicleById(id: string): Observable<Vehicle> {
+    return this.http.get<Vehicle>(`${this.apiUrl}/${id}`);
+  }
+
   createVehicle(vehicle: Vehicle): Observable<any> {
     return this.http.post(this.apiUrl, vehicle);
+  }
+
+  updateVehicle(id: string, vehicle: Vehicle): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${id}`, vehicle);
+  }
+
+  deleteVehicle(id: string): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/${id}`);
   }
 }

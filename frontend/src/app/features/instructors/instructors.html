@@ -21,7 +21,7 @@
       <h2>Instrutores</h2>
       <p>Gerencie os instrutores da escola de condução, seus contactos e licenças.</p>
     </div>
-    <button mat-flat-button color="primary" class="add-btn" (click)="toggleForm()">
+    <button mat-flat-button color="primary" class="add-btn" (click)="openCreateForm()" *ngIf="authService.hasPermission('Users.Manage')">
       <mat-icon>add</mat-icon>
       Registar Instrutor
     </button>
@@ -50,11 +50,11 @@
   </div>
 
   <!-- Drawer form -->
-  <div class="drawer-backdrop" *ngIf="showForm()" (click)="toggleForm()"></div>
+  <div class="drawer-backdrop" *ngIf="showForm()" (click)="closeForm()"></div>
   <div class="drawer" [class.drawer-open]="showForm()">
     <div class="drawer-header">
-      <h3>Registar Novo Instrutor</h3>
-      <button mat-icon-button (click)="toggleForm()">
+      <h3>{{ editingInstructorId() ? 'Editar Instrutor' : 'Registar Novo Instrutor' }}</h3>
+      <button mat-icon-button (click)="closeForm()">
         <mat-icon>close</mat-icon>
       </button>
     </div>
@@ -81,8 +81,10 @@
       </mat-form-field>
 
       <div class="drawer-footer">
-        <button type="button" mat-stroked-button (click)="toggleForm()">Cancelar</button>
-        <button type="submit" mat-flat-button color="primary" [disabled]="instructorForm.invalid" class="submit-drawer-btn">Registar</button>
+        <button type="button" mat-stroked-button (click)="closeForm()">Cancelar</button>
+        <button type="submit" mat-flat-button color="primary" [disabled]="instructorForm.invalid" class="submit-drawer-btn">
+          {{ editingInstructorId() ? 'Guardar' : 'Registar' }}
+        </button>
       </div>
     </form>
   </div>
@@ -98,6 +100,7 @@
             <th>Telefone</th>
             <th>Nº Carta</th>
             <th>Estado</th>
+            <th style="text-align: right;" *ngIf="authService.hasPermission('Users.Manage')">Ações</th>
           </tr>
         </thead>
         <tbody>
@@ -110,6 +113,14 @@
               <span class="status-badge" [ngClass]="inst.isActive !== false ? 'status-available' : 'status-out-service'">
                 {{ inst.isActive !== false ? 'Activo' : 'Inactivo' }}
               </span>
+            </td>
+            <td style="text-align: right;" *ngIf="authService.hasPermission('Users.Manage')">
+              <button mat-icon-button color="primary" (click)="openEditForm(inst)" title="Editar">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button color="warn" (click)="deleteInstructor(inst)" title="Eliminar">
+                <mat-icon>delete</mat-icon>
+              </button>
             </td>
           </tr>
         </tbody>

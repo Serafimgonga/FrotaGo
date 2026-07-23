@@ -26,7 +26,19 @@ export class DocumentService {
     return this.http.get<VehicleDocument[]>(this.apiUrl);
   }
 
+  getDocumentById(id: string): Observable<VehicleDocument> {
+    return this.http.get<VehicleDocument>(`${this.apiUrl}/${id}`);
+  }
+
   createDocument(document: any): Observable<any> {
     return this.http.post(this.apiUrl, document);
+  }
+
+  updateDocument(id: string, document: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${id}`, document);
+  }
+
+  deleteDocument(id: string): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/${id}`);
   }
 }

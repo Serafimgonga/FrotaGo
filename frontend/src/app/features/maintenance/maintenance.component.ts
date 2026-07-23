@@ -28,6 +28,7 @@ export class MaintenanceComponent implements OnInit {
   vehicles = signal<Vehicle[]>([]);
   maintenanceForm: FormGroup;
   showForm = signal(false);
+  editingId = signal<string | null>(null);
   errorMessage = signal<string | null>(null);
   successMessage = signal<string | null>(null);
 
@@ -58,9 +59,11 @@ export class MaintenanceComponent implements OnInit {
     });
 
     this.maintenanceForm.get('vehicleId')?.valueChanges.subscribe(vehicleId => {
-      const selected = this.vehicles().find(v => v.id === vehicleId);
-      if (selected) {
-        this.maintenanceForm.patchValue({ odometer: selected.odometer });
+      if (!this.editingId()) {
+        const selected = this.vehicles().find(v => v.id === vehicleId);
+        if (selected) {
+          this.maintenanceForm.patchValue({ odometer: selected.odometer });
+        }
       }
     });
   }
@@ -79,13 +82,36 @@ export class MaintenanceComponent implements OnInit {
     });
   }
 
-  toggleForm(): void {
-    this.showForm.update(val => !val);
+  openCreateForm(): void {
+    this.editingId.set(null);
+    this.maintenanceForm.reset({ cost: 0, odometer: 0, type: 1, status: 1 });
+    this.showForm.set(true);
     this.errorMessage.set(null);
     this.successMessage.set(null);
-    if (!this.showForm()) {
-      this.maintenanceForm.reset({ cost: 0, odometer: 0, type: 1, status: 1 });
-    }
+  }
+
+  openEditForm(m: MaintenanceRecord): void {
+    if (!m.id) return;
+    this.editingId.set(m.id);
+    const dateFormatted = m.maintenanceDate ? new Date(m.maintenanceDate).toISOString().split('T')[0] : '';
+    this.maintenanceForm.patchValue({
+      vehicleId: m.vehicleId,
+      description: m.description,
+      cost: m.cost,
+      maintenanceDate: dateFormatted,
+      type: m.type,
+      status: m.status,
+      odometer: m.odometer
+    });
+    this.showForm.set(true);
+    this.errorMessage.set(null);
+    this.successMessage.set(null);
+  }
+
+  closeForm(): void {
+    this.showForm.set(false);
+    this.editingId.set(null);
+    this.maintenanceForm.reset({ cost: 0, odometer: 0, type: 1, status: 1 });
   }
 
   onSubmit(): void {
@@ -93,16 +119,47 @@ export class MaintenanceComponent implements OnInit {
     this.errorMessage.set(null);
     this.successMessage.set(null);
 
-    this.maintenanceService.createMaintenance(this.maintenanceForm.value).subscribe({
-      next: () => {
-        this.successMessage.set('Manutenção registada com sucesso!');
-        this.toggleForm();
-        this.loadMaintenances();
-      },
-      error: (err) => {
-        this.errorMessage.set(err.error?.message || 'Erro ao criar manutenção.');
-      }
-    });
+    const formData = this.maintenanceForm.value;
+    const currentId = this.editingId();
+
+    if (currentId) {
+      this.maintenanceService.updateMaintenance(currentId, { ...formData, id: currentId }).subscribe({
+        next: () => {
+          this.successMessage.set('Manutenção atualizada com sucesso!');
+          this.closeForm();
+          this.loadMaintenances();
+        },
+        error: (err) => {
+          this.errorMessage.set(err.error?.message || 'Erro ao atualizar manutenção.');
+        }
+      });
+    } else {
+      this.maintenanceService.createMaintenance(formData).subscribe({
+        next: () => {
+          this.successMessage.set('Manutenção registada com sucesso!');
+          this.closeForm();
+          this.loadMaintenances();
+        },
+        error: (err) => {
+          this.errorMessage.set(err.error?.message || 'Erro ao criar manutenção.');
+        }
+      });
+    }
+  }
+
+  deleteMaintenance(m: MaintenanceRecord): void {
+    if (!m.id) return;
+    if (confirm(`Tem certeza que deseja eliminar esta manutenção (${m.description})?`)) {
+      this.maintenanceService.deleteMaintenance(m.id).subscribe({
+        next: () => {
+          this.successMessage.set('Manutenção eliminada com sucesso!');
+          this.loadMaintenances();
+        },
+        error: (err) => {
+          this.errorMessage.set(err.error?.message || 'Erro ao eliminar manutenção.');
+        }
+      });
+    }
   }
 
   getTypeLabel(type: number): string {

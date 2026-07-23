@@ -27,7 +27,19 @@ export class FuelService {
     return this.http.get<FuelRecord[]>(this.apiUrl);
   }
 
+  getFuelRecordById(id: string): Observable<FuelRecord> {
+    return this.http.get<FuelRecord>(`${this.apiUrl}/${id}`);
+  }
+
   createFuelRecord(record: any): Observable<any> {
     return this.http.post(this.apiUrl, record);
+  }
+
+  updateFuelRecord(id: string, record: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${id}`, record);
+  }
+
+  deleteFuelRecord(id: string): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/${id}`);
   }
 }

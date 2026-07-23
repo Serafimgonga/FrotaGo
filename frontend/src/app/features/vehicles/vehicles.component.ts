@@ -7,6 +7,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
+import { AuthService } from '../authentication/services/auth.service';
 
 @Component({
   selector: 'app-vehicles',
@@ -26,6 +27,7 @@ export class VehiclesComponent implements OnInit {
   vehicles = signal<Vehicle[]>([]);
   vehicleForm: FormGroup;
   showForm = signal(false);
+  editingVehicleId = signal<string | null>(null);
   errorMessage = signal<string | null>(null);
   successMessage = signal<string | null>(null);
 
@@ -36,7 +38,8 @@ export class VehiclesComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private vehicleService: VehicleService
+    private vehicleService: VehicleService,
+    public authService: AuthService
   ) {
     this.vehicleForm = this.fb.group({
       licensePlate: ['', Validators.required],
@@ -45,8 +48,9 @@ export class VehiclesComponent implements OnInit {
       chassis: ['', Validators.required],
       year: [new Date().getFullYear(), [Validators.required, Validators.min(1900)]],
       odometer: [0, [Validators.required, Validators.min(0)]],
-      fuel: [1, Validators.required], // Gasolina
-      transmission: [1, Validators.required] // Manual
+      fuel: [1, Validators.required],
+      transmission: [1, Validators.required],
+      status: [1, Validators.required]
     });
   }
 
@@ -72,18 +76,43 @@ export class VehiclesComponent implements OnInit {
     this.maintenanceVehicles.set(list.filter(v => v.status === 3).length);
   }
 
-  toggleForm(): void {
-    this.showForm.update(val => !val);
+  openCreateForm(): void {
+    this.editingVehicleId.set(null);
+    this.vehicleForm.reset({
+      year: new Date().getFullYear(),
+      odometer: 0,
+      fuel: 1,
+      transmission: 1,
+      status: 1
+    });
+    this.showForm.set(true);
     this.errorMessage.set(null);
     this.successMessage.set(null);
-    if (!this.showForm()) {
-      this.vehicleForm.reset({
-        year: new Date().getFullYear(),
-        odometer: 0,
-        fuel: 1,
-        transmission: 1
-      });
-    }
+  }
+
+  openEditForm(vehicle: Vehicle): void {
+    if (!vehicle.id) return;
+    this.editingVehicleId.set(vehicle.id);
+    this.vehicleForm.patchValue({
+      licensePlate: vehicle.licensePlate,
+      brand: vehicle.brand,
+      model: vehicle.model,
+      chassis: vehicle.chassis,
+      year: vehicle.year,
+      odometer: vehicle.odometer,
+      fuel: vehicle.fuel,
+      transmission: vehicle.transmission,
+      status: vehicle.status
+    });
+    this.showForm.set(true);
+    this.errorMessage.set(null);
+    this.successMessage.set(null);
+  }
+
+  closeForm(): void {
+    this.showForm.set(false);
+    this.editingVehicleId.set(null);
+    this.vehicleForm.reset();
   }
 
   onSubmit(): void {
@@ -92,16 +121,53 @@ export class VehiclesComponent implements OnInit {
     this.errorMessage.set(null);
     this.successMessage.set(null);
 
-    this.vehicleService.createVehicle(this.vehicleForm.value).subscribe({
-      next: () => {
-        this.successMessage.set('Veículo registado com sucesso!');
-        this.toggleForm();
-        this.loadVehicles();
-      },
-      error: (err) => {
-        this.errorMessage.set(err.error?.message || 'Erro ao criar veículo.');
-      }
-    });
+    const vehicleData = this.vehicleForm.value;
+    const currentEditId = this.editingVehicleId();
+
+    if (currentEditId) {
+      this.vehicleService.updateVehicle(currentEditId, { ...vehicleData, id: currentEditId }).subscribe({
+        next: () => {
+          this.successMessage.set('Veículo atualizado com sucesso!');
+          this.closeForm();
+          this.loadVehicles();
+        },
+        error: (err) => {
+          this.errorMessage.set(err.status === 403
+            ? 'Sem autorização. O seu perfil não tem permissão para editar veículos.'
+            : (err.error?.message || 'Erro ao atualizar veículo.'));
+        }
+      });
+    } else {
+      this.vehicleService.createVehicle(vehicleData).subscribe({
+        next: () => {
+          this.successMessage.set('Veículo registado com sucesso!');
+          this.closeForm();
+          this.loadVehicles();
+        },
+        error: (err) => {
+          this.errorMessage.set(err.status === 403
+            ? 'Sem autorização. O seu perfil não tem permissão para registar veículos.'
+            : (err.error?.message || 'Erro ao criar veículo.'));
+        }
+      });
+    }
+  }
+
+  deleteVehicle(vehicle: Vehicle): void {
+    if (!vehicle.id) return;
+    if (confirm(`Tem certeza que deseja eliminar o veículo ${vehicle.brand} ${vehicle.model} (${vehicle.licensePlate})?`)) {
+      this.vehicleService.deleteVehicle(vehicle.id).subscribe({
+        next: () => {
+          this.successMessage.set('Veículo eliminado com sucesso!');
+          this.loadVehicles();
+        },
+        error: (err) => {
+          this.errorMessage.set(err.status === 403
+            ? 'Sem autorização. O seu perfil não tem permissão para eliminar veículos.'
+            : (err.error?.message || 'Erro ao eliminar veículo.'));
+        }
+      });
+    }
   }
 
   getStatusLabel(status: number): string {
