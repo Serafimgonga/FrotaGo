@@ -5,5 +5,6 @@ public enum LessonStatus
     Agendada = 1,
     Realizada = 2,
     Cancelada = 3,
-    Faltou = 4
+    Faltou = 4,
+    EmCurso = 5
 }

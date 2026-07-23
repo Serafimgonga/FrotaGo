@@ -21,5 +21,13 @@ public class Lesson
     public string Topic { get; set; } = string.Empty;
     public LessonStatus Status { get; set; }
     public string Observations { get; set; } = string.Empty;
+
+    // Execução & Avaliação da Aula
+    public DateTime? StartedAt { get; set; }
+    public DateTime? CompletedAt { get; set; }
+    public LessonEvaluation Evaluation { get; set; } = LessonEvaluation.None;
+    public string ExercisesCompletedJson { get; set; } = "[]"; // ex: ["Arranque", "Mudança", "Estacionamento"]
+    public Guid? TrackingSessionId { get; set; }
+
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 }

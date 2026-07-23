@@ -15,7 +15,7 @@
       <h2>Alunos</h2>
       <p>Gerencie os alunos inscritos na escola de condução, categorias de carta e contactos.</p>
     </div>
-    <button mat-flat-button color="primary" class="add-btn" (click)="toggleForm()">
+    <button mat-flat-button color="primary" class="add-btn" (click)="openCreateForm()" *ngIf="authService.hasPermission('Students.Create')">
       <mat-icon>add</mat-icon>
       Registar Aluno
     </button>
@@ -38,11 +38,11 @@
     </div>
   </div>
 
-  <div class="drawer-backdrop" *ngIf="showForm()" (click)="toggleForm()"></div>
+  <div class="drawer-backdrop" *ngIf="showForm()" (click)="closeForm()"></div>
   <div class="drawer" [class.drawer-open]="showForm()">
     <div class="drawer-header">
-      <h3>Registar Novo Aluno</h3>
-      <button mat-icon-button (click)="toggleForm()"><mat-icon>close</mat-icon></button>
+      <h3>{{ editingStudentId() ? 'Editar Aluno' : 'Registar Novo Aluno' }}</h3>
+      <button mat-icon-button (click)="closeForm()"><mat-icon>close</mat-icon></button>
     </div>
     <form [formGroup]="studentForm" (ngSubmit)="onSubmit()" class="drawer-form">
       <mat-form-field appearance="outline" class="w-full">
@@ -70,9 +70,12 @@
           <mat-option [value]="4">Categoria D</mat-option>
         </mat-select>
       </mat-form-field>
+
       <div class="drawer-footer">
-        <button type="button" mat-stroked-button (click)="toggleForm()">Cancelar</button>
-        <button type="submit" mat-flat-button color="primary" [disabled]="studentForm.invalid" class="submit-drawer-btn">Registar</button>
+        <button type="button" mat-stroked-button (click)="closeForm()">Cancelar</button>
+        <button type="submit" mat-flat-button color="primary" [disabled]="studentForm.invalid" class="submit-drawer-btn">
+          {{ editingStudentId() ? 'Guardar' : 'Registar' }}
+        </button>
       </div>
     </form>
   </div>
@@ -87,7 +90,10 @@
             <th>Telefone</th>
             <th>BI</th>
             <th>Categoria</th>
+            <th>Esteira de Formação</th>
+            <th>Aulas Práticas</th>
             <th>Estado</th>
+            <th style="text-align: right;" *ngIf="authService.hasPermission('Students.Edit')">Ações</th>
           </tr>
         </thead>
         <tbody>
@@ -98,9 +104,27 @@
             <td><code class="code-badge">{{ s.identityCardNumber }}</code></td>
             <td><span class="status-badge status-in-use">{{ getCategoryLabel(s.category) }}</span></td>
             <td>
+              <span class="status-badge" [ngClass]="getProgressBadgeClass(s.progressStatus)">
+                {{ getProgressLabel(s.progressStatus) }}
+              </span>
+            </td>
+            <td>
+              <strong style="color: var(--primary); font-size: 0.9rem;">
+                {{ s.completedLessonsCount || 0 }}/{{ s.requiredLessonsCount || 20 }}
+              </strong>
+            </td>
+            <td>
               <span class="status-badge" [ngClass]="s.isActive !== false ? 'status-available' : 'status-out-service'">
                 {{ s.isActive !== false ? 'Activo' : 'Inactivo' }}
               </span>
+            </td>
+            <td style="text-align: right;" *ngIf="authService.hasPermission('Students.Edit')">
+              <button mat-icon-button color="primary" (click)="openEditForm(s)" title="Editar">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button color="warn" (click)="deleteStudent(s)" title="Eliminar">
+                <mat-icon>delete</mat-icon>
+              </button>
             </td>
           </tr>
         </tbody>

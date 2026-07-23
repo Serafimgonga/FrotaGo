@@ -13,12 +13,18 @@
   <div class="page-header">
     <div class="title-desc">
       <h2>Aulas Práticas</h2>
-      <p>Agende e gerencie as aulas práticas de condução, instrutores e veículos atribuídos.</p>
+      <p>Agende e gerencie as aulas práticas de condução, despacho inteligente de frota e rastreamento GPS.</p>
     </div>
-    <button mat-flat-button color="primary" class="add-btn" (click)="toggleForm()">
-      <mat-icon>add</mat-icon>
-      Agendar Aula
-    </button>
+    <div class="header-actions">
+      <button mat-stroked-button color="accent" class="dispatch-btn" (click)="openAutoDispatchModal()" *ngIf="authService.hasPermission('Lessons.Create')">
+        <mat-icon>bolt</mat-icon>
+        ⚡ Despacho Automático
+      </button>
+      <button mat-flat-button color="primary" class="add-btn" (click)="openCreateForm()" *ngIf="authService.hasPermission('Lessons.Create')">
+        <mat-icon>add</mat-icon>
+        Agendar Aula
+      </button>
+    </div>
   </div>
 
   <div class="stats-grid">
@@ -37,6 +43,13 @@
       </div>
     </div>
     <div class="stat-card">
+      <div class="stat-icon icon-in-use"><mat-icon>navigation</mat-icon></div>
+      <div class="stat-details">
+        <span class="stat-value">{{ activeLessons() }}</span>
+        <span class="stat-label">Em Curso (GPS)</span>
+      </div>
+    </div>
+    <div class="stat-card">
       <div class="stat-icon icon-available"><mat-icon>check_circle</mat-icon></div>
       <div class="stat-details">
         <span class="stat-value">{{ completedLessons() }}</span>
@@ -45,33 +58,86 @@
     </div>
   </div>
 
-  <div class="drawer-backdrop" *ngIf="showForm()" (click)="toggleForm()"></div>
+  <!-- Drawer para Criar / Editar Aula -->
+  <div class="drawer-backdrop" *ngIf="showForm()" (click)="closeForm()"></div>
   <div class="drawer" [class.drawer-open]="showForm()">
     <div class="drawer-header">
-      <h3>Agendar Nova Aula</h3>
-      <button mat-icon-button (click)="toggleForm()"><mat-icon>close</mat-icon></button>
+      <h3>{{ editingId() ? 'Editar Aula Prática' : 'Agendar Nova Aula' }}</h3>
+      <button mat-icon-button (click)="closeForm()"><mat-icon>close</mat-icon></button>
     </div>
     <form [formGroup]="lessonForm" (ngSubmit)="onSubmit()" class="drawer-form">
       <mat-form-field appearance="outline" class="w-full">
         <mat-label>Aluno</mat-label>
         <mat-select formControlName="studentId">
-          <mat-option *ngFor="let s of students()" [value]="s.id">{{ s.name }}</mat-option>
-        </mat-select>
-      </mat-form-field>
-      <mat-form-field appearance="outline" class="w-full">
-        <mat-label>Instrutor</mat-label>
-        <mat-select formControlName="instructorId">
-          <mat-option *ngFor="let i of instructors()" [value]="i.id">{{ i.name }}</mat-option>
-        </mat-select>
-      </mat-form-field>
-      <mat-form-field appearance="outline" class="w-full">
-        <mat-label>Veículo</mat-label>
-        <mat-select formControlName="vehicleId">
-          <mat-option *ngFor="let v of vehicles()" [value]="v.id">{{ v.brand }} {{ v.model }} ({{ v.licensePlate }})</mat-option>
+          <mat-option *ngFor="let s of students()" [value]="s.id">{{ s.name }} (BI: {{ s.identityCardNumber }})</mat-option>
         </mat-select>
       </mat-form-field>
       <mat-form-field appearance="outline" class="w-full">
         <mat-label>Data e Hora</mat-label>
+        <input matInput type="datetime-local" formControlName="scheduledDate" (change)="onDateOrDurationChange()" required />
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Duração (minutos)</mat-label>
+        <input matInput type="number" formControlName="durationMinutes" (change)="onDateOrDurationChange()" required />
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Instrutor Disponível</mat-label>
+        <mat-select formControlName="instructorId">
+          <mat-option *ngFor="let i of availableInstructors()" [value]="i.id">{{ i.name }} ✅</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Veículo Disponível</mat-label>
+        <mat-select formControlName="vehicleId">
+          <mat-option *ngFor="let v of availableVehicles()" [value]="v.id">{{ v.brand }} {{ v.model }} ({{ v.licensePlate }}) ✅</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Tema da Aula</mat-label>
+        <input matInput formControlName="topic" placeholder="Ex: Arranque e Estacionamento" required />
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="w-full" *ngIf="editingId()">
+        <mat-label>Estado</mat-label>
+        <mat-select formControlName="status">
+          <mat-option [value]="1">Agendada</mat-option>
+          <mat-option [value]="5">Em Curso</mat-option>
+          <mat-option [value]="2">Realizada</mat-option>
+          <mat-option [value]="3">Cancelada</mat-option>
+          <mat-option [value]="4">Faltou</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Observações</mat-label>
+        <input matInput formControlName="observations" placeholder="Notas adicionais..." />
+      </mat-form-field>
+      <div class="drawer-footer">
+        <button type="button" mat-stroked-button (click)="closeForm()">Cancelar</button>
+        <button type="submit" mat-flat-button color="primary" [disabled]="lessonForm.invalid" class="submit-drawer-btn">
+          {{ editingId() ? 'Guardar' : 'Agendar' }}
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Modal Despacho Automático -->
+  <div class="drawer-backdrop" *ngIf="showAutoDispatch()" (click)="closeAutoDispatch()"></div>
+  <div class="drawer" [class.drawer-open]="showAutoDispatch()">
+    <div class="drawer-header" style="background: linear-gradient(135deg, #6366f1, #4f46e5); color: white;">
+      <h3>⚡ Despacho Automático de Aula</h3>
+      <button mat-icon-button (click)="closeAutoDispatch()" style="color: white;"><mat-icon>close</mat-icon></button>
+    </div>
+    <form [formGroup]="autoDispatchForm" (ngSubmit)="submitAutoDispatch()" class="drawer-form" style="padding: 1.5rem;">
+      <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+        O sistema aloca automaticamente o instrutor com menor carga de trabalho e a viatura disponível ideal sem conflitos.
+      </p>
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Selecione o Aluno</mat-label>
+        <mat-select formControlName="studentId" required>
+          <mat-option *ngFor="let s of students()" [value]="s.id">{{ s.name }} (Cat: {{ getCategoryLabel(s.category) }})</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Data e Hora Solicitada</mat-label>
         <input matInput type="datetime-local" formControlName="scheduledDate" required />
       </mat-form-field>
       <mat-form-field appearance="outline" class="w-full">
@@ -80,15 +146,71 @@
       </mat-form-field>
       <mat-form-field appearance="outline" class="w-full">
         <mat-label>Tema da Aula</mat-label>
-        <input matInput formControlName="topic" placeholder="Ex: Manobras em rotunda" required />
+        <input matInput formControlName="topic" placeholder="Ex: Condução Urbana" />
       </mat-form-field>
       <mat-form-field appearance="outline" class="w-full">
-        <mat-label>Observações</mat-label>
-        <input matInput formControlName="observations" placeholder="Notas adicionais..." />
+        <mat-label>Observações da Recepção</mat-label>
+        <input matInput formControlName="observations" placeholder="Observações de despacho..." />
       </mat-form-field>
       <div class="drawer-footer">
-        <button type="button" mat-stroked-button (click)="toggleForm()">Cancelar</button>
-        <button type="submit" mat-flat-button color="primary" [disabled]="lessonForm.invalid" class="submit-drawer-btn">Agendar</button>
+        <button type="button" mat-stroked-button (click)="closeAutoDispatch()">Cancelar</button>
+        <button type="submit" mat-flat-button color="accent" [disabled]="autoDispatchForm.invalid" style="background: #4f46e5; color: white;">
+          <mat-icon>bolt</mat-icon> Executar Despacho
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Modal Finalizar Aula & Avaliação -->
+  <div class="drawer-backdrop" *ngIf="showCompleteModal()" (click)="closeCompleteModal()"></div>
+  <div class="drawer" [class.drawer-open]="showCompleteModal()">
+    <div class="drawer-header" style="background: #10b981; color: white;">
+      <h3>🏁 Finalizar Aula Prática & Avaliação</h3>
+      <button mat-icon-button (click)="closeCompleteModal()" style="color: white;"><mat-icon>close</mat-icon></button>
+    </div>
+    <form [formGroup]="completeForm" (ngSubmit)="submitCompleteLesson()" class="drawer-form" style="padding: 1.5rem;">
+      <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+        Registe a avaliação do aluno e os exercícios concluídos nesta aula prática.
+      </p>
+
+      <div class="exercises-checklist" style="margin-bottom: 1.5rem; display: grid; gap: 0.5rem;">
+        <strong>Exercícios Praticados:</strong>
+        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+          <input type="checkbox" (change)="toggleExercise('Arranque')" [checked]="hasExercise('Arranque')" />
+          <span>☑ Arranque em Rampa / Plano</span>
+        </label>
+        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+          <input type="checkbox" (change)="toggleExercise('Mudança de velocidade')" [checked]="hasExercise('Mudança de velocidade')" />
+          <span>☑ Mudança de velocidade & Embraiagem</span>
+        </label>
+        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+          <input type="checkbox" (change)="toggleExercise('Estacionamento')" [checked]="hasExercise('Estacionamento')" />
+          <span>☑ Estacionamento em espinha / paralelo</span>
+        </label>
+        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+          <input type="checkbox" (change)="toggleExercise('Marcha atrás')" [checked]="hasExercise('Marcha atrás')" />
+          <span>☑ Marcha atrás & Inversão de marcha</span>
+        </label>
+      </div>
+
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Avaliação do Desempenho</mat-label>
+        <mat-select formControlName="evaluation" required>
+          <mat-option [value]="1">🌟 Excelente</mat-option>
+          <mat-option [value]="2">👍 Boa</mat-option>
+          <mat-option [value]="3">⚠️ Precisa Melhorar</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Observações do Instrutor</mat-label>
+        <textarea matInput formControlName="observations" rows="3" placeholder="Ex: Demonstrou bom domínio do volante..."></textarea>
+      </mat-form-field>
+
+      <div class="drawer-footer">
+        <button type="button" mat-stroked-button (click)="closeCompleteModal()">Cancelar</button>
+        <button type="submit" mat-flat-button color="primary" style="background: #10b981; color: white;">
+          <mat-icon>check_circle</mat-icon> Finalizar & Concluir
+        </button>
       </div>
     </form>
   </div>
@@ -105,6 +227,7 @@
             <th>Duração</th>
             <th>Tema</th>
             <th>Estado</th>
+            <th style="text-align: right;">Ações</th>
           </tr>
         </thead>
         <tbody>
@@ -120,6 +243,26 @@
                 {{ getStatusLabel(l.status) }}
               </span>
             </td>
+            <td style="text-align: right; display: flex; justify-content: flex-end; gap: 0.25rem;">
+              <!-- Botão Iniciar Aula pelo Instrutor -->
+              <button mat-flat-button style="background: #3b82f6; color: white; height: 32px; line-height: 32px; padding: 0 10px; font-size: 0.8rem;"
+                      *ngIf="l.status === 1" (click)="startLesson(l)" title="Iniciar Aula & Ativar GPS">
+                <mat-icon style="font-size: 16px; width: 16px; height: 16px;">play_arrow</mat-icon> Iniciar
+              </button>
+
+              <!-- Botão Finalizar Aula pelo Instrutor -->
+              <button mat-flat-button style="background: #10b981; color: white; height: 32px; line-height: 32px; padding: 0 10px; font-size: 0.8rem;"
+                      *ngIf="l.status === 5" (click)="openCompleteModal(l)" title="Finalizar Aula & Avaliar">
+                <mat-icon style="font-size: 16px; width: 16px; height: 16px;">stop</mat-icon> Finalizar
+              </button>
+
+              <button mat-icon-button color="primary" (click)="openEditForm(l)" title="Editar" *ngIf="authService.hasPermission('Lessons.Create')">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button color="warn" (click)="deleteLesson(l)" title="Eliminar" *ngIf="authService.hasPermission('Lessons.Delete')">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </td>
           </tr>
         </tbody>
       </table>
@@ -128,7 +271,7 @@
       <div class="empty-state">
         <mat-icon class="empty-icon">event</mat-icon>
         <h4>Nenhuma aula registada</h4>
-        <p>Comece por agendar aulas práticas utilizando o botão acima.</p>
+        <p>Comece por agendar aulas práticas utilizando os botões acima.</p>
       </div>
     </ng-template>
   </div>
