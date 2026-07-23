@@ -31,6 +31,7 @@ public class TrackingController : ControllerBase
     public record TrackLocationRequest(Guid TrackingSessionId, double Latitude, double Longitude, double Speed);
 
     [HttpPost("start")]
+    [Authorize(Roles = "SuperAdmin,SchoolOwner,SchoolAdmin,Instructor")]
     public async Task<IActionResult> StartTracking([FromBody] StartTrackingRequest request)
     {
         var vehicle = await _context.Vehicles.FindAsync(request.VehicleId);
@@ -74,6 +75,7 @@ public class TrackingController : ControllerBase
     }
 
     [HttpPost("location")]
+    [Authorize(Roles = "SuperAdmin,SchoolOwner,SchoolAdmin,Instructor")]
     public async Task<IActionResult> TrackLocation([FromBody] TrackLocationRequest request)
     {
         var session = await _context.TrackingSessions.FindAsync(request.TrackingSessionId);
@@ -118,6 +120,7 @@ public class TrackingController : ControllerBase
     }
 
     [HttpPost("stop/{sessionId}")]
+    [Authorize(Roles = "SuperAdmin,SchoolOwner,SchoolAdmin,Instructor")]
     public async Task<IActionResult> StopTracking(Guid sessionId)
     {
         var session = await _context.TrackingSessions.FindAsync(sessionId);
@@ -158,6 +161,7 @@ public class TrackingController : ControllerBase
     }
 
     [HttpGet("active")]
+    [Authorize(Roles = "SuperAdmin,SchoolOwner,SchoolAdmin")]
     public async Task<IActionResult> GetActiveSessions()
     {
         // Obter todas as sessões que estão ativas ou sem sinal temporário

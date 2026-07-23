@@ -34,6 +34,7 @@ public class GpsController : ControllerBase
     public record TrackVehicleLocationRequest(string LicensePlate, double Latitude, double Longitude, double Speed);
 
     [HttpPost("track")]
+    [Authorize(Roles = "SuperAdmin,SchoolOwner,SchoolAdmin,Instructor")]
     public async Task<IActionResult> TrackLocation([FromBody] TrackVehicleLocationRequest request)
     {
         var vehicle = await _vehicleRepository.GetByLicensePlateAsync(request.LicensePlate);
@@ -93,6 +94,7 @@ public class GpsController : ControllerBase
     }
 
     [HttpPost("stop/{vehicleId}")]
+    [Authorize(Roles = "SuperAdmin,SchoolOwner,SchoolAdmin,Instructor")]
     public async Task<IActionResult> StopTracking(Guid vehicleId)
     {
         // Notificar via SignalR que a partilha deste veículo foi interrompida

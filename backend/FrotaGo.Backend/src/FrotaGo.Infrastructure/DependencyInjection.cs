@@ -17,6 +17,7 @@ public static class DependencyInjection
                 configuration.GetConnectionString("DefaultConnection"),
                 b => b.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName)));
 
+        services.AddScoped<ISchoolRepository, SchoolRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IVehicleRepository, VehicleRepository>();
         services.AddScoped<IInstructorRepository, InstructorRepository>();
@@ -25,6 +26,7 @@ public static class DependencyInjection
         services.AddScoped<IMaintenanceRepository, MaintenanceRepository>();
         services.AddScoped<IFuelRecordRepository, FuelRecordRepository>();
         services.AddScoped<IVehicleDocumentRepository, VehicleDocumentRepository>();
+        services.AddScoped<IAccidentRepository, AccidentRepository>();
         services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
 
         services.AddHostedService<FrotaGo.Infrastructure.BackgroundServices.TrackingHeartbeatWorker>();

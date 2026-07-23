@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { AuthService } from '../../features/authentication/services/auth.service';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { PendingApprovalComponent } from '../../features/authentication/pages/pending-approval/pending-approval.component';
 
 @Component({
   selector: 'app-dashboard-layout',
@@ -13,7 +14,8 @@ import { MatButtonModule } from '@angular/material/button';
     RouterLink,
     RouterLinkActive,
     MatIconModule,
-    MatButtonModule
+    MatButtonModule,
+    PendingApprovalComponent
   ],
   templateUrl: './dashboard-layout.html',
   styleUrl: './dashboard-layout.css'

@@ -17,10 +17,89 @@ namespace FrotaGo.Infrastructure.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.28")
+                .HasAnnotation("ProductVersion", "8.0.29")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("FrotaGo.Domain.Entities.Accident", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("EstimatedCost")
+                        .HasColumnType("numeric");
+
+                    b.Property<string>("Location")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("Severity")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("VehicleId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("VehicleId");
+
+                    b.ToTable("Accidents");
+                });
+
+            modelBuilder.Entity("FrotaGo.Domain.Entities.Branch", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("character varying(250)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<double?>("Latitude")
+                        .HasColumnType("double precision");
+
+                    b.Property<double?>("Longitude")
+                        .HasColumnType("double precision");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)");
+
+                    b.Property<Guid>("SchoolId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SchoolId");
+
+                    b.ToTable("Branches");
+                });
 
             modelBuilder.Entity("FrotaGo.Domain.Entities.FuelRecord", b =>
                 {
@@ -96,7 +175,12 @@ namespace FrotaGo.Infrastructure.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("character varying(20)");
 
+                    b.Property<Guid?>("SchoolId")
+                        .HasColumnType("uuid");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("SchoolId");
 
                     b.ToTable("Instructors");
                 });
@@ -189,6 +273,148 @@ namespace FrotaGo.Infrastructure.Migrations
                     b.ToTable("Maintenances");
                 });
 
+            modelBuilder.Entity("FrotaGo.Domain.Entities.Permission", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("character varying(250)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Code")
+                        .IsUnique();
+
+                    b.ToTable("Permissions");
+                });
+
+            modelBuilder.Entity("FrotaGo.Domain.Entities.RolePermission", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("PermissionId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("RoleName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PermissionId");
+
+                    b.ToTable("RolePermissions");
+                });
+
+            modelBuilder.Entity("FrotaGo.Domain.Entities.School", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<double?>("Latitude")
+                        .HasColumnType("double precision");
+
+                    b.Property<DateTime?>("LicenseIssueDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("LicenseIssuer")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("LicenseNumber")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<double?>("Longitude")
+                        .HasColumnType("double precision");
+
+                    b.Property<string>("Municipality")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("NIF")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)");
+
+                    b.Property<string>("Plan")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("Province")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("ShortName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("Slug")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("TrialExpiresAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Website")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NIF")
+                        .IsUnique();
+
+                    b.HasIndex("Slug")
+                        .IsUnique();
+
+                    b.ToTable("Schools");
+                });
+
             modelBuilder.Entity("FrotaGo.Domain.Entities.Student", b =>
                 {
                     b.Property<Guid>("Id")
@@ -224,7 +450,12 @@ namespace FrotaGo.Infrastructure.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("character varying(20)");
 
+                    b.Property<Guid?>("SchoolId")
+                        .HasColumnType("uuid");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("SchoolId");
 
                     b.ToTable("Students");
                 });
@@ -283,6 +514,23 @@ namespace FrotaGo.Infrastructure.Migrations
                         .HasMaxLength(150)
                         .HasColumnType("character varying(150)");
 
+                    b.Property<string>("Gender")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<string>("IdentityCardNumber")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<DateTime?>("InvitationExpiresAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("InvitationToken")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -292,13 +540,21 @@ namespace FrotaGo.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("Phone")
+                        .HasColumnType("text");
+
                     b.Property<int>("Role")
                         .HasColumnType("integer");
+
+                    b.Property<Guid?>("SchoolId")
+                        .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
                     b.HasIndex("Email")
                         .IsUnique();
+
+                    b.HasIndex("SchoolId");
 
                     b.ToTable("Users");
                 });
@@ -338,6 +594,9 @@ namespace FrotaGo.Infrastructure.Migrations
                     b.Property<int>("Odometer")
                         .HasColumnType("integer");
 
+                    b.Property<Guid?>("SchoolId")
+                        .HasColumnType("uuid");
+
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
@@ -354,6 +613,8 @@ namespace FrotaGo.Infrastructure.Migrations
 
                     b.HasIndex("LicensePlate")
                         .IsUnique();
+
+                    b.HasIndex("SchoolId");
 
                     b.ToTable("Vehicles");
                 });
@@ -428,6 +689,28 @@ namespace FrotaGo.Infrastructure.Migrations
                     b.ToTable("VehicleLocations");
                 });
 
+            modelBuilder.Entity("FrotaGo.Domain.Entities.Accident", b =>
+                {
+                    b.HasOne("FrotaGo.Domain.Entities.Vehicle", "Vehicle")
+                        .WithMany()
+                        .HasForeignKey("VehicleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Vehicle");
+                });
+
+            modelBuilder.Entity("FrotaGo.Domain.Entities.Branch", b =>
+                {
+                    b.HasOne("FrotaGo.Domain.Entities.School", "School")
+                        .WithMany("Branches")
+                        .HasForeignKey("SchoolId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("School");
+                });
+
             modelBuilder.Entity("FrotaGo.Domain.Entities.FuelRecord", b =>
                 {
                     b.HasOne("FrotaGo.Domain.Entities.Vehicle", "Vehicle")
@@ -437,6 +720,13 @@ namespace FrotaGo.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Vehicle");
+                });
+
+            modelBuilder.Entity("FrotaGo.Domain.Entities.Instructor", b =>
+                {
+                    b.HasOne("FrotaGo.Domain.Entities.School", null)
+                        .WithMany("Instructors")
+                        .HasForeignKey("SchoolId");
                 });
 
             modelBuilder.Entity("FrotaGo.Domain.Entities.Lesson", b =>
@@ -477,6 +767,24 @@ namespace FrotaGo.Infrastructure.Migrations
                     b.Navigation("Vehicle");
                 });
 
+            modelBuilder.Entity("FrotaGo.Domain.Entities.RolePermission", b =>
+                {
+                    b.HasOne("FrotaGo.Domain.Entities.Permission", "Permission")
+                        .WithMany()
+                        .HasForeignKey("PermissionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Permission");
+                });
+
+            modelBuilder.Entity("FrotaGo.Domain.Entities.Student", b =>
+                {
+                    b.HasOne("FrotaGo.Domain.Entities.School", null)
+                        .WithMany("Students")
+                        .HasForeignKey("SchoolId");
+                });
+
             modelBuilder.Entity("FrotaGo.Domain.Entities.TrackingSession", b =>
                 {
                     b.HasOne("FrotaGo.Domain.Entities.Instructor", "Instructor")
@@ -500,6 +808,23 @@ namespace FrotaGo.Infrastructure.Migrations
                     b.Navigation("Lesson");
 
                     b.Navigation("Vehicle");
+                });
+
+            modelBuilder.Entity("FrotaGo.Domain.Entities.User", b =>
+                {
+                    b.HasOne("FrotaGo.Domain.Entities.School", "School")
+                        .WithMany("Users")
+                        .HasForeignKey("SchoolId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("School");
+                });
+
+            modelBuilder.Entity("FrotaGo.Domain.Entities.Vehicle", b =>
+                {
+                    b.HasOne("FrotaGo.Domain.Entities.School", null)
+                        .WithMany("Vehicles")
+                        .HasForeignKey("SchoolId");
                 });
 
             modelBuilder.Entity("FrotaGo.Domain.Entities.VehicleDocument", b =>
@@ -529,6 +854,19 @@ namespace FrotaGo.Infrastructure.Migrations
                     b.Navigation("TrackingSession");
 
                     b.Navigation("Vehicle");
+                });
+
+            modelBuilder.Entity("FrotaGo.Domain.Entities.School", b =>
+                {
+                    b.Navigation("Branches");
+
+                    b.Navigation("Instructors");
+
+                    b.Navigation("Students");
+
+                    b.Navigation("Users");
+
+                    b.Navigation("Vehicles");
                 });
 
             modelBuilder.Entity("FrotaGo.Domain.Entities.TrackingSession", b =>

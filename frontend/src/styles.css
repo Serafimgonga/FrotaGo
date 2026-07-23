@@ -1,7 +1,7 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 @import 'leaflet/dist/leaflet.css';
 
 /* FrotaGo Global Styles */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
 * {
   margin: 0;
@@ -23,6 +23,46 @@ html, body {
 .mat-mdc-snack-bar-container {
   --mdc-snackbar-container-color: #1f2937;
   --mdc-snackbar-supporting-text-color: #f3f4f6;
+}
+
+/* Angular Material Select Dropdown (Combobox) Dark Background Fix */
+.mat-mdc-select-panel,
+.mat-select-panel,
+.mat-mdc-menu-panel,
+.cdk-overlay-pane .mat-mdc-select-panel {
+  background-color: #1e293b !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.7), 0 8px 10px -6px rgba(0, 0, 0, 0.5) !important;
+  border-radius: 12px !important;
+  padding: 6px 0 !important;
+  overflow: hidden !important;
+}
+
+.mat-mdc-option {
+  color: #e2e8f0 !important;
+  background-color: #1e293b !important;
+  transition: background-color 0.15s ease !important;
+}
+
+.mat-mdc-option:hover,
+.mat-mdc-option.mdc-list-item--activated,
+.mat-mdc-option.mat-mdc-option-active,
+.mat-mdc-option.mat-mdc-option-multiple:hover {
+  background-color: #334155 !important;
+  color: #ffffff !important;
+}
+
+.mat-mdc-option .mdc-list-item__primary-text {
+  color: #e2e8f0 !important;
+}
+
+.mat-mdc-option.mdc-list-item--selected:not(.mdc-list-item--disabled) {
+  background-color: rgba(59, 130, 246, 0.15) !important;
+}
+
+.mat-mdc-option.mdc-list-item--selected:not(.mdc-list-item--disabled) .mdc-list-item__primary-text {
+  color: #60a5fa !important;
+  font-weight: 600;
 }
 
 /* Scrollbar */

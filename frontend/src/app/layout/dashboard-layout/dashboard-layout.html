@@ -1,79 +1,115 @@
-<div class="dashboard-wrapper">
-  <!-- Sidebar -->
-  <aside class="sidebar">
-    <div class="sidebar-header">
-      <mat-icon class="brand-icon">directions_car</mat-icon>
-      <span class="brand-name">FrotaGo</span>
+<ng-container *ngIf="authService.currentUser()?.schoolStatus !== 'Pending'; else pendingApprovalBlock">
+  <div class="dashboard-wrapper">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="brand-info">
+          <mat-icon class="brand-icon">directions_car</mat-icon>
+          <span class="brand-name">FrotaGo</span>
+        </div>
+        <!-- Intelligent Logged-In School Badge in Sidebar -->
+        <div class="school-badge-sidebar" *ngIf="authService.currentUser()?.schoolName" [title]="'Escola Ativa: ' + authService.currentUser()?.schoolName">
+          <div class="school-badge-icon">
+            <mat-icon>school</mat-icon>
+          </div>
+          <div class="school-badge-text">
+            <span class="school-badge-label">Escola Ativa</span>
+            <span class="school-badge-name">{{ authService.currentUser()?.schoolName }}</span>
+          </div>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a routerLink="/dashboard/vehicles" routerLinkActive="active-link" class="nav-item" *ngIf="authService.hasPermission('Vehicles.Manage')">
+          <mat-icon>directions_car</mat-icon>
+          <span>Veículos</span>
+        </a>
+
+        <a routerLink="/dashboard/instructors" routerLinkActive="active-link" class="nav-item" *ngIf="authService.hasPermission('Users.Manage')">
+          <mat-icon>people</mat-icon>
+          <span>Instrutores</span>
+        </a>
+
+        <a routerLink="/dashboard/students" routerLinkActive="active-link" class="nav-item" *ngIf="authService.hasPermission('Students.View') || authService.hasPermission('Students.Create')">
+          <mat-icon>school</mat-icon>
+          <span>Alunos</span>
+        </a>
+
+        <a routerLink="/dashboard/lessons" routerLinkActive="active-link" class="nav-item" *ngIf="authService.hasPermission('Lessons.Create') || authService.hasPermission('Lessons.Execute')">
+          <mat-icon>event</mat-icon>
+          <span>Aulas Práticas</span>
+        </a>
+
+        <a routerLink="/dashboard/maintenance" routerLinkActive="active-link" class="nav-item" *ngIf="authService.hasPermission('Vehicles.Manage')">
+          <mat-icon>build</mat-icon>
+          <span>Manutenção</span>
+        </a>
+
+        <a routerLink="/dashboard/fuel" routerLinkActive="active-link" class="nav-item" *ngIf="authService.hasPermission('Vehicles.Manage')">
+          <mat-icon>local_gas_station</mat-icon>
+          <span>Combustível</span>
+        </a>
+
+        <a routerLink="/dashboard/documents" routerLinkActive="active-link" class="nav-item" *ngIf="authService.hasPermission('Vehicles.Manage') || authService.hasPermission('School.Manage')">
+          <mat-icon>description</mat-icon>
+          <span>Documentação</span>
+        </a>
+
+        <a routerLink="/dashboard/accidents" routerLinkActive="active-link" class="nav-item" *ngIf="authService.hasPermission('Vehicles.Manage')">
+          <mat-icon>report_problem</mat-icon>
+          <span>Acidentes</span>
+        </a>
+
+        <a routerLink="/dashboard/tracking" routerLinkActive="active-link" class="nav-item" *ngIf="authService.hasPermission('Vehicles.ViewGps')">
+          <mat-icon>gps_fixed</mat-icon>
+          <span>Rastreio GPS</span>
+        </a>
+
+        <a routerLink="/dashboard/users" routerLinkActive="active-link" class="nav-item" *ngIf="authService.hasPermission('Users.Manage')">
+          <mat-icon>manage_accounts</mat-icon>
+          <span>Utilizadores</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-info">
+          <div class="user-avatar">
+            <mat-icon>account_circle</mat-icon>
+          </div>
+          <div class="user-details">
+            <span class="user-name">{{ authService.currentUser()?.name }}</span>
+            <span class="user-role">{{ authService.currentUser()?.role }}</span>
+          </div>
+        </div>
+        <button mat-icon-button color="warn" (click)="logout()" title="Terminar Sessão">
+          <mat-icon>logout</mat-icon>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <div class="main-area">
+      <header class="header">
+        <div class="header-left">
+          <h1>Painel de Controle</h1>
+        </div>
+        <!-- Intelligent Top-Bar School Active Status Pill -->
+        <div class="header-right" *ngIf="authService.currentUser()?.schoolName">
+          <div class="school-pill">
+            <span class="green-dot"></span>
+            <mat-icon class="pill-icon">verified_user</mat-icon>
+            <span class="pill-school-name">{{ authService.currentUser()?.schoolName }}</span>
+          </div>
+        </div>
+      </header>
+
+      <main class="content-container">
+        <router-outlet></router-outlet>
+      </main>
     </div>
-
-    <nav class="sidebar-nav">
-      <a routerLink="/dashboard/vehicles" routerLinkActive="active-link" class="nav-item">
-        <mat-icon>directions_car</mat-icon>
-        <span>Veículos</span>
-      </a>
-
-      <a routerLink="/dashboard/instructors" routerLinkActive="active-link" class="nav-item">
-        <mat-icon>people</mat-icon>
-        <span>Instrutores</span>
-      </a>
-      <a routerLink="/dashboard/students" routerLinkActive="active-link" class="nav-item">
-        <mat-icon>school</mat-icon>
-        <span>Alunos</span>
-      </a>
-      <a routerLink="/dashboard/lessons" routerLinkActive="active-link" class="nav-item">
-        <mat-icon>event</mat-icon>
-        <span>Aulas Práticas</span>
-      </a>
-      <a routerLink="/dashboard/maintenance" routerLinkActive="active-link" class="nav-item">
-        <mat-icon>build</mat-icon>
-        <span>Manutenção</span>
-      </a>
-      <a routerLink="/dashboard/fuel" routerLinkActive="active-link" class="nav-item">
-        <mat-icon>local_gas_station</mat-icon>
-        <span>Combustível</span>
-      </a>
-      <a routerLink="/dashboard/documents" routerLinkActive="active-link" class="nav-item">
-        <mat-icon>description</mat-icon>
-        <span>Documentação</span>
-      </a>
-      <a routerLink="/dashboard/tracking" routerLinkActive="active-link" class="nav-item">
-        <mat-icon>gps_fixed</mat-icon>
-        <span>Rastreio GPS</span>
-      </a>
-    </nav>
-
-    <div class="sidebar-footer">
-      <div class="user-info">
-        <div class="user-avatar">
-          <mat-icon>account_circle</mat-icon>
-        </div>
-        <div class="user-details">
-          <span class="user-name">{{ authService.currentUser()?.name }}</span>
-          <span class="user-role">{{ authService.currentUser()?.role }}</span>
-        </div>
-      </div>
-      <button mat-icon-button color="warn" (click)="logout()" title="Terminar Sessão">
-        <mat-icon>logout</mat-icon>
-      </button>
-    </div>
-  </aside>
-
-  <!-- Main Content Area -->
-  <div class="main-area">
-    <header class="header">
-      <div class="header-left">
-        <h1>Painel de Controle</h1>
-      </div>
-      <div class="header-right">
-        <div class="status-indicator">
-          <span class="dot"></span>
-          <span>Angola Compliance Ok</span>
-        </div>
-      </div>
-    </header>
-
-    <main class="content-container">
-      <router-outlet></router-outlet>
-    </main>
   </div>
-</div>
+</ng-container>
+
+<ng-template #pendingApprovalBlock>
+  <app-pending-approval></app-pending-approval>
+</ng-template>
