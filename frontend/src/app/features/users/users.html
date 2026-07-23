@@ -1,0 +1,171 @@
+<div class="users-page">
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-info">
+      <h2>Gestão de Utilizadores</h2>
+      <p>Gerir a equipa da sua escola de condução</p>
+    </div>
+    <button class="btn-primary" (click)="openInviteForm()">
+      <mat-icon>person_add</mat-icon>
+      <span>Convidar Funcionário</span>
+    </button>
+  </div>
+
+  <!-- Statistics Cards -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon blue-icon">
+        <mat-icon>group</mat-icon>
+      </div>
+      <div class="stat-info">
+        <span class="stat-value">{{ totalUsers() }}</span>
+        <span class="stat-label">Total</span>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon green-icon">
+        <mat-icon>check_circle</mat-icon>
+      </div>
+      <div class="stat-info">
+        <span class="stat-value">{{ activeUsers() }}</span>
+        <span class="stat-label">Ativos</span>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon amber-icon">
+        <mat-icon>hourglass_empty</mat-icon>
+      </div>
+      <div class="stat-info">
+        <span class="stat-value">{{ pendingUsers() }}</span>
+        <span class="stat-label">Pendentes</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Messages -->
+  <div class="alert success-alert" *ngIf="successMessage()">
+    <mat-icon>check_circle</mat-icon>
+    <span>{{ successMessage() }}</span>
+  </div>
+  <div class="alert error-alert" *ngIf="errorMessage()">
+    <mat-icon>error</mat-icon>
+    <span>{{ errorMessage() }}</span>
+  </div>
+
+  <!-- Users Table -->
+  <div class="table-container">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Nome</th>
+          <th>Email</th>
+          <th>Perfil</th>
+          <th>Estado</th>
+          <th>Data de Registo</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let u of users()">
+          <td>
+            <div class="user-cell">
+              <div class="avatar">
+                <mat-icon>person</mat-icon>
+              </div>
+              <span>{{ u.name }}</span>
+            </div>
+          </td>
+          <td>{{ u.email }}</td>
+          <td>
+            <span class="role-badge" [ngClass]="getRoleClass(u.role)">
+              {{ getRoleLabel(u.role) }}
+            </span>
+          </td>
+          <td>
+            <span class="status-badge" [ngClass]="u.isActive ? 'status-active' : 'status-pending'">
+              {{ u.isActive ? 'Ativo' : 'Pendente' }}
+            </span>
+          </td>
+          <td>{{ u.createdAt | date:'dd/MM/yyyy' }}</td>
+          <td>
+            <div class="actions-cell">
+              <button mat-icon-button class="action-btn" (click)="toggleStatus(u)" [title]="u.isActive ? 'Desativar' : 'Ativar'">
+                <mat-icon>{{ u.isActive ? 'block' : 'check_circle' }}</mat-icon>
+              </button>
+            </div>
+          </td>
+        </tr>
+        <tr *ngIf="users().length === 0">
+          <td colspan="6" class="empty-state">
+            <mat-icon>group_add</mat-icon>
+            <p>Nenhum funcionário registado. Convide a sua equipa!</p>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Invite Drawer -->
+  <div class="drawer-overlay" [class.open]="showForm()" (click)="closeForm()"></div>
+  <div class="drawer" [class.open]="showForm()">
+    <div class="drawer-header">
+      <h3>Convidar Funcionário</h3>
+      <button mat-icon-button (click)="closeForm()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+
+    <form [formGroup]="inviteForm" (ngSubmit)="onSubmit()" class="drawer-form">
+      <div class="drawer-body">
+        <div class="form-group-custom">
+          <label class="input-label">Nome Completo</label>
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-icon matPrefix class="input-icon">person_outline</mat-icon>
+            <input matInput formControlName="name" placeholder="Ex: Carlos António" required />
+          </mat-form-field>
+        </div>
+
+        <div class="form-group-custom">
+          <label class="input-label">E-mail</label>
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-icon matPrefix class="input-icon">mail_outline</mat-icon>
+            <input matInput type="email" formControlName="email" placeholder="carlos&#64;email.com" required />
+          </mat-form-field>
+        </div>
+
+        <div class="form-group-custom">
+          <label class="input-label">Perfil / Função</label>
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-icon matPrefix class="input-icon">badge</mat-icon>
+            <mat-select formControlName="role">
+              <mat-option [value]="3">Administrador</mat-option>
+              <mat-option [value]="4">Rececionista</mat-option>
+              <mat-option [value]="5">Instrutor</mat-option>
+              <mat-option [value]="6">Financeiro</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <!-- Invitation Link Display -->
+        <div class="invitation-link-box" *ngIf="invitationLink()">
+          <label class="input-label">Link de Convite</label>
+          <div class="link-row">
+            <input type="text" [value]="invitationLink()" readonly class="link-input" />
+            <button type="button" mat-icon-button class="copy-btn" (click)="copyLink()" title="Copiar link">
+              <mat-icon>content_copy</mat-icon>
+            </button>
+          </div>
+          <p class="link-hint">Envie este link ao funcionário. Expira em 7 dias.</p>
+        </div>
+      </div>
+
+      <div class="drawer-footer">
+        <button type="button" mat-stroked-button class="btn-cancel" (click)="closeForm()">Cancelar</button>
+        <button type="submit" mat-flat-button class="btn-submit" [disabled]="inviteForm.invalid">
+          <mat-icon>send</mat-icon>
+          Gerar Convite
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

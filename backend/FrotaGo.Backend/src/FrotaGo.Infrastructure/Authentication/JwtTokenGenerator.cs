@@ -38,6 +38,11 @@ public class JwtTokenGenerator : IJwtTokenGenerator
             new(ClaimTypes.Role, user.Role.ToString())
         };
 
+        if (user.SchoolId.HasValue)
+        {
+            claims.Add(new Claim("schoolId", user.SchoolId.Value.ToString()));
+        }
+
         var token = new JwtSecurityToken(
             issuer: issuer,
             audience: audience,

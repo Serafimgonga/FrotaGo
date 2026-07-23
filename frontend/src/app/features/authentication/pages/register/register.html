@@ -1,0 +1,402 @@
+<div class="register-container">
+  <div class="glass-card">
+    <!-- Header -->
+    <div class="card-header">
+      <div class="brand-badge">
+        <mat-icon class="brand-icon">directions_car</mat-icon>
+        <span class="brand-text">FrotaGo</span>
+      </div>
+      <h2>Registo da Escola de Condução</h2>
+      <p class="subtitle">Plataforma ERP e Gestão de Frota Multi-Escola</p>
+    </div>
+
+    <!-- Stepper Progress Bar -->
+    <div class="stepper-bar">
+      <div class="step-item" [class.active]="currentStep() >= 1" [class.completed]="currentStep() > 1">
+        <div class="step-circle">
+          <mat-icon *ngIf="currentStep() > 1">check</mat-icon>
+          <span *ngIf="currentStep() <= 1">1</span>
+        </div>
+        <span class="step-label">Proprietário</span>
+      </div>
+      <div class="step-line" [class.active]="currentStep() >= 2"></div>
+
+      <div class="step-item" [class.active]="currentStep() >= 2" [class.completed]="currentStep() > 2">
+        <div class="step-circle">
+          <mat-icon *ngIf="currentStep() > 2">check</mat-icon>
+          <span *ngIf="currentStep() <= 2">2</span>
+        </div>
+        <span class="step-label">Escola & Licença</span>
+      </div>
+      <div class="step-line" [class.active]="currentStep() >= 3"></div>
+
+      <div class="step-item" [class.active]="currentStep() >= 3" [class.completed]="currentStep() > 3">
+        <div class="step-circle">
+          <mat-icon *ngIf="currentStep() > 3">check</mat-icon>
+          <span *ngIf="currentStep() <= 3">3</span>
+        </div>
+        <span class="step-label">Primeira Unidade</span>
+      </div>
+      <div class="step-line" [class.active]="currentStep() >= 4"></div>
+
+      <div class="step-item" [class.active]="currentStep() === 4">
+        <div class="step-circle">
+          <span>4</span>
+        </div>
+        <span class="step-label">Plano SaaS</span>
+      </div>
+    </div>
+
+    <!-- Error Alert -->
+    <div class="alert alert-error" *ngIf="errorMessage()">
+      <mat-icon class="alert-icon">error_outline</mat-icon>
+      <span>{{ errorMessage() }}</span>
+    </div>
+
+    <!-- Step 1 — Dados do Proprietário -->
+    <form [formGroup]="step1Form" *ngIf="currentStep() === 1" class="step-form">
+      <div class="step-title">
+        <h3>Passo 1 — Dados do Proprietário / Responsável</h3>
+        <p>Preencha os dados da conta do Administrador Principal (SchoolOwner)</p>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group-custom full-width">
+          <label class="input-label">Nome Completo</label>
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-icon matPrefix class="input-icon">person_outline</mat-icon>
+            <input matInput formControlName="ownerName" placeholder="Ex: João António Manuel" required />
+          </mat-form-field>
+        </div>
+
+        <div class="form-group-custom">
+          <label class="input-label">Género</label>
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-select formControlName="gender">
+              <mat-option value="Masculino">Masculino</mat-option>
+              <mat-option value="Feminino">Feminino</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <div class="form-group-custom">
+          <label class="input-label">BI / NIF Pessoal</label>
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-icon matPrefix class="input-icon">badge</mat-icon>
+            <input matInput formControlName="identityCardNumber" placeholder="Ex: 004598123LA042" required />
+          </mat-form-field>
+        </div>
+
+        <div class="form-group-custom">
+          <label class="input-label">Telefone Principal</label>
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-icon matPrefix class="input-icon">phone</mat-icon>
+            <input matInput formControlName="phone" placeholder="+244 923 000 000" required />
+          </mat-form-field>
+        </div>
+
+        <div class="form-group-custom">
+          <label class="input-label">E-mail Pessoal</label>
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-icon matPrefix class="input-icon">mail_outline</mat-icon>
+            <input matInput type="email" formControlName="email" placeholder="joao@email.com" required />
+          </mat-form-field>
+        </div>
+
+        <div class="form-group-custom">
+          <label class="input-label">Palavra-passe</label>
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-icon matPrefix class="input-icon">lock_outline</mat-icon>
+            <input matInput [type]="hidePassword() ? 'password' : 'text'" formControlName="password" placeholder="••••••••" required />
+            <button type="button" mat-icon-button matSuffix (click)="hidePassword.set(!hidePassword())">
+              <mat-icon>{{ hidePassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+            </button>
+          </mat-form-field>
+        </div>
+
+        <div class="form-group-custom">
+          <label class="input-label">Confirmar Palavra-passe</label>
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-icon matPrefix class="input-icon">lock</mat-icon>
+            <input matInput [type]="hidePassword() ? 'password' : 'text'" formControlName="confirmPassword" placeholder="••••••••" required />
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div class="actions-row right">
+        <button mat-flat-button color="primary" type="button" (click)="nextStep()" class="btn-next">
+          <span>Próximo Passo</span>
+          <mat-icon>arrow_forward</mat-icon>
+        </button>
+      </div>
+    </form>
+
+    <!-- Step 2 — Dados da Escola & Licença INATRO -->
+    <form [formGroup]="step2Form" *ngIf="currentStep() === 2" class="step-form">
+      <div class="step-title">
+        <h3>Passo 2 — Dados da Escola de Condução</h3>
+        <p>Informação comercial, dados legais de acreditação e localização</p>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group-custom">
+          <label class="input-label">Nome Comercial</label>
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-icon matPrefix class="input-icon">school</mat-icon>
+            <input matInput formControlName="schoolName" (input)="onSchoolNameChange()" placeholder="Ex: Instituto de Condução São Nicolau" required />
+          </mat-form-field>
+        </div>
+
+        <div class="form-group-custom">
+          <label class="input-label">Nome Abreviado / Sigla</label>
+          <mat-form-field appearance="outline" class="w-full">
+            <input matInput formControlName="shortName" placeholder="Ex: ICSN" />
+          </mat-form-field>
+        </div>
+
+        <div class="form-group-custom full-width">
+          <label class="input-label">Subdomínio / Slug (URL da Escola)</label>
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-icon matPrefix class="input-icon">link</mat-icon>
+            <input matInput formControlName="slug" placeholder="icsn" required />
+            <span matSuffix class="slug-suffix">.frotago.ao</span>
+          </mat-form-field>
+          <small class="hint-text" *ngIf="step2Form.value.slug">
+            Sugestão de URL: <strong>https://{{ step2Form.value.slug }}.frotago.ao</strong>
+          </small>
+        </div>
+
+        <div class="form-group-custom">
+          <label class="input-label">NIF da Empresa</label>
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-icon matPrefix class="input-icon">receipt_long</mat-icon>
+            <input matInput formControlName="nif" placeholder="Ex: 5417009821" required />
+          </mat-form-field>
+        </div>
+
+        <div class="form-group-custom">
+          <label class="input-label">Número de Licença INATRO</label>
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-icon matPrefix class="input-icon">verified</mat-icon>
+            <input matInput formControlName="licenseNumber" placeholder="Ex: LIC-2024-089" required />
+          </mat-form-field>
+        </div>
+
+        <div class="form-group-custom">
+          <label class="input-label">Entidade Emissora</label>
+          <mat-form-field appearance="outline" class="w-full">
+            <input matInput formControlName="licenseIssuer" placeholder="INATRO" required />
+          </mat-form-field>
+        </div>
+
+        <div class="form-group-custom">
+          <label class="input-label">Província</label>
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-select formControlName="province">
+              <mat-option value="Luanda">Luanda</mat-option>
+              <mat-option value="Benguela">Benguela</mat-option>
+              <mat-option value="Huambo">Huambo</mat-option>
+              <mat-option value="Huíla">Huíla</mat-option>
+              <mat-option value="Cabinda">Cabinda</mat-option>
+              <mat-option value="Cuanza Sul">Cuanza Sul</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <div class="form-group-custom">
+          <label class="input-label">Município</label>
+          <mat-form-field appearance="outline" class="w-full">
+            <input matInput formControlName="municipality" placeholder="Ex: Talatona" required />
+          </mat-form-field>
+        </div>
+
+        <div class="form-group-custom full-width">
+          <label class="input-label">Morada / Endereço Completo</label>
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-icon matPrefix class="input-icon">location_on</mat-icon>
+            <input matInput formControlName="address" placeholder="Ex: Rua 16 de Junho, Bairro Talatona" required />
+          </mat-form-field>
+        </div>
+
+        <div class="form-group-custom">
+          <label class="input-label">Coordenadas GPS — Latitude (Opcional)</label>
+          <mat-form-field appearance="outline" class="w-full">
+            <input matInput type="number" formControlName="latitude" placeholder="Ex: -8.83833" />
+          </mat-form-field>
+        </div>
+
+        <div class="form-group-custom">
+          <label class="input-label">Coordenadas GPS — Longitude (Opcional)</label>
+          <mat-form-field appearance="outline" class="w-full">
+            <input matInput type="number" formControlName="longitude" placeholder="Ex: 13.23444" />
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div class="actions-row">
+        <button mat-stroked-button type="button" (click)="prevStep()" class="btn-prev">
+          <mat-icon>arrow_back</mat-icon>
+          <span>Anterior</span>
+        </button>
+        <button mat-flat-button color="primary" type="button" (click)="nextStep()" class="btn-next">
+          <span>Próximo Passo</span>
+          <mat-icon>arrow_forward</mat-icon>
+        </button>
+      </div>
+    </form>
+
+    <!-- Step 3 — Dados da Primeira Unidade -->
+    <form [formGroup]="step3Form" *ngIf="currentStep() === 3" class="step-form">
+      <div class="step-title">
+        <h3>Passo 3 — Dados da Primeira Unidade (Sede)</h3>
+        <p>No FrotaGo uma escola pode gerir várias unidades. Cadastre a sua primeira unidade.</p>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group-custom full-width">
+          <label class="input-label">Nome da Unidade</label>
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-icon matPrefix class="input-icon">store</mat-icon>
+            <input matInput formControlName="branchName" placeholder="Ex: Sede Talatona" required />
+          </mat-form-field>
+        </div>
+
+        <div class="form-group-custom">
+          <label class="input-label">Telefone da Unidade</label>
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-icon matPrefix class="input-icon">phone</mat-icon>
+            <input matInput formControlName="branchPhone" placeholder="Ex: 923 000 000" />
+          </mat-form-field>
+        </div>
+
+        <div class="form-group-custom full-width">
+          <label class="input-label">Endereço da Unidade</label>
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-icon matPrefix class="input-icon">place</mat-icon>
+            <input matInput formControlName="branchAddress" placeholder="Ex: Av. Principal de Talatona" />
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div class="actions-row">
+        <button mat-stroked-button type="button" (click)="prevStep()" class="btn-prev">
+          <mat-icon>arrow_back</mat-icon>
+          <span>Anterior</span>
+        </button>
+        <button mat-flat-button color="primary" type="button" (click)="nextStep()" class="btn-next">
+          <span>Escolher Plano</span>
+          <mat-icon>arrow_forward</mat-icon>
+        </button>
+      </div>
+    </form>
+
+    <!-- Step 4 — Escolha do Plano SaaS -->
+    <div *ngIf="currentStep() === 4" class="step-form">
+      <div class="step-title">
+        <h3>Passo 4 — Escolha o Plano SaaS ideal</h3>
+        <p>Selecione a subscrição que melhor atende à escala da sua escola</p>
+      </div>
+
+      <div class="plans-grid">
+        <!-- Gratuito / Trial Plan -->
+        <div class="plan-card trial" [class.selected]="selectedPlan() === 'Gratuito'" (click)="selectPlan('Gratuito')">
+          <div class="trial-ribbon">Comece Grátis</div>
+          <div class="plan-header">
+            <span class="plan-name">Gratuito</span>
+            <span class="plan-badge" *ngIf="selectedPlan() === 'Gratuito'">Selecionado</span>
+          </div>
+          <div class="plan-price">
+            <span class="amount free-amount">Grátis</span>
+            <span class="period">por 30 dias</span>
+          </div>
+          <ul class="plan-features">
+            <li><mat-icon>check_circle</mat-icon> 1 instrutor</li>
+            <li><mat-icon>check_circle</mat-icon> Até 15 alunos</li>
+            <li><mat-icon>check_circle</mat-icon> 1 viatura</li>
+            <li><mat-icon>check_circle</mat-icon> Gestão básica de aulas</li>
+            <li class="feature-warning"><mat-icon>info</mat-icon> Sem GPS e Relatórios</li>
+          </ul>
+          <div class="plan-note">
+            Após 30 dias, atualize para um plano pago para continuar.
+          </div>
+        </div>
+
+        <!-- Starter Plan -->
+        <div class="plan-card" [class.selected]="selectedPlan() === 'Starter'" (click)="selectPlan('Starter')">
+          <div class="plan-header">
+            <span class="plan-name">Starter</span>
+            <span class="plan-badge" *ngIf="selectedPlan() === 'Starter'">Selecionado</span>
+          </div>
+          <div class="plan-price">
+            <span class="currency">AOA</span>
+            <span class="amount">25.000</span>
+            <span class="period">/mês</span>
+          </div>
+          <ul class="plan-features">
+            <li><mat-icon>check_circle</mat-icon> Até 3 instrutores</li>
+            <li><mat-icon>check_circle</mat-icon> Até 100 alunos ativos</li>
+            <li><mat-icon>check_circle</mat-icon> Até 3 viaturas</li>
+            <li><mat-icon>check_circle</mat-icon> Gestão básica de aulas</li>
+          </ul>
+        </div>
+
+        <!-- Professional Plan (Recommended) -->
+        <div class="plan-card featured" [class.selected]="selectedPlan() === 'Professional'" (click)="selectPlan('Professional')">
+          <div class="popular-ribbon">Mais Popular</div>
+          <div class="plan-header">
+            <span class="plan-name">Professional</span>
+            <span class="plan-badge" *ngIf="selectedPlan() === 'Professional'">Selecionado</span>
+          </div>
+          <div class="plan-price">
+            <span class="currency">AOA</span>
+            <span class="amount">55.000</span>
+            <span class="period">/mês</span>
+          </div>
+          <ul class="plan-features">
+            <li><mat-icon>check_circle</mat-icon> Até 15 instrutores</li>
+            <li><mat-icon>check_circle</mat-icon> Alunos ilimitados</li>
+            <li><mat-icon>check_circle</mat-icon> Viaturas ilimitadas</li>
+            <li><mat-icon>check_circle</mat-icon> Rastreio GPS em Tempo Real</li>
+            <li><mat-icon>check_circle</mat-icon> Relatórios Financeiros & Frota</li>
+          </ul>
+        </div>
+
+        <!-- Enterprise Plan -->
+        <div class="plan-card" [class.selected]="selectedPlan() === 'Enterprise'" (click)="selectPlan('Enterprise')">
+          <div class="plan-header">
+            <span class="plan-name">Enterprise</span>
+            <span class="plan-badge" *ngIf="selectedPlan() === 'Enterprise'">Selecionado</span>
+          </div>
+          <div class="plan-price">
+            <span class="currency">AOA</span>
+            <span class="amount">120.000</span>
+            <span class="period">/mês</span>
+          </div>
+          <ul class="plan-features">
+            <li><mat-icon>check_circle</mat-icon> Múltiplas Unidades (Branches)</li>
+            <li><mat-icon>check_circle</mat-icon> Tudo do Plano Professional</li>
+            <li><mat-icon>check_circle</mat-icon> Acesso à API & Integrações</li>
+            <li><mat-icon>check_circle</mat-icon> Suporte Prioritário 24/7</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="actions-row">
+        <button mat-stroked-button type="button" (click)="prevStep()" class="btn-prev">
+          <mat-icon>arrow_back</mat-icon>
+          <span>Anterior</span>
+        </button>
+        <button mat-flat-button color="primary" type="button" (click)="onSubmit()" class="btn-submit" [disabled]="isLoading()">
+          <span *ngIf="!isLoading()">Finalizar & Criar Conta</span>
+          <span *ngIf="isLoading()">A registar escola...</span>
+          <mat-icon *ngIf="!isLoading()">rocket_launch</mat-icon>
+        </button>
+      </div>
+    </div>
+
+    <!-- Footer Toggle -->
+    <div class="card-footer">
+      <p>Já possui uma conta? <a routerLink="/login" class="link-highlight">Entrar no FrotaGo</a></p>
+    </div>
+  </div>
+</div>

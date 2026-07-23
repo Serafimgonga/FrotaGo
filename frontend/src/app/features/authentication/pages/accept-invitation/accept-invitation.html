@@ -1,0 +1,80 @@
+<div class="invitation-container">
+  <div class="glow glow-1"></div>
+  <div class="glow glow-2"></div>
+  <div class="glow glow-3"></div>
+
+  <div class="invitation-card">
+    <div class="logo-wrapper">
+      <div class="logo-icon-container">
+        <mat-icon class="logo-icon">directions_car</mat-icon>
+      </div>
+      <span class="logo-text">FrotaGo<span class="logo-dot">.</span></span>
+    </div>
+
+    <div class="form-section">
+      <div class="form-header">
+        <span class="form-subtitle">ATIVAÇÃO DE CONTA</span>
+        <h1>Bem-vindo à equipa!</h1>
+        <p>Defina a sua palavra-passe para ativar a sua conta.</p>
+      </div>
+
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate class="auth-form">
+        <div class="alert error-alert" *ngIf="errorMessage()">
+          <div class="alert-icon-wrapper">
+            <mat-icon>error_outline</mat-icon>
+          </div>
+          <div class="alert-content">
+            <span class="alert-title">Aviso</span>
+            <span class="alert-desc">{{ errorMessage() }}</span>
+          </div>
+        </div>
+
+        <div class="alert success-alert" *ngIf="successMessage()">
+          <div class="alert-icon-wrapper">
+            <mat-icon>check_circle_outline</mat-icon>
+          </div>
+          <div class="alert-content">
+            <span class="alert-title">Sucesso</span>
+            <span class="alert-desc">{{ successMessage() }}</span>
+          </div>
+        </div>
+
+        <div class="inputs-container" *ngIf="!successMessage()">
+          <div class="form-group-custom">
+            <label class="input-label">Palavra-passe</label>
+            <mat-form-field appearance="outline" class="w-full">
+              <mat-icon matPrefix class="input-icon">lock_outline</mat-icon>
+              <input matInput [type]="hidePassword() ? 'password' : 'text'" formControlName="password" placeholder="Mínimo 6 caracteres" />
+              <button type="button" mat-icon-button matSuffix (click)="hidePassword.set(!hidePassword())" class="password-toggle-btn">
+                <mat-icon>{{ hidePassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+              </button>
+            </mat-form-field>
+          </div>
+
+          <div class="form-group-custom">
+            <label class="input-label">Confirmar Palavra-passe</label>
+            <mat-form-field appearance="outline" class="w-full">
+              <mat-icon matPrefix class="input-icon">lock</mat-icon>
+              <input matInput [type]="hidePassword() ? 'password' : 'text'" formControlName="confirmPassword" placeholder="Repita a palavra-passe" />
+            </mat-form-field>
+          </div>
+        </div>
+
+        <button mat-flat-button type="button" (click)="onSubmit()" class="submit-btn" [disabled]="isLoading()" *ngIf="!successMessage()">
+          <span *ngIf="!isLoading()">Ativar Conta</span>
+          <span *ngIf="isLoading()">A ativar...</span>
+          <mat-icon class="btn-arrow" *ngIf="!isLoading()">check</mat-icon>
+        </button>
+
+        <div class="toggle-mode">
+          <span>Já tem conta ativada?</span>
+          <a routerLink="/login" mat-button class="toggle-action-btn">Iniciar Sessão</a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="auth-footer">
+    <span>© 2026 FrotaGo ERP. Todos os direitos reservados.</span>
+  </div>
+</div>

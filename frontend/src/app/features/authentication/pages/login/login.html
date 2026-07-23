@@ -17,11 +17,11 @@
     <div class="form-section">
       <div class="form-header">
         <span class="form-subtitle">ÁREA DE ACESSO</span>
-        <h1>{{ isRegister() ? 'Criar Conta' : 'Boas-vindas!' }}</h1>
-        <p>{{ isRegister() ? 'Registe a sua escola de condução em poucos segundos.' : 'Insira as suas credenciais para aceder ao ERP.' }}</p>
+        <h1>Boas-vindas!</h1>
+        <p>Insira as suas credenciais para aceder ao ERP.</p>
       </div>
 
-      <form [formGroup]="isRegister() ? registerForm : loginForm" (ngSubmit)="onSubmit()" class="auth-form">
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="auth-form">
         <!-- Modern Alert Messages -->
         <div class="alert error-alert" *ngIf="errorMessage()">
           <div class="alert-icon-wrapper">
@@ -33,27 +33,8 @@
           </div>
         </div>
 
-        <div class="alert success-alert" *ngIf="successMessage()">
-          <div class="alert-icon-wrapper">
-            <mat-icon>check_circle_outline</mat-icon>
-          </div>
-          <div class="alert-content">
-            <span class="alert-title">Sucesso</span>
-            <span class="alert-desc">{{ successMessage() }}</span>
-          </div>
-        </div>
-
         <!-- Inputs Container -->
         <div class="inputs-container">
-          <!-- Name Input (Register Only) -->
-          <div class="form-group-custom" *ngIf="isRegister()">
-            <label class="input-label">Nome da Escola / Administrador</label>
-            <mat-form-field appearance="outline" class="w-full">
-              <mat-icon matPrefix class="input-icon">business</mat-icon>
-              <input matInput formControlName="name" placeholder="Ex: Escola de Condução Luanda" required />
-            </mat-form-field>
-          </div>
-
           <!-- Email Input -->
           <div class="form-group-custom">
             <label class="input-label">E-mail Corporativo</label>
@@ -74,33 +55,21 @@
               </button>
             </mat-form-field>
           </div>
-
-          <!-- Role Selector (Register Only) -->
-          <div class="form-group-custom" *ngIf="isRegister()">
-            <label class="input-label">Perfil do Utilizador</label>
-            <mat-form-field appearance="outline" class="w-full">
-              <mat-icon matPrefix class="input-icon">people_outline</mat-icon>
-              <mat-select formControlName="role">
-                <mat-option [value]="1">Administrador</mat-option>
-                <mat-option [value]="2">Instrutor</mat-option>
-                <mat-option [value]="3">Rececionista</mat-option>
-              </mat-select>
-            </mat-form-field>
-          </div>
         </div>
 
         <!-- Submit Button -->
-        <button mat-flat-button type="submit" class="submit-btn" [disabled]="isRegister() ? registerForm.invalid : loginForm.invalid">
-          <span>{{ isRegister() ? 'Registar Escola' : 'Entrar na Plataforma' }}</span>
+        <button mat-flat-button type="submit" class="submit-btn" [disabled]="loginForm.invalid">
+          <span>Entrar na Plataforma</span>
           <mat-icon class="btn-arrow">arrow_forward</mat-icon>
         </button>
 
-        <!-- Toggle Mode Trigger -->
+        <!-- Link to Register -->
         <div class="toggle-mode">
-          <span>{{ isRegister() ? 'Já faz parte da nossa rede?' : 'Novo no FrotaGo?' }}</span>
-          <button type="button" mat-button class="toggle-action-btn" (click)="toggleMode()">
-            {{ isRegister() ? 'Iniciar Sessão' : 'Criar Conta Gratuita' }}
-          </button>
+          <span>Novo no FrotaGo?</span>
+          <a routerLink="/register" class="toggle-action-link">
+            Registar Escola de Condução
+            <mat-icon class="link-arrow">arrow_forward</mat-icon>
+          </a>
         </div>
       </form>
     </div>

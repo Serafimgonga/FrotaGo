@@ -12,7 +12,7 @@
   position: relative;
 }
 
-.login-container {
+.invitation-container {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -24,7 +24,6 @@
   z-index: 2;
 }
 
-/* Dynamic Glowing Background Blur Orbs */
 .glow {
   position: absolute;
   border-radius: 50%;
@@ -38,7 +37,7 @@
 .glow-1 {
   width: 500px;
   height: 500px;
-  background: radial-gradient(circle, rgba(59, 130, 246, 0.4) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.4) 0%, transparent 70%);
   top: -10%;
   left: -5%;
 }
@@ -46,7 +45,7 @@
 .glow-2 {
   width: 600px;
   height: 600px;
-  background: radial-gradient(circle, rgba(139, 92, 246, 0.3) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(59, 130, 246, 0.3) 0%, transparent 70%);
   bottom: -10%;
   right: -5%;
   animation-delay: 2s;
@@ -66,8 +65,7 @@
   100% { transform: translate(30px, -20px) scale(1.1); }
 }
 
-/* Premium Minimalist Centered Card */
-.login-card {
+.invitation-card {
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -88,7 +86,6 @@
   to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-/* Branding Section */
 .logo-wrapper {
   display: flex;
   align-items: center;
@@ -103,8 +100,8 @@
   justify-content: center;
   width: 42px;
   height: 42px;
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(139, 92, 246, 0.2) 100%);
-  border: 1px solid rgba(59, 130, 246, 0.3);
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(59, 130, 246, 0.2) 100%);
+  border: 1px solid rgba(16, 185, 129, 0.3);
   border-radius: 12px;
 }
 
@@ -112,7 +109,7 @@
   font-size: 20px;
   width: 20px;
   height: 20px;
-  color: #3b82f6;
+  color: #10b981;
 }
 
 .logo-text {
@@ -122,9 +119,8 @@
   color: #ffffff;
 }
 
-.logo-dot { color: #3b82f6; }
+.logo-dot { color: #10b981; }
 
-/* Form Section */
 .form-section {
   display: flex;
   flex-direction: column;
@@ -140,7 +136,7 @@
   font-size: 0.7rem;
   font-weight: 700;
   letter-spacing: 0.15em;
-  color: #3b82f6;
+  color: #10b981;
   display: block;
   margin-bottom: 0.5rem;
 }
@@ -185,7 +181,6 @@
 
 .w-full { width: 100%; }
 
-/* Form field styling overrides */
 ::ng-deep .form-group-custom .mat-mdc-text-field-wrapper {
   background-color: rgba(17, 24, 39, 0.45) !important;
   border-radius: 14px !important;
@@ -195,13 +190,13 @@
 
 ::ng-deep .form-group-custom .mat-mdc-text-field-wrapper:hover {
   background-color: rgba(17, 24, 39, 0.6) !important;
-  border-color: rgba(59, 130, 246, 0.3) !important;
+  border-color: rgba(16, 185, 129, 0.3) !important;
 }
 
 ::ng-deep .form-group-custom .mat-mdc-form-field.mat-focused .mat-mdc-text-field-wrapper {
   background-color: rgba(17, 24, 39, 0.8) !important;
-  border-color: #3b82f6 !important;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15) !important;
+  border-color: #10b981 !important;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15) !important;
 }
 
 ::ng-deep .form-group-custom .mdc-notched-outline__leading,
@@ -210,68 +205,42 @@
   border-color: transparent !important;
 }
 
-::ng-deep .form-group-custom .mat-mdc-input-element,
-::ng-deep .form-group-custom .mat-mdc-select-value {
+::ng-deep .form-group-custom .mat-mdc-input-element {
   color: #ffffff !important;
 }
 
-::ng-deep .form-group-custom .mat-mdc-select-arrow {
-  color: #9ca3af !important;
-}
-
-/* Prefix Icon Styling */
 ::ng-deep .form-group-custom .input-icon {
   color: #6b7280 !important;
   margin-right: 10px !important;
   font-size: 20px !important;
   width: 20px !important;
   height: 20px !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
   transition: color 0.25s ease !important;
 }
 
-/* Highlight prefix icon when input is focused */
 ::ng-deep .form-group-custom .mat-mdc-form-field.mat-focused .input-icon {
-  color: #3b82f6 !important;
+  color: #10b981 !important;
 }
 
-/* Password Toggle Icon Button Suffix */
 ::ng-deep .form-group-custom .password-toggle-btn {
   width: 32px !important;
   height: 32px !important;
-  padding: 0 !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
   color: #6b7280 !important;
   transition: color 0.25s ease !important;
-  margin-right: -4px !important;
 }
 
 ::ng-deep .form-group-custom .password-toggle-btn:hover {
   color: #ffffff !important;
 }
 
-::ng-deep .form-group-custom .password-toggle-btn .mat-icon {
-  font-size: 20px !important;
-  width: 20px !important;
-  height: 20px !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-}
-
-/* Submit Button */
 .submit-btn {
   height: 52px;
   border-radius: 14px !important;
   font-size: 0.95rem !important;
   font-weight: 600 !important;
-  background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%) !important;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
   color: #ffffff !important;
-  box-shadow: 0 8px 24px -6px rgba(59, 130, 246, 0.4) !important;
+  box-shadow: 0 8px 24px -6px rgba(16, 185, 129, 0.4) !important;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
   display: flex !important;
   align-items: center !important;
@@ -281,7 +250,6 @@
 
 .submit-btn:hover:not([disabled]) {
   transform: translateY(-2px);
-  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%) !important;
 }
 
 .btn-arrow {
@@ -297,14 +265,12 @@
   box-shadow: none !important;
 }
 
-/* Alerts */
 .alert {
   display: flex;
   gap: 0.75rem;
   padding: 1rem;
   border-radius: 14px;
   font-size: 0.85rem;
-  margin-bottom: 0.5rem;
   animation: slideAlert 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -313,11 +279,7 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
-.alert-content {
-  display: flex;
-  flex-direction: column;
-}
-
+.alert-content { display: flex; flex-direction: column; }
 .alert-title { font-weight: 700; }
 
 .error-alert {
@@ -332,40 +294,22 @@
   color: #a7f3d0;
 }
 
-/* Toggle Mode Link */
 .toggle-mode {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
   margin-top: 0.5rem;
   font-size: 0.85rem;
 }
 
 .toggle-mode span { color: #9ca3af; }
 
-.toggle-action-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3rem;
-  color: #60a5fa;
-  font-weight: 700;
+.toggle-action-btn {
+  color: #60a5fa !important;
+  font-weight: 700 !important;
   text-decoration: none;
-  transition: all 0.2s ease;
 }
 
-.toggle-action-link:hover {
-  color: #93bbfc;
-  text-decoration: underline;
-}
-
-.toggle-action-link .link-arrow {
-  font-size: 16px;
-  width: 16px;
-  height: 16px;
-}
-
-/* Minimalist Footer outside the Card */
 .auth-footer {
   margin-top: 2rem;
   font-size: 0.75rem;
@@ -374,9 +318,8 @@
   z-index: 10;
 }
 
-/* Responsive adjustment */
 @media (max-width: 480px) {
-  .login-card {
+  .invitation-card {
     padding: 2.25rem 1.5rem;
     border-radius: 24px;
   }

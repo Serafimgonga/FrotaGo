@@ -1,0 +1,167 @@
+<div class="approval-container">
+  <div class="glass-card" [class.expanded]="showPlanSelector()">
+    <div class="status-icon-wrapper warning-glow">
+      <mat-icon class="status-icon">hourglass_top</mat-icon>
+    </div>
+
+    <div class="card-header">
+      <div class="school-pill">
+        <mat-icon>school</mat-icon>
+        <span>{{ authService.currentUser()?.schoolName || 'Escola de Condução' }}</span>
+      </div>
+      <h2>Conta em Fase de Validação</h2>
+      <p class="subtitle">A sua escola foi registada com sucesso no FrotaGo ERP!</p>
+    </div>
+
+    <div class="info-box">
+      <div class="info-item">
+        <mat-icon class="info-icon">verified_user</mat-icon>
+        <div class="info-content">
+          <h4>Validação Legal (NIF & Licença INATRO)</h4>
+          <p>Para garantir a máxima conformidade legal do ecossistema, a equipa FrotaGo está a verificar a existência e a autenticidade dos dados da sua licença.</p>
+        </div>
+      </div>
+
+      <div class="info-item">
+        <mat-icon class="info-icon">mark_email_read</mat-icon>
+        <div class="info-content">
+          <h4>Notificação por Email</h4>
+          <p>Assim que a licença for aprovada, receberá uma notificação em <strong>{{ authService.currentUser()?.email }}</strong> e o seu Dashboard será totalmente desbloqueado.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="status-timeline">
+      <div class="timeline-step completed">
+        <mat-icon>check_circle</mat-icon>
+        <span>Registo de Escola & Proprietário</span>
+      </div>
+      <div class="timeline-line completed"></div>
+      <div class="timeline-step active">
+        <mat-icon>sync</mat-icon>
+        <span>Validação por FrotaGo (Pendente)</span>
+      </div>
+      <div class="timeline-line"></div>
+      <div class="timeline-step">
+        <mat-icon>lock</mat-icon>
+        <span>Acesso Total ao ERP</span>
+      </div>
+    </div>
+
+    <!-- Alert Messages -->
+    <div class="alert alert-success" *ngIf="successMessage()">
+      <mat-icon class="alert-icon">check_circle</mat-icon>
+      <span>{{ successMessage() }}</span>
+    </div>
+
+    <div class="alert alert-error" *ngIf="errorMessage()">
+      <mat-icon class="alert-icon">error_outline</mat-icon>
+      <span>{{ errorMessage() }}</span>
+    </div>
+
+    <!-- Plan Selection Drawer (Toggleable) -->
+    <div class="plan-change-section" *ngIf="showPlanSelector()">
+      <div class="plan-change-header">
+        <h3><mat-icon>workspace_premium</mat-icon> Alterar Subscrição / Plano SaaS</h3>
+        <p>Escolha um plano diferente para a sua escola enquanto aguarda a aprovação legal</p>
+      </div>
+
+      <div class="plans-grid">
+        <!-- Gratuito / Trial Plan -->
+        <div class="plan-card trial" [class.selected]="selectedPlan() === 'Gratuito'" (click)="selectPlan('Gratuito')">
+          <div class="trial-ribbon">Comece Grátis</div>
+          <div class="plan-header">
+            <span class="plan-name">Gratuito</span>
+            <span class="plan-badge" *ngIf="selectedPlan() === 'Gratuito'">Atual</span>
+          </div>
+          <div class="plan-price">
+            <span class="amount free-amount">Grátis</span>
+            <span class="period">por 30 dias</span>
+          </div>
+          <ul class="plan-features">
+            <li><mat-icon>check_circle</mat-icon> 1 instrutor</li>
+            <li><mat-icon>check_circle</mat-icon> Até 15 alunos</li>
+            <li><mat-icon>check_circle</mat-icon> 1 viatura</li>
+            <li class="feature-warning"><mat-icon>info</mat-icon> Sem GPS e Relatórios</li>
+          </ul>
+        </div>
+
+        <!-- Starter Plan -->
+        <div class="plan-card" [class.selected]="selectedPlan() === 'Starter'" (click)="selectPlan('Starter')">
+          <div class="plan-header">
+            <span class="plan-name">Starter</span>
+            <span class="plan-badge" *ngIf="selectedPlan() === 'Starter'">Atual</span>
+          </div>
+          <div class="plan-price">
+            <span class="currency">AOA</span>
+            <span class="amount">25.000</span>
+            <span class="period">/mês</span>
+          </div>
+          <ul class="plan-features">
+            <li><mat-icon>check_circle</mat-icon> Até 3 instrutores</li>
+            <li><mat-icon>check_circle</mat-icon> Até 100 alunos</li>
+            <li><mat-icon>check_circle</mat-icon> Até 3 viaturas</li>
+          </ul>
+        </div>
+
+        <!-- Professional Plan -->
+        <div class="plan-card featured" [class.selected]="selectedPlan() === 'Professional'" (click)="selectPlan('Professional')">
+          <div class="popular-ribbon">Mais Popular</div>
+          <div class="plan-header">
+            <span class="plan-name">Professional</span>
+            <span class="plan-badge" *ngIf="selectedPlan() === 'Professional'">Atual</span>
+          </div>
+          <div class="plan-price">
+            <span class="currency">AOA</span>
+            <span class="amount">55.000</span>
+            <span class="period">/mês</span>
+          </div>
+          <ul class="plan-features">
+            <li><mat-icon>check_circle</mat-icon> Até 15 instrutores</li>
+            <li><mat-icon>check_circle</mat-icon> Alunos ilimitados</li>
+            <li><mat-icon>check_circle</mat-icon> Rastreio GPS em Tempo Real</li>
+          </ul>
+        </div>
+
+        <!-- Enterprise Plan -->
+        <div class="plan-card" [class.selected]="selectedPlan() === 'Enterprise'" (click)="selectPlan('Enterprise')">
+          <div class="plan-header">
+            <span class="plan-name">Enterprise</span>
+            <span class="plan-badge" *ngIf="selectedPlan() === 'Enterprise'">Atual</span>
+          </div>
+          <div class="plan-price">
+            <span class="currency">AOA</span>
+            <span class="amount">120.000</span>
+            <span class="period">/mês</span>
+          </div>
+          <ul class="plan-features">
+            <li><mat-icon>check_circle</mat-icon> Múltiplas Unidades</li>
+            <li><mat-icon>check_circle</mat-icon> API & Integrações</li>
+            <li><mat-icon>check_circle</mat-icon> Suporte 24/7</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button mat-flat-button color="primary" class="btn-action" (click)="checkStatus()">
+        <mat-icon>refresh</mat-icon>
+        <span>Verificar Estado Novamente</span>
+      </button>
+
+      <button mat-stroked-button color="accent" class="btn-plan-toggle" (click)="togglePlanSelector()">
+        <mat-icon>{{ showPlanSelector() ? 'expand_less' : 'card_membership' }}</mat-icon>
+        <span>{{ showPlanSelector() ? 'Ocultar Planos' : 'Alterar Plano SaaS' }}</span>
+      </button>
+
+      <button mat-stroked-button class="btn-logout" (click)="logout()">
+        <mat-icon>logout</mat-icon>
+        <span>Terminar Sessão</span>
+      </button>
+    </div>
+
+    <div class="support-footer">
+      <p>Dúvidas ou urgência na aprovação? Contacte a nossa equipa via WhatsApp: <strong>+244 923 000 000</strong> ou email: <strong>suporte@frotago.ao</strong></p>
+    </div>
+  </div>
+</div>
