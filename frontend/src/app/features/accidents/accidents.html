@@ -1,0 +1,162 @@
+<div class="crud-page">
+  <div class="alert error-alert" *ngIf="errorMessage()">
+    <mat-icon>error_outline</mat-icon>
+    <span>{{ errorMessage() }}</span>
+    <button mat-icon-button (click)="errorMessage.set(null)" class="close-alert-btn"><mat-icon>close</mat-icon></button>
+  </div>
+  <div class="alert success-alert" *ngIf="successMessage()">
+    <mat-icon>check_circle_outline</mat-icon>
+    <span>{{ successMessage() }}</span>
+    <button mat-icon-button (click)="successMessage.set(null)" class="close-alert-btn"><mat-icon>close</mat-icon></button>
+  </div>
+
+  <div class="page-header">
+    <div class="title-desc">
+      <h2>Sinistros e Acidentes</h2>
+      <p>Registe acidentes da frota, acompanhe sinistros, custos estimados e resolução de seguros.</p>
+    </div>
+    <button mat-flat-button color="warn" class="add-btn" (click)="openCreateForm()">
+      <mat-icon>report_problem</mat-icon>
+      Registar Acidente
+    </button>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon icon-danger"><mat-icon>report</mat-icon></div>
+      <div class="stat-details">
+        <span class="stat-value">{{ totalAccidents() }}</span>
+        <span class="stat-label">Total de Acidentes</span>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon icon-maintenance"><mat-icon>hourglass_empty</mat-icon></div>
+      <div class="stat-details">
+        <span class="stat-value">{{ pendingAccidents() }}</span>
+        <span class="stat-label">Em Resolução</span>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon icon-cost"><mat-icon>payments</mat-icon></div>
+      <div class="stat-details">
+        <span class="stat-value">{{ totalEstimatedCost() | number:'1.0-0' }} Kz</span>
+        <span class="stat-label">Custo Estimado</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="drawer-backdrop" *ngIf="showForm()" (click)="closeForm()"></div>
+  <div class="drawer" [class.drawer-open]="showForm()">
+    <div class="drawer-header">
+      <h3>{{ editingId() ? 'Editar Acidente' : 'Registar Sinistro / Acidente' }}</h3>
+      <button mat-icon-button (click)="closeForm()"><mat-icon>close</mat-icon></button>
+    </div>
+    <form [formGroup]="accidentForm" (ngSubmit)="onSubmit()" class="drawer-form">
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Veículo Acidentado</mat-label>
+        <mat-select formControlName="vehicleId">
+          <mat-option *ngFor="let v of vehicles()" [value]="v.id">{{ v.brand }} {{ v.model }} ({{ v.licensePlate }})</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Data do Ocorrido</mat-label>
+        <input matInput type="date" formControlName="date" required />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Descrição do Acidente</mat-label>
+        <input matInput formControlName="description" placeholder="Ex: Colisão traseira na Via Expressa" required />
+      </mat-form-field>
+
+      <div class="form-row">
+        <mat-form-field appearance="outline">
+          <mat-label>Gravidade</mat-label>
+          <mat-select formControlName="severity">
+            <mat-option [value]="1">Leve</mat-option>
+            <mat-option [value]="2">Moderada</mat-option>
+            <mat-option [value]="3">Grave</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Custo Estimado (Kz)</mat-label>
+          <input matInput type="number" formControlName="estimatedCost" required />
+        </mat-form-field>
+      </div>
+
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Localização / Endereço</mat-label>
+        <input matInput formControlName="location" placeholder="Ex: Avenida Deolinda Rodrigues" required />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="w-full" *ngIf="editingId()">
+        <mat-label>Estado de Resolução</mat-label>
+        <mat-select formControlName="status">
+          <mat-option [value]="1">Pendente</mat-option>
+          <mat-option [value]="2">Em Resolução</mat-option>
+          <mat-option [value]="3">Resolvido</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <div class="drawer-footer">
+        <button type="button" mat-stroked-button (click)="closeForm()">Cancelar</button>
+        <button type="submit" mat-flat-button color="warn" [disabled]="accidentForm.invalid" class="submit-drawer-btn">
+          {{ editingId() ? 'Guardar' : 'Registar' }}
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <div class="table-card">
+    <div class="table-container" *ngIf="accidents().length > 0; else noData">
+      <table>
+        <thead>
+          <tr>
+            <th>Veículo</th>
+            <th>Data</th>
+            <th>Descrição</th>
+            <th>Localização</th>
+            <th>Gravidade</th>
+            <th>Custo Estimado</th>
+            <th>Estado</th>
+            <th style="text-align: right;">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let a of accidents()">
+            <td><span class="plate-badge" *ngIf="a.vehicle">{{ a.vehicle.licensePlate }}</span></td>
+            <td>{{ a.date | date:'dd/MM/yyyy' }}</td>
+            <td><span class="primary-text">{{ a.description }}</span></td>
+            <td>{{ a.location }}</td>
+            <td>
+              <span class="status-badge" [ngClass]="getSeverityClass(a.severity)">
+                {{ getSeverityLabel(a.severity) }}
+              </span>
+            </td>
+            <td>{{ a.estimatedCost | number:'1.0-0' }} Kz</td>
+            <td>
+              <span class="status-badge" [ngClass]="getStatusClass(a.status)">
+                {{ getStatusLabel(a.status) }}
+              </span>
+            </td>
+            <td style="text-align: right;">
+              <button mat-icon-button color="primary" (click)="openEditForm(a)" title="Editar">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button color="warn" (click)="deleteAccident(a)" title="Eliminar">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <ng-template #noData>
+      <div class="empty-state">
+        <mat-icon class="empty-icon">report_problem</mat-icon>
+        <h4>Nenhum acidente registado</h4>
+        <p>Registe eventuais sinistros ou colisões utilizando o botão acima.</p>
+      </div>
+    </ng-template>
+  </div>
+</div>
