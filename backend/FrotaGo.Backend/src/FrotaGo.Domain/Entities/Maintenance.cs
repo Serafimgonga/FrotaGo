@@ -17,4 +17,8 @@ public class Maintenance
     public MaintenanceStatus Status { get; set; }
     public int Odometer { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+    // Multi-tenancy
+    public Guid SchoolId { get; set; }
+    public School? School { get; set; }
 }

@@ -22,11 +22,16 @@ public class CreateLessonCommandHandler : IRequestHandler<CreateLessonCommand, G
 {
     private readonly ILessonRepository _lessonRepository;
     private readonly IVehicleRepository _vehicleRepository;
+    private readonly ITenantProvider _tenantProvider;
 
-    public CreateLessonCommandHandler(ILessonRepository lessonRepository, IVehicleRepository vehicleRepository)
+    public CreateLessonCommandHandler(
+        ILessonRepository lessonRepository,
+        IVehicleRepository vehicleRepository,
+        ITenantProvider tenantProvider)
     {
         _lessonRepository = lessonRepository;
         _vehicleRepository = vehicleRepository;
+        _tenantProvider = tenantProvider;
     }
 
     public async Task<Guid> Handle(CreateLessonCommand request, CancellationToken cancellationToken)
@@ -36,6 +41,8 @@ public class CreateLessonCommandHandler : IRequestHandler<CreateLessonCommand, G
         {
             throw new Exception("Este veículo não está disponível para aulas práticas de condução.");
         }
+
+        var schoolId = _tenantProvider.SchoolId ?? vehicle?.SchoolId ?? throw new Exception("Não foi possível determinar a escola.");
 
         // Verificar sobreposição de horários
         var existingLessons = await _lessonRepository.GetAllAsync();
@@ -70,6 +77,7 @@ public class CreateLessonCommandHandler : IRequestHandler<CreateLessonCommand, G
         var lesson = new Lesson
         {
             Id = Guid.NewGuid(),
+            SchoolId = schoolId,
             StudentId = request.StudentId,
             InstructorId = request.InstructorId,
             VehicleId = request.VehicleId,

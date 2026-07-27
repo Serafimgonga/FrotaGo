@@ -22,23 +22,29 @@ public record CreateVehicleCommand(
 public class CreateVehicleCommandHandler : IRequestHandler<CreateVehicleCommand, Guid>
 {
     private readonly IVehicleRepository _vehicleRepository;
+    private readonly ITenantProvider _tenantProvider;
 
-    public CreateVehicleCommandHandler(IVehicleRepository vehicleRepository)
+    public CreateVehicleCommandHandler(IVehicleRepository vehicleRepository, ITenantProvider tenantProvider)
     {
         _vehicleRepository = vehicleRepository;
+        _tenantProvider = tenantProvider;
     }
 
     public async Task<Guid> Handle(CreateVehicleCommand request, CancellationToken cancellationToken)
     {
+        var schoolId = _tenantProvider.SchoolId 
+            ?? throw new Exception("Não foi possível determinar a escola do utilizador.");
+
         var existing = await _vehicleRepository.GetByLicensePlateAsync(request.LicensePlate);
         if (existing != null)
         {
-            throw new Exception("Veículo com esta matrícula já existe.");
+            throw new Exception("Veículo com esta matrícula já existe nesta escola.");
         }
 
         var vehicle = new Vehicle
         {
             Id = Guid.NewGuid(),
+            SchoolId = schoolId,
             LicensePlate = request.LicensePlate,
             Brand = request.Brand,
             Model = request.Model,

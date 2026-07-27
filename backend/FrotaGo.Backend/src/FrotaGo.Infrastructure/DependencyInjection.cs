@@ -17,6 +17,9 @@ public static class DependencyInjection
                 configuration.GetConnectionString("DefaultConnection"),
                 b => b.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName)));
 
+        services.AddHttpContextAccessor();
+        services.AddScoped<ITenantProvider, HttpContextTenantProvider>();
+
         services.AddScoped<ISchoolRepository, SchoolRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IVehicleRepository, VehicleRepository>();

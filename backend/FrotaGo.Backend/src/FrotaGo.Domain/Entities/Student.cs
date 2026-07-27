@@ -25,4 +25,8 @@ public class Student
 
     public bool IsActive { get; set; } = true;
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+    // Multi-tenancy
+    public Guid SchoolId { get; set; }
+    public School? School { get; set; }
 }

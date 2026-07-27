@@ -20,17 +20,28 @@ public record CreateDocumentCommand(
 public class CreateDocumentCommandHandler : IRequestHandler<CreateDocumentCommand, Guid>
 {
     private readonly IVehicleDocumentRepository _documentRepository;
+    private readonly IVehicleRepository _vehicleRepository;
+    private readonly ITenantProvider _tenantProvider;
 
-    public CreateDocumentCommandHandler(IVehicleDocumentRepository documentRepository)
+    public CreateDocumentCommandHandler(
+        IVehicleDocumentRepository documentRepository,
+        IVehicleRepository vehicleRepository,
+        ITenantProvider tenantProvider)
     {
         _documentRepository = documentRepository;
+        _vehicleRepository = vehicleRepository;
+        _tenantProvider = tenantProvider;
     }
 
     public async Task<Guid> Handle(CreateDocumentCommand request, CancellationToken cancellationToken)
     {
+        var vehicle = await _vehicleRepository.GetByIdAsync(request.VehicleId);
+        var schoolId = _tenantProvider.SchoolId ?? vehicle?.SchoolId ?? throw new Exception("Não foi possível determinar a escola do veículo.");
+
         var document = new VehicleDocument
         {
             Id = Guid.NewGuid(),
+            SchoolId = schoolId,
             VehicleId = request.VehicleId,
             Type = request.Type,
             DocumentNumber = request.DocumentNumber,

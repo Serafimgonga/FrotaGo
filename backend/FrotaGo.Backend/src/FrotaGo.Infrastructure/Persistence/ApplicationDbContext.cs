@@ -1,3 +1,4 @@
+using FrotaGo.Application.Interfaces;
 using FrotaGo.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -5,9 +6,12 @@ namespace FrotaGo.Infrastructure.Persistence;
 
 public class ApplicationDbContext : DbContext
 {
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+    private readonly ITenantProvider _tenantProvider;
+
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, ITenantProvider tenantProvider)
         : base(options)
     {
+        _tenantProvider = tenantProvider;
     }
 
     public DbSet<School> Schools => Set<School>();
@@ -96,18 +100,29 @@ public class ApplicationDbContext : DbContext
                 .OnDelete(DeleteBehavior.Cascade);
         });
 
+        // ─── ENTIDADES OPERACIONAIS COM ISOLAMENTO MULTI-TENANT ───────────────
+
         modelBuilder.Entity<Vehicle>(entity =>
         {
             entity.HasKey(e => e.Id);
             entity.Property(e => e.LicensePlate).IsRequired().HasMaxLength(20);
-            entity.HasIndex(e => e.LicensePlate).IsUnique();
+            // Índice único por escola: duas escolas podem ter matrículas iguais
+            entity.HasIndex(e => new { e.SchoolId, e.LicensePlate }).IsUnique();
             entity.Property(e => e.Brand).IsRequired().HasMaxLength(50);
             entity.Property(e => e.Model).IsRequired().HasMaxLength(50);
             entity.Property(e => e.Chassis).IsRequired().HasMaxLength(50);
-            entity.HasIndex(e => e.Chassis).IsUnique();
+            entity.HasIndex(e => new { e.SchoolId, e.Chassis }).IsUnique();
             entity.Property(e => e.Fuel).HasConversion<int>();
             entity.Property(e => e.Transmission).HasConversion<int>();
             entity.Property(e => e.Status).HasConversion<int>();
+
+            entity.HasOne(e => e.School)
+                .WithMany(s => s.Vehicles)
+                .HasForeignKey(e => e.SchoolId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Global Query Filter — filtra automaticamente por escola em todas as queries
+            entity.HasQueryFilter(e => _tenantProvider.SchoolId == null || e.SchoolId == _tenantProvider.SchoolId);
         });
 
         modelBuilder.Entity<Instructor>(entity =>
@@ -117,6 +132,13 @@ public class ApplicationDbContext : DbContext
             entity.Property(e => e.Email).IsRequired().HasMaxLength(150);
             entity.Property(e => e.PhoneNumber).IsRequired().HasMaxLength(20);
             entity.Property(e => e.LicenseNumber).IsRequired().HasMaxLength(50);
+
+            entity.HasOne(e => e.School)
+                .WithMany(s => s.Instructors)
+                .HasForeignKey(e => e.SchoolId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasQueryFilter(e => _tenantProvider.SchoolId == null || e.SchoolId == _tenantProvider.SchoolId);
         });
 
         modelBuilder.Entity<Student>(entity =>
@@ -127,6 +149,13 @@ public class ApplicationDbContext : DbContext
             entity.Property(e => e.PhoneNumber).IsRequired().HasMaxLength(20);
             entity.Property(e => e.IdentityCardNumber).IsRequired().HasMaxLength(50);
             entity.Property(e => e.Category).HasConversion<int>();
+
+            entity.HasOne(e => e.School)
+                .WithMany(s => s.Students)
+                .HasForeignKey(e => e.SchoolId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasQueryFilter(e => _tenantProvider.SchoolId == null || e.SchoolId == _tenantProvider.SchoolId);
         });
 
         modelBuilder.Entity<Lesson>(entity =>
@@ -135,6 +164,13 @@ public class ApplicationDbContext : DbContext
             entity.Property(e => e.Topic).IsRequired().HasMaxLength(150);
             entity.Property(e => e.Status).HasConversion<int>();
             entity.Property(e => e.Observations).HasMaxLength(500);
+
+            entity.HasOne(e => e.School)
+                .WithMany()
+                .HasForeignKey(e => e.SchoolId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasQueryFilter(e => _tenantProvider.SchoolId == null || e.SchoolId == _tenantProvider.SchoolId);
 
             entity.HasOne(e => e.Student)
                 .WithMany()
@@ -164,6 +200,13 @@ public class ApplicationDbContext : DbContext
                 .WithMany()
                 .HasForeignKey(e => e.VehicleId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.School)
+                .WithMany()
+                .HasForeignKey(e => e.SchoolId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            entity.HasQueryFilter(e => _tenantProvider.SchoolId == null || e.SchoolId == _tenantProvider.SchoolId);
         });
 
         modelBuilder.Entity<FuelRecord>(entity =>
@@ -178,6 +221,13 @@ public class ApplicationDbContext : DbContext
                 .WithMany()
                 .HasForeignKey(e => e.VehicleId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.School)
+                .WithMany()
+                .HasForeignKey(e => e.SchoolId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            entity.HasQueryFilter(e => _tenantProvider.SchoolId == null || e.SchoolId == _tenantProvider.SchoolId);
         });
 
         modelBuilder.Entity<VehicleDocument>(entity =>
@@ -191,6 +241,35 @@ public class ApplicationDbContext : DbContext
                 .WithMany()
                 .HasForeignKey(e => e.VehicleId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.School)
+                .WithMany()
+                .HasForeignKey(e => e.SchoolId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            entity.HasQueryFilter(e => _tenantProvider.SchoolId == null || e.SchoolId == _tenantProvider.SchoolId);
+        });
+
+        modelBuilder.Entity<Accident>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Description).IsRequired().HasMaxLength(500);
+            entity.Property(e => e.Location).HasMaxLength(200);
+            entity.Property(e => e.EstimatedCost).HasPrecision(18, 2);
+            entity.Property(e => e.Severity).HasConversion<int>();
+            entity.Property(e => e.Status).HasConversion<int>();
+
+            entity.HasOne(e => e.Vehicle)
+                .WithMany()
+                .HasForeignKey(e => e.VehicleId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.School)
+                .WithMany()
+                .HasForeignKey(e => e.SchoolId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            entity.HasQueryFilter(e => _tenantProvider.SchoolId == null || e.SchoolId == _tenantProvider.SchoolId);
         });
 
         modelBuilder.Entity<TrackingSession>(entity =>

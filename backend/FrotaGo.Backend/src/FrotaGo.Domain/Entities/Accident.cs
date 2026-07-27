@@ -28,4 +28,8 @@ public class Accident
     public string Location { get; set; } = string.Empty;
     public AccidentStatus Status { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+    // Multi-tenancy
+    public Guid SchoolId { get; set; }
+    public School? School { get; set; }
 }

@@ -19,17 +19,23 @@ public record CreateStudentCommand(
 public class CreateStudentCommandHandler : IRequestHandler<CreateStudentCommand, Guid>
 {
     private readonly IStudentRepository _studentRepository;
+    private readonly ITenantProvider _tenantProvider;
 
-    public CreateStudentCommandHandler(IStudentRepository studentRepository)
+    public CreateStudentCommandHandler(IStudentRepository studentRepository, ITenantProvider tenantProvider)
     {
         _studentRepository = studentRepository;
+        _tenantProvider = tenantProvider;
     }
 
     public async Task<Guid> Handle(CreateStudentCommand request, CancellationToken cancellationToken)
     {
+        var schoolId = _tenantProvider.SchoolId 
+            ?? throw new Exception("Não foi possível determinar a escola do utilizador.");
+
         var student = new Student
         {
             Id = Guid.NewGuid(),
+            SchoolId = schoolId,
             Name = request.Name,
             Email = request.Email,
             PhoneNumber = request.PhoneNumber,

@@ -16,4 +16,8 @@ public class Vehicle
     public TransmissionType Transmission { get; set; }        // Câmbio
     public VehicleStatus Status { get; set; }                 // Estado
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+    // Multi-tenancy
+    public Guid SchoolId { get; set; }
+    public School? School { get; set; }
 }

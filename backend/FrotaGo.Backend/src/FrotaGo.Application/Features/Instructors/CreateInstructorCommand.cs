@@ -17,17 +17,23 @@ public record CreateInstructorCommand(
 public class CreateInstructorCommandHandler : IRequestHandler<CreateInstructorCommand, Guid>
 {
     private readonly IInstructorRepository _instructorRepository;
+    private readonly ITenantProvider _tenantProvider;
 
-    public CreateInstructorCommandHandler(IInstructorRepository instructorRepository)
+    public CreateInstructorCommandHandler(IInstructorRepository instructorRepository, ITenantProvider tenantProvider)
     {
         _instructorRepository = instructorRepository;
+        _tenantProvider = tenantProvider;
     }
 
     public async Task<Guid> Handle(CreateInstructorCommand request, CancellationToken cancellationToken)
     {
+        var schoolId = _tenantProvider.SchoolId 
+            ?? throw new Exception("Não foi possível determinar a escola do utilizador.");
+
         var instructor = new Instructor
         {
             Id = Guid.NewGuid(),
+            SchoolId = schoolId,
             Name = request.Name,
             Email = request.Email,
             PhoneNumber = request.PhoneNumber,

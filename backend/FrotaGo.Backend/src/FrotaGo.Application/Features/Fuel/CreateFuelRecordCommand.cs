@@ -21,11 +21,13 @@ public class CreateFuelRecordCommandHandler : IRequestHandler<CreateFuelRecordCo
 {
     private readonly IFuelRecordRepository _fuelRecordRepository;
     private readonly IVehicleRepository _vehicleRepository;
+    private readonly ITenantProvider _tenantProvider;
 
-    public CreateFuelRecordCommandHandler(IFuelRecordRepository fuelRecordRepository, IVehicleRepository vehicleRepository)
+    public CreateFuelRecordCommandHandler(IFuelRecordRepository fuelRecordRepository, IVehicleRepository vehicleRepository, ITenantProvider tenantProvider)
     {
         _fuelRecordRepository = fuelRecordRepository;
         _vehicleRepository = vehicleRepository;
+        _tenantProvider = tenantProvider;
     }
 
     public async Task<Guid> Handle(CreateFuelRecordCommand request, CancellationToken cancellationToken)
@@ -44,9 +46,12 @@ public class CreateFuelRecordCommandHandler : IRequestHandler<CreateFuelRecordCo
         vehicle.Odometer = request.Odometer;
         await _vehicleRepository.UpdateAsync(vehicle);
 
+        var schoolId = _tenantProvider.SchoolId ?? vehicle.SchoolId;
+
         var fuelRecord = new FuelRecord
         {
             Id = Guid.NewGuid(),
+            SchoolId = schoolId,
             VehicleId = request.VehicleId,
             Litres = request.Litres,
             CostPerLitre = request.CostPerLitre,

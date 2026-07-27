@@ -22,11 +22,13 @@ public class CreateMaintenanceCommandHandler : IRequestHandler<CreateMaintenance
 {
     private readonly IMaintenanceRepository _maintenanceRepository;
     private readonly IVehicleRepository _vehicleRepository;
+    private readonly ITenantProvider _tenantProvider;
 
-    public CreateMaintenanceCommandHandler(IMaintenanceRepository maintenanceRepository, IVehicleRepository vehicleRepository)
+    public CreateMaintenanceCommandHandler(IMaintenanceRepository maintenanceRepository, IVehicleRepository vehicleRepository, ITenantProvider tenantProvider)
     {
         _maintenanceRepository = maintenanceRepository;
         _vehicleRepository = vehicleRepository;
+        _tenantProvider = tenantProvider;
     }
 
     public async Task<Guid> Handle(CreateMaintenanceCommand request, CancellationToken cancellationToken)
@@ -54,9 +56,12 @@ public class CreateMaintenanceCommandHandler : IRequestHandler<CreateMaintenance
 
         await _vehicleRepository.UpdateAsync(vehicle);
 
+        var schoolId = _tenantProvider.SchoolId ?? vehicle.SchoolId;
+
         var maintenance = new FrotaGo.Domain.Entities.Maintenance
         {
             Id = Guid.NewGuid(),
+            SchoolId = schoolId,
             VehicleId = request.VehicleId,
             Description = request.Description,
             Cost = request.Cost,

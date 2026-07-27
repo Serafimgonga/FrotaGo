@@ -11,4 +11,8 @@ public class Instructor
     public string LicenseNumber { get; set; } = string.Empty;
     public bool IsActive { get; set; } = true;
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+    // Multi-tenancy
+    public Guid SchoolId { get; set; }
+    public School? School { get; set; }
 }
