@@ -7,10 +7,12 @@ import { AuthService } from '../../features/authentication/services/auth.service
 describe('DashboardLayoutComponent', () => {
   let component: DashboardLayoutComponent;
   let fixture: ComponentFixture<DashboardLayoutComponent>;
-  let authService: jasmine.SpyObj<AuthService>;
+  let authService: any;
 
   beforeEach(async () => {
-    authService = jasmine.createSpyObj('AuthService', ['logout']);
+    authService = {
+    logout: vi.fn()
+  } as any;
 
     await TestBed.configureTestingModule({
       imports: [DashboardLayoutComponent, RouterTestingModule],

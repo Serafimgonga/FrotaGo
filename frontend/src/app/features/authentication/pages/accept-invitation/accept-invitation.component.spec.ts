@@ -9,11 +9,13 @@ import { UserService } from '../../../users/services/user.service';
 describe('AcceptInvitationComponent', () => {
   let component: AcceptInvitationComponent;
   let fixture: ComponentFixture<AcceptInvitationComponent>;
-  let userService: jasmine.SpyObj<UserService>;
+  let userService: any;
 
   beforeEach(async () => {
-    userService = jasmine.createSpyObj('UserService', ['acceptInvitation']);
-    userService.acceptInvitation.and.returnValue(of({ success: true, message: 'Sucesso' }));
+    userService = {
+    acceptInvitation: vi.fn()
+  } as any;
+    userService.acceptInvitation.mockReturnValue(of({ success: true, message: 'Sucesso' }));
 
     await TestBed.configureTestingModule({
       imports: [AcceptInvitationComponent, RouterTestingModule],

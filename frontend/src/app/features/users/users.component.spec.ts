@@ -8,12 +8,16 @@ import { AuthService, User } from '../authentication/services/auth.service';
 describe('UsersComponent', () => {
   let component: UsersComponent;
   let fixture: ComponentFixture<UsersComponent>;
-  let userService: jasmine.SpyObj<UserService>;
-  let authService: Partial<AuthService>;
+  let userService: any;
+  let authService: any;
 
   beforeEach(async () => {
-    userService = jasmine.createSpyObj('UserService', ['getUsers', 'inviteUser', 'toggleUserStatus']);
-    userService.getUsers.and.returnValue(of([]));
+    userService = {
+    getUsers: vi.fn(),
+    inviteUser: vi.fn(),
+    toggleUserStatus: vi.fn()
+  } as any;
+    userService.getUsers.mockReturnValue(of([]));
     authService = { currentUser: () => ({ schoolId: 'school-1' } as User) } as any;
 
     await TestBed.configureTestingModule({

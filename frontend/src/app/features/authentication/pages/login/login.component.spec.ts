@@ -8,11 +8,13 @@ import { AuthService } from '../../services/auth.service';
 describe('LoginComponent', () => {
   let component: LoginComponent;
   let fixture: ComponentFixture<LoginComponent>;
-  let authService: jasmine.SpyObj<AuthService>;
+  let authService: any;
 
   beforeEach(async () => {
-    authService = jasmine.createSpyObj('AuthService', ['login']);
-    authService.login.and.returnValue(of({ token: 'x', userId: '1', name: 'Test', email: 'test@test.com', role: 'User', permissions: [] }));
+    authService = {
+    login: vi.fn()
+  } as any;
+    authService.login.mockReturnValue(of({ token: 'x', userId: '1', name: 'Test', email: 'test@test.com', role: 'User', permissions: [] }));
 
     await TestBed.configureTestingModule({
       imports: [LoginComponent, RouterTestingModule],
@@ -29,7 +31,7 @@ describe('LoginComponent', () => {
   });
 
   it('should create a login form with email and password controls', () => {
-    expect(component.loginForm.contains('email')).toBeTrue();
-    expect(component.loginForm.contains('password')).toBeTrue();
+    expect(component.loginForm.contains('email')).toBe(true);
+    expect(component.loginForm.contains('password')).toBe(true);
   });
 });

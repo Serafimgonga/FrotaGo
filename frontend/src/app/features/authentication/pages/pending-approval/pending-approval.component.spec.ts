@@ -8,11 +8,14 @@ import { of } from 'rxjs';
 describe('PendingApprovalComponent', () => {
   let component: PendingApprovalComponent;
   let fixture: ComponentFixture<PendingApprovalComponent>;
-  let authService: jasmine.SpyObj<AuthService>;
+  let authService: any;
 
   beforeEach(async () => {
-    authService = jasmine.createSpyObj('AuthService', ['logout', 'updateSchoolPlan']);
-    authService.updateSchoolPlan.and.returnValue(of({}));
+    authService = {
+    logout: vi.fn(),
+    updateSchoolPlan: vi.fn()
+  } as any;
+    authService.updateSchoolPlan.mockReturnValue(of({}));
 
     await TestBed.configureTestingModule({
       imports: [PendingApprovalComponent, RouterTestingModule],

@@ -8,11 +8,13 @@ import { AuthService } from '../../services/auth.service';
 describe('RegisterComponent', () => {
   let component: RegisterComponent;
   let fixture: ComponentFixture<RegisterComponent>;
-  let authService: jasmine.SpyObj<AuthService>;
+  let authService: any;
 
   beforeEach(async () => {
-    authService = jasmine.createSpyObj('AuthService', ['registerSchool']);
-    authService.registerSchool.and.returnValue(of({ token: 'x', userId: '1', name: 'Test', email: 'test@test.com', role: 'SchoolOwner', permissions: [] }));
+    authService = {
+    registerSchool: vi.fn()
+  } as any;
+    authService.registerSchool.mockReturnValue(of({ token: 'x', userId: '1', name: 'Test', email: 'test@test.com', role: 'SchoolOwner', permissions: [] }));
 
     await TestBed.configureTestingModule({
       imports: [RegisterComponent, RouterTestingModule],

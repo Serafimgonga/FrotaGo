@@ -8,12 +8,17 @@ import { AuthService } from '../authentication/services/auth.service';
 describe('VehiclesComponent', () => {
   let component: VehiclesComponent;
   let fixture: ComponentFixture<VehiclesComponent>;
-  let vehicleService: jasmine.SpyObj<VehicleService>;
-  let authService: Partial<AuthService>;
+  let vehicleService: any;
+  let authService: any;
 
   beforeEach(async () => {
-    vehicleService = jasmine.createSpyObj('VehicleService', ['getVehicles', 'createVehicle', 'updateVehicle', 'deleteVehicle']);
-    vehicleService.getVehicles.and.returnValue(of([]));
+    vehicleService = {
+    getVehicles: vi.fn(),
+    createVehicle: vi.fn(),
+    updateVehicle: vi.fn(),
+    deleteVehicle: vi.fn()
+  } as any;
+    vehicleService.getVehicles.mockReturnValue(of([]));
     authService = { currentUser: () => ({ schoolId: 'school-1' }) } as any;
 
     await TestBed.configureTestingModule({

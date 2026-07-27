@@ -3,19 +3,30 @@ import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { of } from 'rxjs';
 import { FuelComponent } from './fuel.component';
 import { FuelService } from './services/fuel.service';
+import { VehicleService } from '../vehicles/services/vehicle.service';
 
 describe('FuelComponent', () => {
   let component: FuelComponent;
   let fixture: ComponentFixture<FuelComponent>;
-  let fuelService: jasmine.SpyObj<FuelService>;
+  let fuelService: any;
+  let vehicleService: any;
 
   beforeEach(async () => {
-    fuelService = jasmine.createSpyObj('FuelService', ['getFuelRecords']);
-    fuelService.getFuelRecords.and.returnValue(of([]));
+    fuelService = {
+    getFuelRecords: vi.fn()
+  } as any;
+    vehicleService = {
+    getVehicles: vi.fn()
+  } as any;
+    fuelService.getFuelRecords.mockReturnValue(of([]));
+    vehicleService.getVehicles.mockReturnValue(of([]));
 
     await TestBed.configureTestingModule({
       imports: [FuelComponent],
-      providers: [{ provide: FuelService, useValue: fuelService }],
+      providers: [
+        { provide: FuelService, useValue: fuelService },
+        { provide: VehicleService, useValue: vehicleService }
+      ],
       schemas: [NO_ERRORS_SCHEMA]
     }).compileComponents();
 

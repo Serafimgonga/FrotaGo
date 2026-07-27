@@ -9,14 +9,18 @@ import { AuthService } from '../authentication/services/auth.service';
 describe('TrackingComponent', () => {
   let component: TrackingComponent;
   let fixture: ComponentFixture<TrackingComponent>;
-  let vehicleService: jasmine.SpyObj<VehicleService>;
-  let authService: jasmine.SpyObj<AuthService>;
+  let vehicleService: any;
+  let authService: any;
 
   beforeEach(async () => {
-    vehicleService = jasmine.createSpyObj('VehicleService', ['getVehicles']);
-    vehicleService.getVehicles.and.returnValue(of([]));
-    authService = jasmine.createSpyObj('AuthService', ['token']);
-    authService.token.and.returnValue(null);
+    vehicleService = {
+    getVehicles: vi.fn()
+  } as any;
+    vehicleService.getVehicles.mockReturnValue(of([]));
+    authService = {
+    token: vi.fn()
+  } as any;
+    authService.token.mockReturnValue(null);
 
     await TestBed.configureTestingModule({
       imports: [TrackingComponent, HttpClientTestingModule],

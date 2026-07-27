@@ -9,20 +9,22 @@ import { VehicleService } from '../vehicles/services/vehicle.service';
 describe('AccidentsComponent', () => {
   let component: AccidentsComponent;
   let fixture: ComponentFixture<AccidentsComponent>;
-  let accidentService: jasmine.SpyObj<AccidentService>;
-  let vehicleService: jasmine.SpyObj<VehicleService>;
+  let accidentService: any;
+  let vehicleService: any;
 
   beforeEach(async () => {
-    accidentService = jasmine.createSpyObj('AccidentService', [
-      'getAccidents',
-      'createAccident',
-      'updateAccident',
-      'deleteAccident'
-    ]);
-    vehicleService = jasmine.createSpyObj('VehicleService', ['getVehicles']);
+    accidentService = {
+    getAccidents: vi.fn(),
+    createAccident: vi.fn(),
+    updateAccident: vi.fn(),
+    deleteAccident: vi.fn()
+  } as any;
+    vehicleService = {
+    getVehicles: vi.fn()
+  } as any;
 
-    accidentService.getAccidents.and.returnValue(of([]));
-    vehicleService.getVehicles.and.returnValue(of([]));
+    accidentService.getAccidents.mockReturnValue(of([]));
+    vehicleService.getVehicles.mockReturnValue(of([]));
 
     await TestBed.configureTestingModule({
       imports: [AccidentsComponent],

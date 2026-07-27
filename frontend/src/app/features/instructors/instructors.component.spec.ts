@@ -7,11 +7,13 @@ import { InstructorService } from './services/instructor.service';
 describe('InstructorsComponent', () => {
   let component: InstructorsComponent;
   let fixture: ComponentFixture<InstructorsComponent>;
-  let instructorService: jasmine.SpyObj<InstructorService>;
+  let instructorService: any;
 
   beforeEach(async () => {
-    instructorService = jasmine.createSpyObj('InstructorService', ['getInstructors']);
-    instructorService.getInstructors.and.returnValue(of([]));
+    instructorService = {
+    getInstructors: vi.fn()
+  } as any;
+    instructorService.getInstructors.mockReturnValue(of([]));
 
     await TestBed.configureTestingModule({
       imports: [InstructorsComponent],

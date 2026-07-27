@@ -12,21 +12,35 @@ import { AuthService } from '../authentication/services/auth.service';
 describe('LessonsComponent', () => {
   let component: LessonsComponent;
   let fixture: ComponentFixture<LessonsComponent>;
-  let lessonService: jasmine.SpyObj<LessonService>;
-  let instructorService: jasmine.SpyObj<InstructorService>;
-  let studentService: jasmine.SpyObj<StudentService>;
-  let vehicleService: jasmine.SpyObj<VehicleService>;
-  let authService: Partial<AuthService>;
+  let lessonService: any;
+  let instructorService: any;
+  let studentService: any;
+  let vehicleService: any;
+  let authService: any;
 
   beforeEach(async () => {
-    lessonService = jasmine.createSpyObj('LessonService', ['getLessons', 'getAvailableResources', 'autoDispatch', 'startLesson', 'createLesson', 'updateLesson', 'deleteLesson']);
-    instructorService = jasmine.createSpyObj('InstructorService', ['getInstructors']);
-    studentService = jasmine.createSpyObj('StudentService', ['getStudents']);
-    vehicleService = jasmine.createSpyObj('VehicleService', ['getVehicles']);
-    lessonService.getLessons.and.returnValue(of([]));
-    instructorService.getInstructors.and.returnValue(of([]));
-    studentService.getStudents.and.returnValue(of([]));
-    vehicleService.getVehicles.and.returnValue(of([]));
+    lessonService = {
+    getLessons: vi.fn(),
+    getAvailableResources: vi.fn(),
+    autoDispatch: vi.fn(),
+    startLesson: vi.fn(),
+    createLesson: vi.fn(),
+    updateLesson: vi.fn(),
+    deleteLesson: vi.fn()
+  } as any;
+    instructorService = {
+    getInstructors: vi.fn()
+  } as any;
+    studentService = {
+    getStudents: vi.fn()
+  } as any;
+    vehicleService = {
+    getVehicles: vi.fn()
+  } as any;
+    lessonService.getLessons.mockReturnValue(of([]));
+    instructorService.getInstructors.mockReturnValue(of([]));
+    studentService.getStudents.mockReturnValue(of([]));
+    vehicleService.getVehicles.mockReturnValue(of([]));
     authService = { currentUser: () => ({ schoolId: 'school-1' }) } as any;
 
     await TestBed.configureTestingModule({
