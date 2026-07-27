@@ -34,7 +34,6 @@ export class LandingComponent implements OnInit, OnDestroy, AfterViewInit {
       vehicles: '28 Viaturas',
       instructors: '12 Instrutores',
       students: '450+ Alunos Ativos',
-      legalBadge: '100% INATRO OK',
       highlight: 'Gestão Completa de Frota e Sedes'
     },
     {
@@ -44,7 +43,6 @@ export class LandingComponent implements OnInit, OnDestroy, AfterViewInit {
       vehicles: '18 Viaturas',
       instructors: '8 Instrutores',
       students: '280+ Alunos Ativos',
-      legalBadge: 'GPS Ao Vivo',
       highlight: 'Monitorização de Aulas Práticas'
     },
     {
@@ -54,7 +52,6 @@ export class LandingComponent implements OnInit, OnDestroy, AfterViewInit {
       vehicles: '22 Viaturas',
       instructors: '10 Instrutores',
       students: '320+ Alunos Ativos',
-      legalBadge: '-38% Combustível',
       highlight: 'Controlo de Abastecimento e Peças'
     }
   ];
