@@ -49,7 +49,6 @@ jobs:
 
             echo "🔍 Testando API..."
 
-            curl --fail http://localhost/api/healthz
-
+            curl --fail http://localhost/healthz
 
             echo "✅ Deploy concluído com sucesso!"
