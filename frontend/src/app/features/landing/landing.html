@@ -1,231 +1,253 @@
-<div class="landing-container">
+<div class="landing-page">
   <!-- Header -->
   <header class="header" [class.scrolled]="scrolled()">
-    <div class="header-content">
+    <div class="header-inner">
       <div class="logo-area" (click)="scrollTo('hero')">
-        <span class="logo-icon"><img src="logo.png" alt="FrotaGo Logo" style="width: 28px; height: 28px; object-fit: contain;" /></span>
-        <span class="logo-text">Frota<span>Go</span></span>
+        <img src="logo.png" alt="FrotaGo" class="brand-logo-img" />
       </div>
+
       <nav class="desktop-nav">
-        <a (click)="scrollTo('hero')">Início</a>
+        <a (click)="scrollTo('schools')">Escolas</a>
         <a (click)="scrollTo('features')">Funcionalidades</a>
-        <a (click)="scrollTo('workflow')">Como Funciona</a>
-        <a (click)="scrollTo('testimonials')">Depoimentos</a>
+        <a (click)="scrollTo('pricing')">Planos</a>
+        <a (click)="scrollTo('faq')">FAQ</a>
       </nav>
+
       <div class="cta-area">
-        <button class="btn btn-secondary" (click)="navigateToLogin()">Entrar</button>
-        <button class="btn btn-primary" (click)="navigateToLogin()">Criar Conta</button>
+        <button class="btn btn-outline" (click)="navigateToLogin()">Entrar</button>
+        <button class="btn btn-solid" (click)="navigateToRegister()">Criar Conta</button>
       </div>
-      <button class="mobile-menu-btn" (click)="toggleMenu()">
+
+      <button class="mobile-toggle" (click)="toggleMenu()" aria-label="Menu">
         <span class="material-icons">{{ menuOpen() ? 'close' : 'menu' }}</span>
       </button>
     </div>
   </header>
 
-  <!-- Mobile Nav Overlay -->
+  <!-- Mobile Nav -->
   <div class="mobile-nav" [class.open]="menuOpen()">
-    <a (click)="scrollTo('hero')">Início</a>
+    <a (click)="scrollTo('schools')">Escolas</a>
     <a (click)="scrollTo('features')">Funcionalidades</a>
-    <a (click)="scrollTo('workflow')">Como Funciona</a>
-    <a (click)="scrollTo('testimonials')">Depoimentos</a>
+    <a (click)="scrollTo('pricing')">Planos</a>
+    <a (click)="scrollTo('faq')">FAQ</a>
     <div class="mobile-cta">
-      <button class="btn btn-secondary w-full" (click)="navigateToLogin()">Entrar</button>
-      <button class="btn btn-primary w-full" (click)="navigateToLogin()">Criar Conta</button>
+      <button class="btn btn-outline w-full" (click)="navigateToLogin()">Entrar</button>
+      <button class="btn btn-solid w-full" (click)="navigateToRegister()">Criar Conta</button>
     </div>
   </div>
 
-  <!-- Hero Section -->
-  <section id="hero" class="hero-section">
-    <div class="grid-bg"></div>
-    <div class="blob blob-1"></div>
-    <div class="blob blob-2"></div>
-    
-    <div class="hero-content">
-      <span class="badge-tag"><span class="material-icons">verified_user</span> Conformidade Legal Angolana</span>
-      <h1>Simplifique a Gestão da sua <span>Escola de Condução</span></h1>
-      <p class="hero-subtitle">
-        Controle veículos, instrutores, agendamento de aulas práticas, combustíveis e manutenção numa plataforma web premium concebida especialmente para o mercado de Angola.
-      </p>
-      <div class="hero-buttons">
-        <button class="btn btn-lg btn-primary" (click)="navigateToLogin()">
-          Iniciar Teste Gratuito <span class="material-icons">arrow_forward</span>
+  <!-- Hero — foto real: instrutor e aluno dentro do carro -->
+  <section id="hero" class="hero">
+    <div class="hero-bg" style="background-image: url('assets/images/landing/instructor_lesson.png')"></div>
+    <div class="hero-overlay"></div>
+
+    <div class="hero-inner reveal-bottom">
+
+
+      <h1>Gestão De Frotas em tempo <span class="accent">Real</span></h1>
+      <p>Controle veículos, instrutores, aulas práticas e conformidade INATRO numa só plataforma.</p>
+      <div class="hero-actions">
+        <button class="btn btn-solid btn-lg" (click)="navigateToRegister()">
+          Experimentar 30 Dias Grátis
+          <span class="material-icons">east</span>
         </button>
-        <button class="btn btn-lg btn-secondary" (click)="scrollTo('features')">
-          Ver Funcionalidades
+        <button class="btn btn-outline btn-lg" (click)="scrollTo('schools')">
+          Ver Escolas Parceiras
         </button>
       </div>
+    </div>
+  </section>
 
-      <!-- Glassmorphic Mockup -->
-      <div class="mockup-container">
-        <div class="mockup-frame">
-          <div class="mockup-header">
-            <span class="dot"></span>
-            <span class="dot"></span>
-            <span class="dot"></span>
-            <span class="mockup-title">FrotaGo ERP Dashboard</span>
+  <!-- Números -->
+  <section class="numbers reveal-bottom">
+    <div class="numbers-inner">
+      <div class="num-item" *ngFor="let stat of stats; let i = index" [style.transition-delay]="(i * 0.08) + 's'">
+        <strong>{{ stat.value }}{{ stat.suffix }}</strong>
+        <span>{{ stat.label }}</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Escolas Parceiras — 2 Colunas (1 Grande Destaque + 2 Menores Empilhados) -->
+  <section id="schools" class="schools">
+    <div class="section-title reveal-bottom">
+      <h2>Escolas de Condução que Confiam no FrotaGo</h2>
+      <p>Resultados reais em Angola.</p>
+    </div>
+
+    <div class="schools-bento" *ngIf="drivingSchools.length >= 3">
+
+      <!-- Coluna Esquerda: Card Destaque Grande -->
+      <div class="school-card school-card--featured reveal-left">
+        <div class="school-photo">
+          <img [src]="drivingSchools[0].image" [alt]="drivingSchools[0].name" />
+        </div>
+        <div class="school-info">
+          <div class="school-header-meta">
+            <h3>{{ drivingSchools[0].name }}</h3>
+            <span class="school-legal-tag">{{ drivingSchools[0].legalBadge }}</span>
           </div>
-          <div class="mockup-body">
-            <!-- Simulated UI Grid -->
-            <div class="sim-sidebar">
-              <div class="sim-logo"><img src="logo.png" alt="FrotaGo" style="width: 24px; height: 24px; object-fit: contain;" /></div>
-              <div class="sim-nav-item active"><span class="material-icons">dashboard</span></div>
-              <div class="sim-nav-item"><span class="material-icons">people</span></div>
-              <div class="sim-nav-item"><span class="material-icons">event</span></div>
-              <div class="sim-nav-item"><span class="material-icons">build</span></div>
-              <div class="sim-nav-item"><span class="material-icons">local_gas_station</span></div>
+          <span class="school-loc">
+            <span class="material-icons">place</span> {{ drivingSchools[0].location }}
+          </span>
+          <p>{{ drivingSchools[0].highlight }}</p>
+          <div class="school-pills">
+            <span>{{ drivingSchools[0].vehicles }}</span>
+            <span>{{ drivingSchools[0].instructors }}</span>
+            <span>{{ drivingSchools[0].students }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Coluna Direita: 2 Cards Menores Empilhados -->
+      <div class="schools-bento-col">
+        <div class="school-card school-card--small reveal-right" style="transition-delay:.1s">
+          <div class="school-photo">
+            <img [src]="drivingSchools[1].image" [alt]="drivingSchools[1].name" />
+          </div>
+          <div class="school-info">
+            <div class="school-header-meta">
+              <h3>{{ drivingSchools[1].name }}</h3>
+              <span class="school-legal-tag">{{ drivingSchools[1].legalBadge }}</span>
             </div>
-            <div class="sim-main">
-              <div class="sim-topbar"></div>
-              <div class="sim-cards">
-                <div class="sim-card">
-                  <div class="sim-card-header"><span class="material-icons" style="color: #6366f1;">directions_car</span></div>
-                  <div class="sim-card-val">24</div>
-                  <div class="sim-card-lbl">Veículos Disponíveis</div>
-                </div>
-                <div class="sim-card">
-                  <div class="sim-card-header"><span class="material-icons" style="color: #22d3ee;">build</span></div>
-                  <div class="sim-card-val">3</div>
-                  <div class="sim-card-lbl">Em Manutenção</div>
-                </div>
-                <div class="sim-card">
-                  <div class="sim-card-header"><span class="material-icons" style="color: #f59e0b;">warning</span></div>
-                  <div class="sim-card-val">2</div>
-                  <div class="sim-card-lbl">Documentos a Expirar</div>
-                </div>
-              </div>
-              <div class="sim-table">
-                <div class="sim-table-row header-row">
-                  <div>Veículo</div><div>Ocupação</div><div>Status</div>
-                </div>
-                <div class="sim-table-row">
-                  <div>Toyota Hilux (LD-12-34)</div><div>90%</div><div class="badge green">Disponível</div>
-                </div>
-                <div class="sim-table-row">
-                  <div>Hyundai i20 (LD-77-88)</div><div>—</div><div class="badge blue">Em Aula</div>
-                </div>
-              </div>
+            <span class="school-loc">
+              <span class="material-icons">place</span> {{ drivingSchools[1].location }}
+            </span>
+            <p>{{ drivingSchools[1].highlight }}</p>
+            <div class="school-pills">
+              <span>{{ drivingSchools[1].vehicles }}</span>
+              <span>{{ drivingSchools[1].instructors }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="school-card school-card--small reveal-right" style="transition-delay:.2s">
+          <div class="school-photo">
+            <img [src]="drivingSchools[2].image" [alt]="drivingSchools[2].name" />
+          </div>
+          <div class="school-info">
+            <div class="school-header-meta">
+              <h3>{{ drivingSchools[2].name }}</h3>
+              <span class="school-legal-tag">{{ drivingSchools[2].legalBadge }}</span>
+            </div>
+            <span class="school-loc">
+              <span class="material-icons">place</span> {{ drivingSchools[2].location }}
+            </span>
+            <p>{{ drivingSchools[2].highlight }}</p>
+            <div class="school-pills">
+              <span>{{ drivingSchools[2].vehicles }}</span>
+              <span>{{ drivingSchools[2].students }}</span>
             </div>
           </div>
         </div>
       </div>
+
     </div>
   </section>
 
-  <!-- Metrics Section -->
-  <section class="metrics-section">
-    <div class="metrics-grid">
-      <div class="metric-card" *ngFor="let stat of stats">
-        <div class="metric-icon"><span class="material-icons">{{ stat.icon }}</span></div>
-        <div class="metric-value">{{ stat.value }}{{ stat.suffix }}</div>
-        <div class="metric-label">{{ stat.label }}</div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Features Bento Section -->
-  <section id="features" class="features-section">
-    <div class="section-header">
-      <span class="section-tag">Funcionalidades</span>
-      <h2>Gestão Inteligente de Ponta a Ponta</h2>
-      <p>Desenvolvemos soluções para resolver os desafios reais do dia-a-dia de uma escola de condução.</p>
+  <!-- Funcionalidades — layout alternado com foto -->
+  <section id="features" class="features">
+    <div class="section-title reveal-bottom">
+      <h2>Funcionalidades</h2>
+      <p>Tudo o que precisa para gerir a sua frota.</p>
     </div>
 
-    <div class="features-grid">
-      <div class="feature-card" *ngFor="let f of features">
-        <div class="feature-icon-wrapper" [style.background-color]="f.color + '20'" [style.color]="f.color">
-          <span class="material-icons">{{ f.icon }}</span>
+    <div class="feat-grid">
+      <div class="feat-card" *ngFor="let f of features; let i = index" [ngClass]="{
+          'reveal-left': i % 2 === 0,
+          'reveal-right': i % 2 === 1
+        }" [style.transition-delay]="(i * 0.06) + 's'">
+        <div class="feat-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor" class="svg-icon">
+            <path stroke-linecap="round" stroke-linejoin="round" [attr.d]="f.svgPath" />
+          </svg>
         </div>
-        <h3>{{ f.title }}</h3>
-        <p>{{ f.description }}</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- How It Works Section -->
-  <section id="workflow" class="workflow-section">
-    <div class="section-header">
-      <span class="section-tag">Workflow</span>
-      <h2>Como Funciona o FrotaGo?</h2>
-      <p>Instale de forma simples e organize os seus processos operacionais de forma totalmente intuitiva.</p>
-    </div>
-
-    <div class="workflow-grid">
-      <div class="workflow-card" *ngFor="let w of workflow">
-        <div class="workflow-step">{{ w.step }}</div>
-        <div class="workflow-icon"><span class="material-icons">{{ w.icon }}</span></div>
-        <h3>{{ w.title }}</h3>
-        <p>{{ w.description }}</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- Testimonials Section -->
-  <section id="testimonials" class="testimonials-section">
-    <div class="section-header">
-      <span class="section-tag">Depoimentos</span>
-      <h2>O que dizem os nossos clientes</h2>
-      <p>Escolas de condução de norte a sul de Angola já utilizam a nossa plataforma.</p>
-    </div>
-
-    <div class="testimonials-grid">
-      <div class="testimonial-card" *ngFor="let t of testimonials">
-        <div class="testimonial-header">
-          <div class="avatar">{{ t.avatar }}</div>
-          <div class="user-meta">
-            <h4>{{ t.name }}</h4>
-            <span>{{ t.role }}</span>
-          </div>
-        </div>
-        <p class="testimonial-text">"{{ t.text }}"</p>
-        <div class="stars">
-          <span class="material-icons" *ngFor="let i of [1,2,3,4,5]">star</span>
+        <div class="feat-text">
+          <h3>{{ f.title }}</h3>
+          <p>{{ f.description }}</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Final CTA Section -->
-  <section class="final-cta-section">
-    <div class="cta-glow"></div>
-    <div class="cta-content">
-      <h2>Pronto para elevar a gestão da sua escola de condução?</h2>
-      <p>Junte-se a dezenas de escolas de condução em Angola que já digitalizaram a sua operação com o FrotaGo.</p>
-      <button class="btn btn-lg btn-primary" (click)="navigateToLogin()">
-        Criar Minha Conta Agora <span class="material-icons">arrow_forward</span>
-      </button>
+  <!-- Foto destaque instrutor -->
+  <section class="photo-break reveal-scale">
+    <div class="photo-break-inner">
+      <img src="assets/images/landing/instructor_lesson.png" alt="Aula prática de condução em Luanda" />
+      <div class="photo-caption">
+        <h3>Aulas Práticas Monitorizadas</h3>
+        <p>Acompanhe os instrutores e alunos em tempo real com rastreamento GPS integrado.</p>
+      </div>
     </div>
+  </section>
+
+  <!-- Planos -->
+  <section id="pricing" class="pricing">
+    <div class="section-title reveal-bottom">
+      <h2>Planos</h2>
+      <p>Sem custos ocultos. Cancele quando quiser.</p>
+      <div class="period-toggle">
+        <button [class.active]="pricingPeriod() === 'monthly'" (click)="setPricingPeriod('monthly')">Mensal</button>
+        <button [class.active]="pricingPeriod() === 'annual'" (click)="setPricingPeriod('annual')">Anual (-20%)</button>
+      </div>
+    </div>
+
+    <div class="pricing-row">
+      <div class="plan-card" *ngFor="let plan of pricingPlans; let i = index" [class.featured]="plan.popular" [ngClass]="{
+          'reveal-left': i === 0,
+          'reveal-bottom': i === 1,
+          'reveal-right': i === 2
+        }" [style.transition-delay]="(i * 0.1) + 's'">
+        <div class="plan-ribbon" *ngIf="plan.popular">Recomendado</div>
+        <h3>{{ plan.name }}</h3>
+        <p class="plan-desc">{{ plan.description }}</p>
+        <div class="plan-price">
+          <strong>{{ pricingPeriod() === 'monthly' ? plan.priceMonthly : plan.priceAnnual }}</strong>
+          <span>{{ plan.period }}</span>
+        </div>
+        <ul>
+          <li *ngFor="let feat of plan.features">
+            <span class="material-icons li-check">check</span> {{ feat }}
+          </li>
+        </ul>
+        <button class="btn w-full" [ngClass]="plan.popular ? 'btn-solid' : 'btn-outline'"
+          (click)="navigateToRegister()">
+          {{ plan.buttonText }}
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq" class="faq">
+    <div class="section-title reveal-bottom">
+      <h2>Perguntas Frequentes</h2>
+    </div>
+    <div class="faq-list reveal-bottom">
+      <div class="faq-item" *ngFor="let item of faqs; let i = index" [class.open]="openFaqIndex() === i">
+        <button (click)="toggleFaq(i)">
+          <span>{{ item.question }}</span>
+          <span class="material-icons">{{ openFaqIndex() === i ? 'expand_less' : 'expand_more' }}</span>
+        </button>
+        <div class="faq-body" *ngIf="openFaqIndex() === i">
+          <p>{{ item.answer }}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Final -->
+  <section class="cta-final reveal-scale">
+    <h2>Digitalize a gestão da sua escola de condução</h2>
+    <button class="btn btn-solid btn-lg" (click)="navigateToRegister()">
+      Criar Conta Grátis <span class="material-icons">east</span>
+    </button>
   </section>
 
   <!-- Footer -->
-  <footer class="footer">
-    <div class="footer-content">
-      <div class="footer-left">
-        <div class="logo-area">
-          <span class="logo-icon"><img src="logo.png" alt="FrotaGo Logo" style="width: 28px; height: 28px; object-fit: contain;" /></span>
-          <span class="logo-text">Frota<span>Go</span></span>
-        </div>
-        <p>A primeira plataforma ERP inteligente de gestão de frota integrada e conformidade legal para escolas de condução em Angola.</p>
-      </div>
-      <div class="footer-links">
-        <div>
-          <h4>Produto</h4>
-          <a (click)="scrollTo('features')">Funcionalidades</a>
-          <a (click)="scrollTo('workflow')">Como Funciona</a>
-        </div>
-        <div>
-          <h4>Legal</h4>
-          <a href="#">Termos de Uso</a>
-          <a href="#">Privacidade</a>
-        </div>
-        <div>
-          <h4>Contacto</h4>
-          <a href="#">suporte&#64;frotago.co.ao</a>
-          <a href="#">Luanda, Angola</a>
-        </div>
-      </div>
-    </div>
-    <div class="footer-bottom">
-      <p>&copy; 2026 FrotaGo ERP. Feito com amor em Angola. Todos os direitos reservados.</p>
-    </div>
+  <footer class="site-footer">
+    <img src="logo.png" alt="FrotaGo" class="footer-logo" />
+    <p>Plataforma de gestão de frota para escolas de condução em Angola 🇦🇴</p>
+    <span class="footer-copy">&copy; 2026 FrotaGo. Todos os direitos reservados.</span>
   </footer>
 </div>

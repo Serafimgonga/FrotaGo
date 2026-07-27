@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
@@ -252,6 +252,33 @@ namespace FrotaGo.Infrastructure.Migrations
                 name: "IX_Accidents_SchoolId",
                 table: "Accidents",
                 column: "SchoolId");
+
+            migrationBuilder.Sql(@"
+                UPDATE ""FuelRecords"" fr SET ""SchoolId"" = v.""SchoolId"" FROM ""Vehicles"" v WHERE fr.""VehicleId"" = v.""Id"" AND (fr.""SchoolId"" = '00000000-0000-0000-0000-000000000000' OR fr.""SchoolId"" IS NULL) AND v.""SchoolId"" != '00000000-0000-0000-0000-000000000000';
+                UPDATE ""Maintenances"" m SET ""SchoolId"" = v.""SchoolId"" FROM ""Vehicles"" v WHERE m.""VehicleId"" = v.""Id"" AND (m.""SchoolId"" = '00000000-0000-0000-0000-000000000000' OR m.""SchoolId"" IS NULL) AND v.""SchoolId"" != '00000000-0000-0000-0000-000000000000';
+                UPDATE ""VehicleDocuments"" vd SET ""SchoolId"" = v.""SchoolId"" FROM ""Vehicles"" v WHERE vd.""VehicleId"" = v.""Id"" AND (vd.""SchoolId"" = '00000000-0000-0000-0000-000000000000' OR vd.""SchoolId"" IS NULL) AND v.""SchoolId"" != '00000000-0000-0000-0000-000000000000';
+                UPDATE ""Accidents"" a SET ""SchoolId"" = v.""SchoolId"" FROM ""Vehicles"" v WHERE a.""VehicleId"" = v.""Id"" AND (a.""SchoolId"" = '00000000-0000-0000-0000-000000000000' OR a.""SchoolId"" IS NULL) AND v.""SchoolId"" != '00000000-0000-0000-0000-000000000000';
+                UPDATE ""Lessons"" l SET ""SchoolId"" = v.""SchoolId"" FROM ""Vehicles"" v WHERE l.""VehicleId"" = v.""Id"" AND (l.""SchoolId"" = '00000000-0000-0000-0000-000000000000' OR l.""SchoolId"" IS NULL) AND v.""SchoolId"" != '00000000-0000-0000-0000-000000000000';
+                UPDATE ""Lessons"" l SET ""SchoolId"" = s.""SchoolId"" FROM ""Students"" s WHERE l.""StudentId"" = s.""Id"" AND (l.""SchoolId"" = '00000000-0000-0000-0000-000000000000' OR l.""SchoolId"" IS NULL) AND s.""SchoolId"" != '00000000-0000-0000-0000-000000000000';
+
+                UPDATE ""FuelRecords"" SET ""SchoolId"" = (SELECT ""Id"" FROM ""Schools"" LIMIT 1) WHERE ""SchoolId"" = '00000000-0000-0000-0000-000000000000' AND EXISTS (SELECT 1 FROM ""Schools"");
+                UPDATE ""Maintenances"" SET ""SchoolId"" = (SELECT ""Id"" FROM ""Schools"" LIMIT 1) WHERE ""SchoolId"" = '00000000-0000-0000-0000-000000000000' AND EXISTS (SELECT 1 FROM ""Schools"");
+                UPDATE ""VehicleDocuments"" SET ""SchoolId"" = (SELECT ""Id"" FROM ""Schools"" LIMIT 1) WHERE ""SchoolId"" = '00000000-0000-0000-0000-000000000000' AND EXISTS (SELECT 1 FROM ""Schools"");
+                UPDATE ""Accidents"" SET ""SchoolId"" = (SELECT ""Id"" FROM ""Schools"" LIMIT 1) WHERE ""SchoolId"" = '00000000-0000-0000-0000-000000000000' AND EXISTS (SELECT 1 FROM ""Schools"");
+                UPDATE ""Lessons"" SET ""SchoolId"" = (SELECT ""Id"" FROM ""Schools"" LIMIT 1) WHERE ""SchoolId"" = '00000000-0000-0000-0000-000000000000' AND EXISTS (SELECT 1 FROM ""Schools"");
+                UPDATE ""Instructors"" SET ""SchoolId"" = (SELECT ""Id"" FROM ""Schools"" LIMIT 1) WHERE ""SchoolId"" = '00000000-0000-0000-0000-000000000000' AND EXISTS (SELECT 1 FROM ""Schools"");
+                UPDATE ""Students"" SET ""SchoolId"" = (SELECT ""Id"" FROM ""Schools"" LIMIT 1) WHERE ""SchoolId"" = '00000000-0000-0000-0000-000000000000' AND EXISTS (SELECT 1 FROM ""Schools"");
+                UPDATE ""Vehicles"" SET ""SchoolId"" = (SELECT ""Id"" FROM ""Schools"" LIMIT 1) WHERE ""SchoolId"" = '00000000-0000-0000-0000-000000000000' AND EXISTS (SELECT 1 FROM ""Schools"");
+
+                DELETE FROM ""FuelRecords"" WHERE ""SchoolId"" NOT IN (SELECT ""Id"" FROM ""Schools"");
+                DELETE FROM ""Maintenances"" WHERE ""SchoolId"" NOT IN (SELECT ""Id"" FROM ""Schools"");
+                DELETE FROM ""VehicleDocuments"" WHERE ""SchoolId"" NOT IN (SELECT ""Id"" FROM ""Schools"");
+                DELETE FROM ""Accidents"" WHERE ""SchoolId"" NOT IN (SELECT ""Id"" FROM ""Schools"");
+                DELETE FROM ""Lessons"" WHERE ""SchoolId"" NOT IN (SELECT ""Id"" FROM ""Schools"");
+                DELETE FROM ""Instructors"" WHERE ""SchoolId"" NOT IN (SELECT ""Id"" FROM ""Schools"");
+                DELETE FROM ""Students"" WHERE ""SchoolId"" NOT IN (SELECT ""Id"" FROM ""Schools"");
+                DELETE FROM ""Vehicles"" WHERE ""SchoolId"" NOT IN (SELECT ""Id"" FROM ""Schools"");
+            ");
 
             migrationBuilder.AddForeignKey(
                 name: "FK_Accidents_Schools_SchoolId",

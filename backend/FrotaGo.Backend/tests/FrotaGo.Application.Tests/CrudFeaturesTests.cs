@@ -96,14 +96,21 @@ public class FakeVehicleDocumentRepository : IVehicleDocumentRepository
     public Task DeleteAsync(VehicleDocument document) { VehicleDocuments.Remove(document); return Task.CompletedTask; }
 }
 
+public class FakeTenantProvider : ITenantProvider
+{
+    public Guid? SchoolId { get; set; } = Guid.NewGuid();
+}
+
 public class CrudFeaturesTests
 {
+    private readonly FakeTenantProvider _tenantProvider = new();
+
     [Fact]
     public async Task CreateInstructor_ShouldAddInstructorToRepository()
     {
         // Arrange
         var repo = new FakeInstructorRepository();
-        var handler = new CreateInstructorCommandHandler(repo);
+        var handler = new CreateInstructorCommandHandler(repo, _tenantProvider);
         var command = new CreateInstructorCommand("Joao Instructor", "joao@frotago.com", "912345678", "LD-12345");
 
         // Act
@@ -122,7 +129,7 @@ public class CrudFeaturesTests
     {
         // Arrange
         var repo = new FakeStudentRepository();
-        var handler = new CreateStudentCommandHandler(repo);
+        var handler = new CreateStudentCommandHandler(repo, _tenantProvider);
         var command = new CreateStudentCommand("Maria Student", "maria@frotago.com", "911111111", "00123456AB789", LicenseCategory.B);
 
         // Act
@@ -147,7 +154,7 @@ public class CrudFeaturesTests
         var vehicle = new Vehicle { Id = vehicleId, LicensePlate = "LD-00-11-AA", Odometer = 1000, Status = VehicleStatus.Disponivel };
         await vehicleRepo.AddAsync(vehicle);
 
-        var handler = new CreateLessonCommandHandler(lessonRepo, vehicleRepo);
+        var handler = new CreateLessonCommandHandler(lessonRepo, vehicleRepo, _tenantProvider);
         var command = new CreateLessonCommand(Guid.NewGuid(), Guid.NewGuid(), vehicleId, DateTime.UtcNow, 60, "Controle de Embraiagem", "Primeira aula");
 
         // Act
@@ -171,7 +178,7 @@ public class CrudFeaturesTests
         var vehicle = new Vehicle { Id = vehicleId, LicensePlate = "LD-00-11-AA", Odometer = 1000, Status = VehicleStatus.EmManutencao };
         await vehicleRepo.AddAsync(vehicle);
 
-        var handler = new CreateLessonCommandHandler(lessonRepo, vehicleRepo);
+        var handler = new CreateLessonCommandHandler(lessonRepo, vehicleRepo, _tenantProvider);
         var command = new CreateLessonCommand(Guid.NewGuid(), Guid.NewGuid(), vehicleId, DateTime.UtcNow, 60, "Controle de Embraiagem", "Primeira aula");
 
         // Act & Assert
@@ -190,7 +197,7 @@ public class CrudFeaturesTests
         var vehicle = new Vehicle { Id = vehicleId, LicensePlate = "LD-00-11-AA", Odometer = 50000, Status = VehicleStatus.Disponivel };
         await vehicleRepo.AddAsync(vehicle);
 
-        var handler = new CreateMaintenanceCommandHandler(maintRepo, vehicleRepo);
+        var handler = new CreateMaintenanceCommandHandler(maintRepo, vehicleRepo, _tenantProvider);
         var command = new CreateMaintenanceCommand(vehicleId, "Revisao Geral", 150000, DateTime.UtcNow, MaintenanceType.Preventiva, MaintenanceStatus.EmProgresso, 50500);
 
         // Act
@@ -215,7 +222,7 @@ public class CrudFeaturesTests
         var vehicle = new Vehicle { Id = vehicleId, LicensePlate = "LD-00-11-AA", Odometer = 50000, Status = VehicleStatus.Disponivel };
         await vehicleRepo.AddAsync(vehicle);
 
-        var handler = new CreateMaintenanceCommandHandler(maintRepo, vehicleRepo);
+        var handler = new CreateMaintenanceCommandHandler(maintRepo, vehicleRepo, _tenantProvider);
         var command = new CreateMaintenanceCommand(vehicleId, "Revisao Geral", 150000, DateTime.UtcNow, MaintenanceType.Preventiva, MaintenanceStatus.EmProgresso, 49999);
 
         // Act & Assert
@@ -234,7 +241,7 @@ public class CrudFeaturesTests
         var vehicle = new Vehicle { Id = vehicleId, LicensePlate = "LD-00-11-AA", Odometer = 12000, Status = VehicleStatus.Disponivel };
         await vehicleRepo.AddAsync(vehicle);
 
-        var handler = new CreateFuelRecordCommandHandler(fuelRepo, vehicleRepo);
+        var handler = new CreateFuelRecordCommandHandler(fuelRepo, vehicleRepo, _tenantProvider);
         var command = new CreateFuelRecordCommand(vehicleId, 45, 300, 13500, 12200, DateTime.UtcNow, "Pumangol");
 
         // Act
@@ -258,7 +265,7 @@ public class CrudFeaturesTests
         var vehicle = new Vehicle { Id = vehicleId, LicensePlate = "LD-00-11-AA", Odometer = 12000, Status = VehicleStatus.Disponivel };
         await vehicleRepo.AddAsync(vehicle);
 
-        var handler = new CreateFuelRecordCommandHandler(fuelRepo, vehicleRepo);
+        var handler = new CreateFuelRecordCommandHandler(fuelRepo, vehicleRepo, _tenantProvider);
         var command = new CreateFuelRecordCommand(vehicleId, 45, 300, 13500, 11999, DateTime.UtcNow, "Pumangol");
 
         // Act & Assert
@@ -270,8 +277,9 @@ public class CrudFeaturesTests
     public async Task CreateDocument_ShouldAddDocumentToRepository()
     {
         // Arrange
-        var repo = new FakeVehicleDocumentRepository();
-        var handler = new CreateDocumentCommandHandler(repo);
+        var docRepo = new FakeVehicleDocumentRepository();
+        var vehicleRepo = new FakeVehicleRepository();
+        var handler = new CreateDocumentCommandHandler(docRepo, vehicleRepo, _tenantProvider);
         var command = new CreateDocumentCommand(Guid.NewGuid(), DocumentType.Seguro, "SEG-12345", DateTime.UtcNow.AddDays(365), DateTime.UtcNow, null);
 
         // Act
@@ -279,7 +287,7 @@ public class CrudFeaturesTests
 
         // Assert
         Assert.NotEqual(Guid.Empty, resultId);
-        var doc = await repo.GetByIdAsync(resultId);
+        var doc = await docRepo.GetByIdAsync(resultId);
         Assert.NotNull(doc);
         Assert.Equal("SEG-12345", doc.DocumentNumber);
         Assert.Equal(DocumentType.Seguro, doc.Type);
