@@ -93,3 +93,5 @@ inspecções, DUA e licenças, alertas e relatórios prontos para auditoria.
 - Especificação de Onboarding & Multi-Tenancy está em `docs/onboarding-and-tenancy.md`.
 - Especificação da API mobile está em `docs/mobile-api-spec.md`.
 - Decisões de arquitectura de tracking/GPS estão em `docs/architecture-decisions.md`.
+- Arquitectura cross-platform e desenvolvimento móvel Linux/Windows estão em `docs/mobile-architecture-crossplatform.md`.
+

@@ -68,31 +68,32 @@ O fluxo principal do instrutor ao utilizar a aplicação mobile é o seguinte:
 
 ---
 
-## 4. Estrutura do Projeto MAUI (`mobile/`)
+## 4. Estrutura do Projeto Móvel (`mobile/`) — Desacoplado Core / MAUI
 
-A aplicação móvel será organizada sob o diretório `/mobile` da seguinte forma:
+A aplicação móvel é organizada sob a pasta `/mobile`, desacoplando a lógica de negócio (`FrotaGo.Mobile.Core` em C# Standard, compilável no Debian Linux) da interface gráfica (`FrotaGo.Mobile` em .NET MAUI, desenvolvida no Windows):
 
 ```
 mobile/
-└── FrotaGo.Driver/
-    ├── Features/                  # Funcionalidades verticais (Vertical Slices)
-    │   ├── Authentication/        # Login, Logout e gestão de tokens JWT
-    │   ├── Tracking/              # Gestão da sessão de rastreamento e GPS
-    │   ├── Lessons/               # Listagem e controlo de aulas práticas
-    │   └── Vehicles/              # Seleção de veículos da escola
-    ├── Services/                  # Serviços transversais da aplicação
-    │   ├── LocationService.cs     # Obtenção de coordenadas nativas GPS
-    │   ├── TrackingService.cs     # Controlo lógico da sessão de envio
-    │   ├── SignalRService.cs      # Conexão em tempo real com o Hub da API
-    │   └── ApiService.cs          # Cliente HTTP comum para a API do FrotaGo
-    ├── Models/                    # Entidades e DTOs locais
-    ├── ViewModels/                # Lógica de apresentação (MVVM)
-    ├── Views/                     # Páginas XAML da aplicação
-    ├── Resources/                 # Imagens, fontes, estilos globais
-    └── Platforms/                 # Configurações específicas de plataforma
-        ├── Android/               # Serviços em Background, Manifest e Permissões
-        └── iOS/                   # Info.plist e Background Capabilities
+├── FrotaGo.Mobile.Core/          # Biblioteca de Classes C# (.net8.0) — Compilável no Linux
+│   ├── DTOs/                     # Objetos de transferência de dados (API REST)
+│   ├── Enums/                    # Enumerações de domínio (LessonStatus, VehicleStatus, etc.)
+│   ├── Helpers/                  # Utilitários e constantes de endpoints
+│   ├── Interfaces/               # Contratos de serviços (IAuthService, ITrackingService, IGpsService)
+│   ├── Models/                   # Entidades e modelos de domínio móvel
+│   ├── Services/                 # Lógica de negócio, clientes HTTP e clientes SignalR
+│   └── ViewModels/               # Lógica de apresentação MVVM (CommunityToolkit.Mvvm)
+│
+└── FrotaGo.Mobile/               # Aplicação .NET MAUI — Executada/Testada no Windows
+    ├── App.xaml / App.xaml.cs
+    ├── MauiProgram.cs            # Injeção de dependências e configuração do app
+    ├── Views/                    # Interfaces gráficas XAML (LoginPage, DashboardPage, etc.)
+    ├── Resources/                # Imagens, fontes, estilos globais
+    └── Platforms/                # Configurações específicas de plataforma
+        ├── Android/              # Serviços em Background, Manifest e Permissões
+        └── iOS/                  # Info.plist e Background Capabilities
 ```
+
+Para a especificação completa da estratégia cross-platform Linux/Windows, ver [`docs/mobile-architecture-crossplatform.md`](file:///home/sgonga/Transferências/FrotaGo/docs/mobile-architecture-crossplatform.md).
 
 ---
 
