@@ -412,6 +412,9 @@ export class TrackingComponent implements OnInit, OnDestroy, AfterViewInit {
           this.map.panTo([lat, lng]);
         }
         this.selectedVehicle.set({ ...state });
+      } else if (!currentSelected) {
+        // Se nenhum veículo estiver selecionado, auto-seleciona e foca neste primeiro veículo em direto
+        this.selectVehicle(state);
       }
 
       // Notifica o Signal da alteração

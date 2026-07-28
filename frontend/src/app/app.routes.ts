@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { LoginComponent } from './features/authentication/pages/login/login.component';
 import { RegisterComponent } from './features/authentication/pages/register/register.component';
 import { AcceptInvitationComponent } from './features/authentication/pages/accept-invitation/accept-invitation.component';
+import { MobileInstructorComponent } from './features/mobile/mobile-instructor.component';
 import { DashboardLayoutComponent } from './layout/dashboard-layout/dashboard-layout.component';
 import { VehiclesComponent } from './features/vehicles/vehicles.component';
 import { InstructorsComponent } from './features/instructors/instructors.component';
@@ -21,6 +22,7 @@ export const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'accept-invitation', component: AcceptInvitationComponent },
+  { path: 'mobile', component: MobileInstructorComponent },
   {
     path: 'dashboard',
     component: DashboardLayoutComponent,

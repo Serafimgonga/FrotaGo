@@ -1,0 +1,343 @@
+<div class="mobile-wrapper">
+  <!-- Smartphone Frame -->
+  <div class="phone-frame">
+    <!-- Status Bar / Notch -->
+    <div class="phone-header">
+      <div class="notch"></div>
+      <div class="status-bar">
+        <span class="time">09:41</span>
+        <div class="status-icons">
+          <mat-icon class="status-icon">wifi</mat-icon>
+
+          <mat-icon class="status-icon">battery_full</mat-icon>
+        </div>
+      </div>
+
+      <!-- App Header Bar -->
+      <div class="app-bar" *ngIf="currentScreen() !== 'login'">
+        <button mat-icon-button *ngIf="currentScreen() !== 'dashboard' && currentScreen() !== 'in_progress'" (click)="currentScreen.set('dashboard')" class="nav-back">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+        <div class="app-brand">
+          <img src="logo.png" alt="Logo" class="app-logo" />
+          <span class="app-title">FrotaGo Driver</span>
+        </div>
+        <button mat-icon-button (click)="logoutMobile()" class="nav-logout" title="Terminar Sessão">
+          <mat-icon>power_settings_new</mat-icon>
+        </button>
+      </div>
+    </div>
+
+    <!-- Phone Screen Content -->
+    <div class="phone-body">
+
+      <!-- ================= SCREEN 1: LOGIN ================= -->
+      <div *ngIf="currentScreen() === 'login'" class="screen-view login-screen">
+        <div class="mobile-brand">
+          <div class="logo-circle">
+            <img src="logo.png" alt="FrotaGo" />
+          </div>
+          <h2>FrotaGo Driver</h2>
+          <p class="subtitle">Aplicação Móvel do Instrutor</p>
+        </div>
+
+        <form [formGroup]="loginForm" (ngSubmit)="onMobileLogin()" class="mobile-form">
+          <div class="alert alert-error" *ngIf="loginError()">
+            <mat-icon>error_outline</mat-icon>
+            <span>{{ loginError() }}</span>
+          </div>
+
+          <div class="input-group">
+            <label>E-mail do Instrutor</label>
+            <div class="field-box">
+              <mat-icon>email</mat-icon>
+              <input type="email" formControlName="email" placeholder="instrutor@escola.ao" />
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label>Palavra-passe</label>
+            <div class="field-box">
+              <mat-icon>lock</mat-icon>
+              <input type="password" formControlName="password" placeholder="••••••••" />
+            </div>
+          </div>
+
+          <button mat-flat-button color="primary" type="submit" class="btn-primary-mobile" [disabled]="isLoggingIn()">
+            <span *ngIf="!isLoggingIn()">Entrar na App</span>
+            <mat-spinner diameter="20" *ngIf="isLoggingIn()"></mat-spinner>
+          </button>
+        </form>
+
+        <div class="login-footer">
+          <small>Apenas contas de instrutores convidadas pela escola podem aceder.</small>
+        </div>
+      </div>
+
+      <!-- ================= SCREEN 2: DASHBOARD ================= -->
+      <div *ngIf="currentScreen() === 'dashboard'" class="screen-view dashboard-screen">
+        <!-- Instructor Profile Header Card -->
+        <div class="profile-card">
+          <div class="avatar-ring">
+            <img [src]="profile()?.fotografia || 'assets/images/default-avatar.png'" alt="Instrutor" />
+          </div>
+          <div class="profile-info">
+            <h3>{{ profile()?.nome || 'Instrutor Principial' }}</h3>
+            <span class="school-badge"><mat-icon>school</mat-icon> {{ profile()?.escola || 'Escola de Condução' }}</span>
+          </div>
+        </div>
+
+        <!-- Dashboard Stats Grid -->
+        <div class="stats-row">
+          <div class="stat-card">
+            <span class="stat-number">{{ dashboardData().lessonsToday }}</span>
+            <span class="stat-label">Aulas Hoje</span>
+          </div>
+          <div class="stat-card highlight">
+            <span class="stat-number">{{ dashboardData().nextLesson }}</span>
+            <span class="stat-label">Próxima Aula</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-number">{{ dashboardData().notifications }}</span>
+            <span class="stat-label">Avisos</span>
+          </div>
+        </div>
+
+        <!-- Section Title -->
+        <div class="section-header">
+          <h4>As minhas aulas de hoje</h4>
+          <span class="badge-count">{{ lessons().length }}</span>
+        </div>
+
+        <!-- Today's Lessons List -->
+        <div class="lessons-list">
+          <div class="lesson-card" *ngFor="let lesson of lessons()" (click)="selectLesson(lesson)">
+            <div class="time-badge">
+              <mat-icon>schedule</mat-icon>
+              <span>{{ lesson.start }}</span>
+            </div>
+            <div class="lesson-main">
+              <div class="student-name">{{ lesson.student }}</div>
+              <div class="vehicle-info">
+                <mat-icon>directions_car</mat-icon>
+                <span>{{ lesson.vehicle }}</span>
+              </div>
+              <div class="topic-tag" *ngIf="lesson.topic">{{ lesson.topic }}</div>
+            </div>
+            <mat-icon class="arrow-icon">chevron_right</mat-icon>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= SCREEN 3: LESSON DETAIL ================= -->
+      <div *ngIf="currentScreen() === 'detail'" class="screen-view detail-screen">
+        <div class="detail-header">
+          <h3>Detalhes da Aula Prática</h3>
+          <span class="status-pill scheduled">Agendada</span>
+        </div>
+
+        <!-- Info Blocks -->
+        <div class="info-block">
+          <div class="block-icon student"><mat-icon>person</mat-icon></div>
+          <div class="block-content">
+            <label>Aluno Atribuído</label>
+            <div class="value-title">{{ selectedLesson()?.student }}</div>
+            <div class="sub-value">Categoria B — Ligeiro Amador</div>
+          </div>
+        </div>
+
+        <div class="info-block">
+          <div class="block-icon vehicle"><mat-icon>directions_car</mat-icon></div>
+          <div class="block-content">
+            <label>Veículo de Instrução</label>
+            <div class="value-title">{{ selectedLesson()?.vehicle }}</div>
+            <div class="sub-value">Gasolina • Câmbio Manual</div>
+          </div>
+        </div>
+
+        <div class="info-block">
+          <div class="block-icon time"><mat-icon>access_time</mat-icon></div>
+          <div class="block-content">
+            <label>Horário da Aula</label>
+            <div class="value-title">Hoje às {{ selectedLesson()?.start }}</div>
+            <div class="sub-value">Duração prevista: 60 minutos</div>
+          </div>
+        </div>
+
+        <div class="info-block">
+          <div class="block-icon location"><mat-icon>place</mat-icon></div>
+          <div class="block-content">
+            <label>Local de Encontro</label>
+            <div class="value-title">{{ selectedLesson()?.meetingPoint || 'Instalações Principais' }}</div>
+          </div>
+        </div>
+
+        <!-- Action Button -->
+        <div class="bottom-action">
+          <button mat-flat-button color="primary" class="btn-start-big" (click)="goToValidation()">
+            <mat-icon>play_circle_filled</mat-icon>
+            <span>Iniciar Aula</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- ================= SCREEN 4: PRE-START VALIDATION ================= -->
+      <div *ngIf="currentScreen() === 'validation'" class="screen-view validation-screen">
+        <div class="validation-header">
+          <mat-icon class="pulse-icon">sensors</mat-icon>
+          <h3>Validação de Pré-Requisitos</h3>
+          <p>Verificando os sensores e ligações do dispositivo móvel...</p>
+        </div>
+
+        <div class="check-list">
+          <div class="check-item" [class.done]="internetValid()">
+            <mat-icon *ngIf="internetValid()">check_circle</mat-icon>
+            <mat-spinner diameter="20" *ngIf="!internetValid()"></mat-spinner>
+            <div class="check-text">
+              <strong>Ligação à Internet</strong>
+              <span>Conexão ativa para transmissão de dados</span>
+            </div>
+          </div>
+
+          <div class="check-item" [class.done]="gpsValid()">
+            <mat-icon *ngIf="gpsValid()">check_circle</mat-icon>
+            <mat-spinner diameter="20" *ngIf="!gpsValid()"></mat-spinner>
+            <div class="check-text">
+              <strong>Sensor GPS do Dispositivo</strong>
+              <span>Sinal de satélite detetado e calibrado</span>
+            </div>
+          </div>
+
+          <div class="check-item" [class.done]="permissionsValid()">
+            <mat-icon *ngIf="permissionsValid()">check_circle</mat-icon>
+            <mat-spinner diameter="20" *ngIf="!permissionsValid()"></mat-spinner>
+            <div class="check-text">
+              <strong>Permissões de Localização em 2º Plano</strong>
+              <span>Permissão concedida para rastreamento contínuo</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="bottom-action">
+          <button mat-flat-button color="primary" class="btn-start-big" [disabled]="isValidating()" (click)="startLesson()">
+            <mat-icon>satellite_alt</mat-icon>
+            <span>Iniciar Transmissão & Aula</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- ================= SCREEN 5: IN-PROGRESS TRACKING ================= -->
+      <div *ngIf="currentScreen() === 'in_progress'" class="screen-view in-progress-screen">
+        <div class="live-banner">
+          <span class="live-dot pulse"></span>
+          <span class="live-text">AULA EM CURSO • GPS EM TEMPO REAL</span>
+          <span class="signal-badge" [class.online]="signalRConnected()">
+            <mat-icon>rss_feed</mat-icon> SignalR
+          </span>
+        </div>
+
+        <!-- Simulated Map / Route View -->
+        <div class="map-simulation">
+          <div class="route-line"></div>
+          <div class="car-marker pulse-car">
+            <mat-icon>directions_car</mat-icon>
+          </div>
+          <div class="coords-box">
+            <span>Lat: {{ lat().toFixed(4) }}</span>
+            <span>Lng: {{ lng().toFixed(4) }}</span>
+          </div>
+        </div>
+
+        <!-- Speedometer & Timer Row -->
+        <div class="telemetry-row">
+          <div class="speed-dial">
+            <span class="speed-value">{{ speed() }}</span>
+            <span class="speed-unit">km/h</span>
+          </div>
+          <div class="timer-box">
+            <label>Tempo Decorrido</label>
+            <span class="timer-value">{{ lessonTimer() }}</span>
+          </div>
+        </div>
+
+        <!-- Current Student Banner -->
+        <div class="active-student-bar">
+          <mat-icon>person</mat-icon>
+          <span>Aluno: <strong>{{ selectedLesson()?.student }}</strong></span>
+        </div>
+
+        <!-- Finish Action -->
+        <div class="bottom-action">
+          <button mat-flat-button color="warn" class="btn-finish-big" (click)="goToFinish()">
+            <mat-icon>stop_circle</mat-icon>
+            <span>Terminar Aula</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- ================= SCREEN 6: FINISH & EVALUATION ================= -->
+      <div *ngIf="currentScreen() === 'finish'" class="screen-view finish-screen">
+        <div class="finish-header">
+          <h3>Terminar Aula & Relatório</h3>
+          <p>Registe a avaliação do aluno e a quilometragem final do veículo.</p>
+        </div>
+
+        <form [formGroup]="finishForm" (ngSubmit)="submitFinish()" class="mobile-form">
+          <div class="input-group">
+            <label>Odómetro Final do Veículo (km)</label>
+            <div class="field-box">
+              <mat-icon>speed</mat-icon>
+              <input type="number" formControlName="odometer" />
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label>Avaliação do Desempenho</label>
+            <mat-form-field appearance="outline" class="w-full">
+              <mat-select formControlName="evaluation">
+                <mat-option value="Excellent">Excelente</mat-option>
+                <mat-option value="Good">Bom / Evolução Positiva</mat-option>
+                <mat-option value="Satisfactory">Satisfatório</mat-option>
+                <mat-option value="NeedsImprovement">Necessita de Melhorias</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+          <div class="input-group">
+            <label>Observações do Instrutor</label>
+            <div class="field-box textarea-box">
+              <textarea formControlName="notes" rows="3" placeholder="Escreva observações sobre o comportamento do aluno..."></textarea>
+            </div>
+          </div>
+
+          <button mat-flat-button color="primary" type="submit" class="btn-primary-mobile" [disabled]="isFinishing()">
+            <span *ngIf="!isFinishing()">Enviar Relatório Final</span>
+            <mat-spinner diameter="20" *ngIf="isFinishing()"></mat-spinner>
+          </button>
+        </form>
+      </div>
+
+      <!-- ================= SCREEN 7: COMPLETED ================= -->
+      <div *ngIf="currentScreen() === 'completed'" class="screen-view completed-screen">
+        <div class="success-box">
+          <div class="success-icon-wrap">
+            <mat-icon>check_circle</mat-icon>
+          </div>
+          <h2>Aula Concluída!</h2>
+          <p>O relatório foi gravado com sucesso e os dados de GPS foram arquivados.</p>
+        </div>
+
+        <button mat-flat-button color="primary" class="btn-primary-mobile" (click)="finishFlow()">
+          <mat-icon>dashboard</mat-icon>
+          <span>Voltar ao Dashboard</span>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Phone Home Indicator Bar -->
+    <div class="phone-footer">
+      <div class="home-indicator"></div>
+    </div>
+  </div>
+</div>

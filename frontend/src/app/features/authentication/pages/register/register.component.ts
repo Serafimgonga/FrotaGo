@@ -1,5 +1,5 @@
 import { Component, signal } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService, RegisterSchoolRequest } from '../../services/auth.service';
@@ -45,39 +45,39 @@ export class RegisterComponent {
   ) {
     // Passo 1 — Proprietário / Responsável
     this.step1Form = this.fb.group({
-      ownerName: ['', [Validators.required, Validators.minLength(3)]],
+      ownerName: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
       gender: ['Masculino', Validators.required],
-      phone: ['', [Validators.required]],
+      phone: ['', [Validators.required, Validators.pattern(/^\+?[0-9\s]{9,15}$/)]],
       email: ['', [Validators.required, Validators.email]],
-      identityCardNumber: ['', Validators.required],
-      password: ['', [Validators.required, Validators.minLength(6)]],
-      confirmPassword: ['', [Validators.required, Validators.minLength(6)]]
-    });
+      identityCardNumber: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(20)]],
+      password: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(50)]],
+      confirmPassword: ['', [Validators.required]]
+    }, { validators: RegisterComponent.passwordMatchValidator });
 
     // Passo 2 — Escola de Condução (Informação básica, legal, contactos, localização)
     this.step2Form = this.fb.group({
-      schoolName: ['', [Validators.required, Validators.minLength(3)]],
-      shortName: [''],
-      slug: ['', [Validators.required, Validators.pattern('^[a-z0-9-]+$')]],
-      nif: ['', [Validators.required, Validators.minLength(5)]],
-      licenseNumber: ['', Validators.required],
+      schoolName: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(150)]],
+      shortName: ['', [Validators.maxLength(10)]],
+      slug: ['', [Validators.required, Validators.pattern('^[a-z0-9-]+$'), Validators.minLength(3), Validators.maxLength(50)]],
+      nif: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(20)]],
+      licenseNumber: ['', [Validators.required, Validators.minLength(3)]],
       licenseIssuer: ['INATRO', Validators.required],
       licenseIssueDate: [''],
-      schoolPhone: [''],
+      schoolPhone: ['', [Validators.pattern(/^\+?[0-9\s]{9,15}$/)]],
       schoolEmail: ['', Validators.email],
       website: [''],
       province: ['Luanda', Validators.required],
-      municipality: ['Talatona', Validators.required],
-      address: ['', Validators.required],
+      municipality: ['Talatona', [Validators.required, Validators.minLength(2)]],
+      address: ['', [Validators.required, Validators.minLength(5)]],
       latitude: [null],
       longitude: [null]
     });
 
     // Passo 3 — Primeira Unidade (Sede)
     this.step3Form = this.fb.group({
-      branchName: ['Sede Talatona', Validators.required],
-      branchPhone: [''],
-      branchAddress: ['']
+      branchName: ['Sede Talatona', [Validators.required, Validators.minLength(3)]],
+      branchPhone: ['', [Validators.pattern(/^\+?[0-9\s]{9,15}$/)]],
+      branchAddress: ['', [Validators.minLength(5)]]
     });
 
     // Passo 4 — Escolha do Plano
@@ -105,22 +105,37 @@ export class RegisterComponent {
     }
   }
 
+  /** Cross-field validator: password === confirmPassword */
+  static passwordMatchValidator(group: AbstractControl): ValidationErrors | null {
+    const password = group.get('password')?.value;
+    const confirm = group.get('confirmPassword')?.value;
+    if (password && confirm && password !== confirm) {
+      group.get('confirmPassword')?.setErrors({ passwordMismatch: true });
+      return { passwordMismatch: true };
+    }
+    return null;
+  }
+
+  /** Helper to check field errors in the template */
+  hasError(form: FormGroup, field: string, error: string): boolean {
+    const control = form.get(field);
+    return !!(control && control.hasError(error) && (control.dirty || control.touched));
+  }
+
   nextStep(): void {
     this.errorMessage.set(null);
 
     if (this.currentStep() === 1) {
       if (this.step1Form.invalid) {
         this.step1Form.markAllAsTouched();
-        return;
-      }
-      if (this.step1Form.value.password !== this.step1Form.value.confirmPassword) {
-        this.errorMessage.set('As palavras-passe não coincidem.');
+        this.errorMessage.set('Preencha todos os campos obrigatórios correctamente.');
         return;
       }
       this.currentStep.set(2);
     } else if (this.currentStep() === 2) {
       if (this.step2Form.invalid) {
         this.step2Form.markAllAsTouched();
+        this.errorMessage.set('Preencha todos os campos obrigatórios da escola.');
         return;
       }
       // Replicar telefone/morada para o passo 3 se vazios
@@ -134,6 +149,7 @@ export class RegisterComponent {
     } else if (this.currentStep() === 3) {
       if (this.step3Form.invalid) {
         this.step3Form.markAllAsTouched();
+        this.errorMessage.set('Preencha os dados da unidade correctamente.');
         return;
       }
       this.currentStep.set(4);

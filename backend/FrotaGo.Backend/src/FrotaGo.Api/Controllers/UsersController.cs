@@ -33,7 +33,8 @@ public class UsersController : ControllerBase
         try
         {
             var token = await _mediator.Send(command);
-            return Ok(new { token, message = "Convite gerado com sucesso!" });
+            var inviteUrl = $"/accept-invitation?token={token}";
+            return Ok(new { token, inviteUrl, message = "Convite gerado com sucesso!" });
         }
         catch (System.Exception ex)
         {

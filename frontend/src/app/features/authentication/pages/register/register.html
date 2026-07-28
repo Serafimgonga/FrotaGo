@@ -3,11 +3,12 @@
     <!-- Header -->
     <div class="card-header">
       <div class="brand-badge">
-        <img src="logo.png" alt="FrotaGo Logo" style="width: 28px; height: 28px; object-fit: contain; margin-right: 8px;" />
+        <img src="logo.png" alt="FrotaGo Logo"
+          style="width: 28px; height: 28px; object-fit: contain; margin-right: 8px;" />
         <span class="brand-text">FrotaGo</span>
       </div>
       <h2>Registo da Escola de Condução</h2>
-      <p class="subtitle">Plataforma ERP e Gestão de Frota Multi-Escola</p>
+      <p class="subtitle">Plataforma ERP de Gestão de Frota</p>
     </div>
 
     <!-- Stepper Progress Bar -->
@@ -62,63 +63,80 @@
 
       <div class="form-grid">
         <div class="form-group-custom full-width">
-          <label class="input-label">Nome Completo</label>
+          <label class="input-label">Nome Completo <span class="required-mark">*</span></label>
           <mat-form-field appearance="outline" class="w-full">
             <mat-icon matPrefix class="input-icon">person_outline</mat-icon>
-            <input matInput formControlName="ownerName" placeholder="Ex: João António Manuel" required />
+            <input matInput formControlName="ownerName" placeholder="Ex: João António Manuel" />
+            <mat-error *ngIf="hasError(step1Form, 'ownerName', 'required')">O nome é obrigatório.</mat-error>
+            <mat-error *ngIf="hasError(step1Form, 'ownerName', 'minlength')">O nome deve ter pelo menos 3 caracteres.</mat-error>
+            <mat-error *ngIf="hasError(step1Form, 'ownerName', 'maxlength')">O nome não pode exceder 100 caracteres.</mat-error>
           </mat-form-field>
         </div>
 
         <div class="form-group-custom">
-          <label class="input-label">Género</label>
+          <label class="input-label">Género <span class="required-mark">*</span></label>
           <mat-form-field appearance="outline" class="w-full">
             <mat-select formControlName="gender">
               <mat-option value="Masculino">Masculino</mat-option>
               <mat-option value="Feminino">Feminino</mat-option>
             </mat-select>
+            <mat-error *ngIf="hasError(step1Form, 'gender', 'required')">Selecione o género.</mat-error>
           </mat-form-field>
         </div>
 
         <div class="form-group-custom">
-          <label class="input-label">BI / NIF Pessoal</label>
+          <label class="input-label">BI / NIF Pessoal <span class="required-mark">*</span></label>
           <mat-form-field appearance="outline" class="w-full">
             <mat-icon matPrefix class="input-icon">badge</mat-icon>
-            <input matInput formControlName="identityCardNumber" placeholder="Ex: 004598123LA042" required />
+            <input matInput formControlName="identityCardNumber" placeholder="Ex: 004598123LA042" />
+            <mat-error *ngIf="hasError(step1Form, 'identityCardNumber', 'required')">O número do BI é obrigatório.</mat-error>
+            <mat-error *ngIf="hasError(step1Form, 'identityCardNumber', 'minlength')">Mínimo de 5 caracteres.</mat-error>
+            <mat-error *ngIf="hasError(step1Form, 'identityCardNumber', 'maxlength')">Máximo de 20 caracteres.</mat-error>
           </mat-form-field>
         </div>
 
         <div class="form-group-custom">
-          <label class="input-label">Telefone Principal</label>
+          <label class="input-label">Telefone Principal <span class="required-mark">*</span></label>
           <mat-form-field appearance="outline" class="w-full">
             <mat-icon matPrefix class="input-icon">phone</mat-icon>
-            <input matInput formControlName="phone" placeholder="+244 923 000 000" required />
+            <input matInput formControlName="phone" placeholder="+244 923 000 000" />
+            <mat-error *ngIf="hasError(step1Form, 'phone', 'required')">O telefone é obrigatório.</mat-error>
+            <mat-error *ngIf="hasError(step1Form, 'phone', 'pattern')">Formato inválido. Ex: +244 923 000 000</mat-error>
           </mat-form-field>
         </div>
 
         <div class="form-group-custom">
-          <label class="input-label">E-mail Pessoal</label>
+          <label class="input-label">E-mail Pessoal <span class="required-mark">*</span></label>
           <mat-form-field appearance="outline" class="w-full">
             <mat-icon matPrefix class="input-icon">mail_outline</mat-icon>
-            <input matInput type="email" formControlName="email" placeholder="joao@email.com" required />
+            <input matInput type="email" formControlName="email" placeholder="joao@email.com" />
+            <mat-error *ngIf="hasError(step1Form, 'email', 'required')">O e-mail é obrigatório.</mat-error>
+            <mat-error *ngIf="hasError(step1Form, 'email', 'email')">Introduza um e-mail válido.</mat-error>
           </mat-form-field>
         </div>
 
         <div class="form-group-custom">
-          <label class="input-label">Palavra-passe</label>
+          <label class="input-label">Palavra-passe <span class="required-mark">*</span></label>
           <mat-form-field appearance="outline" class="w-full">
             <mat-icon matPrefix class="input-icon">lock_outline</mat-icon>
-            <input matInput [type]="hidePassword() ? 'password' : 'text'" formControlName="password" placeholder="••••••••" required />
+            <input matInput [type]="hidePassword() ? 'password' : 'text'" formControlName="password"
+              placeholder="••••••••" />
             <button type="button" mat-icon-button matSuffix (click)="hidePassword.set(!hidePassword())">
               <mat-icon>{{ hidePassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
             </button>
+            <mat-error *ngIf="hasError(step1Form, 'password', 'required')">A palavra-passe é obrigatória.</mat-error>
+            <mat-error *ngIf="hasError(step1Form, 'password', 'minlength')">Mínimo de 6 caracteres.</mat-error>
           </mat-form-field>
         </div>
 
         <div class="form-group-custom">
-          <label class="input-label">Confirmar Palavra-passe</label>
+          <label class="input-label">Confirmar Palavra-passe <span class="required-mark">*</span></label>
           <mat-form-field appearance="outline" class="w-full">
             <mat-icon matPrefix class="input-icon">lock</mat-icon>
-            <input matInput [type]="hidePassword() ? 'password' : 'text'" formControlName="confirmPassword" placeholder="••••••••" required />
+            <input matInput [type]="hidePassword() ? 'password' : 'text'" formControlName="confirmPassword"
+              placeholder="••••••••" />
+            <mat-error *ngIf="hasError(step1Form, 'confirmPassword', 'required')">Confirme a palavra-passe.</mat-error>
+            <mat-error *ngIf="hasError(step1Form, 'confirmPassword', 'passwordMismatch')">As palavras-passe não coincidem.</mat-error>
           </mat-form-field>
         </div>
       </div>
@@ -140,10 +158,14 @@
 
       <div class="form-grid">
         <div class="form-group-custom">
-          <label class="input-label">Nome Comercial</label>
+          <label class="input-label">Nome Comercial <span class="required-mark">*</span></label>
           <mat-form-field appearance="outline" class="w-full">
             <mat-icon matPrefix class="input-icon">school</mat-icon>
-            <input matInput formControlName="schoolName" (input)="onSchoolNameChange()" placeholder="Ex: Instituto de Condução São Nicolau" required />
+            <input matInput formControlName="schoolName" (input)="onSchoolNameChange()"
+              placeholder="Ex: Instituto de Condução São Nicolau" />
+            <mat-error *ngIf="hasError(step2Form, 'schoolName', 'required')">O nome da escola é obrigatório.</mat-error>
+            <mat-error *ngIf="hasError(step2Form, 'schoolName', 'minlength')">Mínimo de 3 caracteres.</mat-error>
+            <mat-error *ngIf="hasError(step2Form, 'schoolName', 'maxlength')">Máximo de 150 caracteres.</mat-error>
           </mat-form-field>
         </div>
 
@@ -151,15 +173,19 @@
           <label class="input-label">Nome Abreviado / Sigla</label>
           <mat-form-field appearance="outline" class="w-full">
             <input matInput formControlName="shortName" placeholder="Ex: ICSN" />
+            <mat-error *ngIf="hasError(step2Form, 'shortName', 'maxlength')">Máximo de 10 caracteres.</mat-error>
           </mat-form-field>
         </div>
 
         <div class="form-group-custom full-width">
-          <label class="input-label">Subdomínio / Slug (URL da Escola)</label>
+          <label class="input-label">Subdomínio / Slug (URL da Escola) <span class="required-mark">*</span></label>
           <mat-form-field appearance="outline" class="w-full">
             <mat-icon matPrefix class="input-icon">link</mat-icon>
-            <input matInput formControlName="slug" placeholder="icsn" required />
+            <input matInput formControlName="slug" placeholder="icsn" />
             <span matSuffix class="slug-suffix">.frotago.ao</span>
+            <mat-error *ngIf="hasError(step2Form, 'slug', 'required')">O slug é obrigatório.</mat-error>
+            <mat-error *ngIf="hasError(step2Form, 'slug', 'pattern')">Apenas letras minúsculas, números e hífens.</mat-error>
+            <mat-error *ngIf="hasError(step2Form, 'slug', 'minlength')">Mínimo de 3 caracteres.</mat-error>
           </mat-form-field>
           <small class="hint-text" *ngIf="step2Form.value.slug">
             Sugestão de URL: <strong>https://{{ step2Form.value.slug }}.frotago.ao</strong>
@@ -167,30 +193,36 @@
         </div>
 
         <div class="form-group-custom">
-          <label class="input-label">NIF da Empresa</label>
+          <label class="input-label">NIF da Empresa <span class="required-mark">*</span></label>
           <mat-form-field appearance="outline" class="w-full">
             <mat-icon matPrefix class="input-icon">receipt_long</mat-icon>
-            <input matInput formControlName="nif" placeholder="Ex: 5417009821" required />
+            <input matInput formControlName="nif" placeholder="Ex: 5417009821" />
+            <mat-error *ngIf="hasError(step2Form, 'nif', 'required')">O NIF é obrigatório.</mat-error>
+            <mat-error *ngIf="hasError(step2Form, 'nif', 'minlength')">Mínimo de 5 caracteres.</mat-error>
+            <mat-error *ngIf="hasError(step2Form, 'nif', 'maxlength')">Máximo de 20 caracteres.</mat-error>
           </mat-form-field>
         </div>
 
         <div class="form-group-custom">
-          <label class="input-label">Número de Licença INATRO</label>
+          <label class="input-label">Número de Licença INATRO <span class="required-mark">*</span></label>
           <mat-form-field appearance="outline" class="w-full">
             <mat-icon matPrefix class="input-icon">verified</mat-icon>
-            <input matInput formControlName="licenseNumber" placeholder="Ex: LIC-2024-089" required />
+            <input matInput formControlName="licenseNumber" placeholder="Ex: LIC-2024-089" />
+            <mat-error *ngIf="hasError(step2Form, 'licenseNumber', 'required')">O número de licença é obrigatório.</mat-error>
+            <mat-error *ngIf="hasError(step2Form, 'licenseNumber', 'minlength')">Mínimo de 3 caracteres.</mat-error>
           </mat-form-field>
         </div>
 
         <div class="form-group-custom">
-          <label class="input-label">Entidade Emissora</label>
+          <label class="input-label">Entidade Emissora <span class="required-mark">*</span></label>
           <mat-form-field appearance="outline" class="w-full">
-            <input matInput formControlName="licenseIssuer" placeholder="INATRO" required />
+            <input matInput formControlName="licenseIssuer" placeholder="INATRO" />
+            <mat-error *ngIf="hasError(step2Form, 'licenseIssuer', 'required')">A entidade emissora é obrigatória.</mat-error>
           </mat-form-field>
         </div>
 
         <div class="form-group-custom">
-          <label class="input-label">Província</label>
+          <label class="input-label">Província <span class="required-mark">*</span></label>
           <mat-form-field appearance="outline" class="w-full">
             <mat-select formControlName="province">
               <mat-option value="Luanda">Luanda</mat-option>
@@ -200,21 +232,26 @@
               <mat-option value="Cabinda">Cabinda</mat-option>
               <mat-option value="Cuanza Sul">Cuanza Sul</mat-option>
             </mat-select>
+            <mat-error *ngIf="hasError(step2Form, 'province', 'required')">Selecione a província.</mat-error>
           </mat-form-field>
         </div>
 
         <div class="form-group-custom">
-          <label class="input-label">Município</label>
+          <label class="input-label">Município <span class="required-mark">*</span></label>
           <mat-form-field appearance="outline" class="w-full">
-            <input matInput formControlName="municipality" placeholder="Ex: Talatona" required />
+            <input matInput formControlName="municipality" placeholder="Ex: Talatona" />
+            <mat-error *ngIf="hasError(step2Form, 'municipality', 'required')">O município é obrigatório.</mat-error>
+            <mat-error *ngIf="hasError(step2Form, 'municipality', 'minlength')">Mínimo de 2 caracteres.</mat-error>
           </mat-form-field>
         </div>
 
         <div class="form-group-custom full-width">
-          <label class="input-label">Morada / Endereço Completo</label>
+          <label class="input-label">Morada / Endereço Completo <span class="required-mark">*</span></label>
           <mat-form-field appearance="outline" class="w-full">
             <mat-icon matPrefix class="input-icon">location_on</mat-icon>
-            <input matInput formControlName="address" placeholder="Ex: Rua 16 de Junho, Bairro Talatona" required />
+            <input matInput formControlName="address" placeholder="Ex: Rua 16 de Junho, Bairro Talatona" />
+            <mat-error *ngIf="hasError(step2Form, 'address', 'required')">A morada é obrigatória.</mat-error>
+            <mat-error *ngIf="hasError(step2Form, 'address', 'minlength')">Mínimo de 5 caracteres.</mat-error>
           </mat-form-field>
         </div>
 
@@ -254,10 +291,12 @@
 
       <div class="form-grid">
         <div class="form-group-custom full-width">
-          <label class="input-label">Nome da Unidade</label>
+          <label class="input-label">Nome da Unidade <span class="required-mark">*</span></label>
           <mat-form-field appearance="outline" class="w-full">
             <mat-icon matPrefix class="input-icon">store</mat-icon>
-            <input matInput formControlName="branchName" placeholder="Ex: Sede Talatona" required />
+            <input matInput formControlName="branchName" placeholder="Ex: Sede Talatona" />
+            <mat-error *ngIf="hasError(step3Form, 'branchName', 'required')">O nome da unidade é obrigatório.</mat-error>
+            <mat-error *ngIf="hasError(step3Form, 'branchName', 'minlength')">Mínimo de 3 caracteres.</mat-error>
           </mat-form-field>
         </div>
 
@@ -266,6 +305,7 @@
           <mat-form-field appearance="outline" class="w-full">
             <mat-icon matPrefix class="input-icon">phone</mat-icon>
             <input matInput formControlName="branchPhone" placeholder="Ex: 923 000 000" />
+            <mat-error *ngIf="hasError(step3Form, 'branchPhone', 'pattern')">Formato de telefone inválido.</mat-error>
           </mat-form-field>
         </div>
 
@@ -274,6 +314,7 @@
           <mat-form-field appearance="outline" class="w-full">
             <mat-icon matPrefix class="input-icon">place</mat-icon>
             <input matInput formControlName="branchAddress" placeholder="Ex: Av. Principal de Talatona" />
+            <mat-error *ngIf="hasError(step3Form, 'branchAddress', 'minlength')">Mínimo de 5 caracteres.</mat-error>
           </mat-form-field>
         </div>
       </div>
@@ -341,7 +382,8 @@
         </div>
 
         <!-- Professional Plan (Recommended) -->
-        <div class="plan-card featured" [class.selected]="selectedPlan() === 'Professional'" (click)="selectPlan('Professional')">
+        <div class="plan-card featured" [class.selected]="selectedPlan() === 'Professional'"
+          (click)="selectPlan('Professional')">
           <div class="popular-ribbon">Mais Popular</div>
           <div class="plan-header">
             <span class="plan-name">Professional</span>
@@ -386,7 +428,8 @@
           <mat-icon>arrow_back</mat-icon>
           <span>Anterior</span>
         </button>
-        <button mat-flat-button color="primary" type="button" (click)="onSubmit()" class="btn-submit" [disabled]="isLoading()">
+        <button mat-flat-button color="primary" type="button" (click)="onSubmit()" class="btn-submit"
+          [disabled]="isLoading()">
           <span *ngIf="!isLoading()">Finalizar & Criar Conta</span>
           <span *ngIf="isLoading()">A registar escola...</span>
           <mat-icon *ngIf="!isLoading()">rocket_launch</mat-icon>

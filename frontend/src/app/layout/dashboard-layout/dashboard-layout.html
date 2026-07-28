@@ -1,14 +1,14 @@
 <ng-container *ngIf="authService.currentUser()?.schoolStatus !== 'Pending'; else pendingApprovalBlock">
-  <div class="dashboard-wrapper">
+  <div class="dashboard-wrapper" [class.sidebar-collapsed]="sidebarCollapsed()">
     <!-- Sidebar -->
-    <aside class="sidebar">
+    <aside class="sidebar" [class.collapsed]="sidebarCollapsed()">
       <div class="sidebar-header">
         <div class="brand-info">
-          <img src="logo.png" alt="FrotaGo Logo" style="width: 26px; height: 26px; object-fit: contain; margin-right: 8px;" />
-          <span class="brand-name">FrotaGo</span>
+          <img src="logo.png" alt="FrotaGo Logo" style="width: 26px; height: 26px; object-fit: contain; flex-shrink: 0;" />
+          <span class="brand-name" *ngIf="!sidebarCollapsed()">FrotaGo</span>
         </div>
         <!-- Intelligent Logged-In School Badge in Sidebar -->
-        <div class="school-badge-sidebar" *ngIf="authService.currentUser()?.schoolName" [title]="'Escola Ativa: ' + authService.currentUser()?.schoolName">
+        <div class="school-badge-sidebar" *ngIf="authService.currentUser()?.schoolName && !sidebarCollapsed()" [title]="'Escola Ativa: ' + authService.currentUser()?.schoolName">
           <div class="school-badge-icon">
             <mat-icon>school</mat-icon>
           </div>
@@ -20,59 +20,69 @@
       </div>
 
       <nav class="sidebar-nav">
-        <a routerLink="/dashboard/vehicles" routerLinkActive="active-link" class="nav-item" *ngIf="authService.hasPermission('Vehicles.Manage')">
+        <a routerLink="/dashboard/vehicles" routerLinkActive="active-link" class="nav-item" *ngIf="authService.hasPermission('Vehicles.Manage')"
+           [matTooltip]="sidebarCollapsed() ? 'Veículos' : ''" matTooltipPosition="right">
           <mat-icon>directions_car</mat-icon>
-          <span>Veículos</span>
+          <span *ngIf="!sidebarCollapsed()">Veículos</span>
         </a>
 
-        <a routerLink="/dashboard/instructors" routerLinkActive="active-link" class="nav-item" *ngIf="authService.hasPermission('Users.Manage')">
+        <a routerLink="/dashboard/instructors" routerLinkActive="active-link" class="nav-item" *ngIf="authService.hasPermission('Users.Manage')"
+           [matTooltip]="sidebarCollapsed() ? 'Instrutores' : ''" matTooltipPosition="right">
           <mat-icon>people</mat-icon>
-          <span>Instrutores</span>
+          <span *ngIf="!sidebarCollapsed()">Instrutores</span>
         </a>
 
-        <a routerLink="/dashboard/students" routerLinkActive="active-link" class="nav-item" *ngIf="authService.hasPermission('Students.View') || authService.hasPermission('Students.Create')">
+        <a routerLink="/dashboard/students" routerLinkActive="active-link" class="nav-item" *ngIf="authService.hasPermission('Students.View') || authService.hasPermission('Students.Create')"
+           [matTooltip]="sidebarCollapsed() ? 'Alunos' : ''" matTooltipPosition="right">
           <mat-icon>school</mat-icon>
-          <span>Alunos</span>
+          <span *ngIf="!sidebarCollapsed()">Alunos</span>
         </a>
 
-        <a routerLink="/dashboard/lessons" routerLinkActive="active-link" class="nav-item" *ngIf="authService.hasPermission('Lessons.Create') || authService.hasPermission('Lessons.Execute')">
+        <a routerLink="/dashboard/lessons" routerLinkActive="active-link" class="nav-item" *ngIf="authService.hasPermission('Lessons.Create') || authService.hasPermission('Lessons.Execute')"
+           [matTooltip]="sidebarCollapsed() ? 'Aulas Práticas' : ''" matTooltipPosition="right">
           <mat-icon>event</mat-icon>
-          <span>Aulas Práticas</span>
+          <span *ngIf="!sidebarCollapsed()">Aulas Práticas</span>
         </a>
 
-        <a routerLink="/dashboard/maintenance" routerLinkActive="active-link" class="nav-item" *ngIf="authService.hasPermission('Vehicles.Manage')">
+        <a routerLink="/dashboard/maintenance" routerLinkActive="active-link" class="nav-item" *ngIf="authService.hasPermission('Vehicles.Manage')"
+           [matTooltip]="sidebarCollapsed() ? 'Manutenção' : ''" matTooltipPosition="right">
           <mat-icon>build</mat-icon>
-          <span>Manutenção</span>
+          <span *ngIf="!sidebarCollapsed()">Manutenção</span>
         </a>
 
-        <a routerLink="/dashboard/fuel" routerLinkActive="active-link" class="nav-item" *ngIf="authService.hasPermission('Vehicles.Manage')">
+        <a routerLink="/dashboard/fuel" routerLinkActive="active-link" class="nav-item" *ngIf="authService.hasPermission('Vehicles.Manage')"
+           [matTooltip]="sidebarCollapsed() ? 'Combustível' : ''" matTooltipPosition="right">
           <mat-icon>local_gas_station</mat-icon>
-          <span>Combustível</span>
+          <span *ngIf="!sidebarCollapsed()">Combustível</span>
         </a>
 
-        <a routerLink="/dashboard/documents" routerLinkActive="active-link" class="nav-item" *ngIf="authService.hasPermission('Vehicles.Manage') || authService.hasPermission('School.Manage')">
+        <a routerLink="/dashboard/documents" routerLinkActive="active-link" class="nav-item" *ngIf="authService.hasPermission('Vehicles.Manage') || authService.hasPermission('School.Manage')"
+           [matTooltip]="sidebarCollapsed() ? 'Documentação' : ''" matTooltipPosition="right">
           <mat-icon>description</mat-icon>
-          <span>Documentação</span>
+          <span *ngIf="!sidebarCollapsed()">Documentação</span>
         </a>
 
-        <a routerLink="/dashboard/accidents" routerLinkActive="active-link" class="nav-item" *ngIf="authService.hasPermission('Vehicles.Manage')">
+        <a routerLink="/dashboard/accidents" routerLinkActive="active-link" class="nav-item" *ngIf="authService.hasPermission('Vehicles.Manage')"
+           [matTooltip]="sidebarCollapsed() ? 'Acidentes' : ''" matTooltipPosition="right">
           <mat-icon>report_problem</mat-icon>
-          <span>Acidentes</span>
+          <span *ngIf="!sidebarCollapsed()">Acidentes</span>
         </a>
 
-        <a routerLink="/dashboard/tracking" routerLinkActive="active-link" class="nav-item" *ngIf="authService.hasPermission('Vehicles.ViewGps')">
+        <a routerLink="/dashboard/tracking" routerLinkActive="active-link" class="nav-item" *ngIf="authService.hasPermission('Vehicles.ViewGps')"
+           [matTooltip]="sidebarCollapsed() ? 'Rastreio GPS' : ''" matTooltipPosition="right">
           <mat-icon>gps_fixed</mat-icon>
-          <span>Rastreio GPS</span>
+          <span *ngIf="!sidebarCollapsed()">Rastreio GPS</span>
         </a>
 
-        <a routerLink="/dashboard/users" routerLinkActive="active-link" class="nav-item" *ngIf="authService.hasPermission('Users.Manage')">
+        <a routerLink="/dashboard/users" routerLinkActive="active-link" class="nav-item" *ngIf="authService.hasPermission('Users.Manage')"
+           [matTooltip]="sidebarCollapsed() ? 'Utilizadores' : ''" matTooltipPosition="right">
           <mat-icon>manage_accounts</mat-icon>
-          <span>Utilizadores</span>
+          <span *ngIf="!sidebarCollapsed()">Utilizadores</span>
         </a>
       </nav>
 
       <div class="sidebar-footer">
-        <div class="user-info">
+        <div class="user-info" *ngIf="!sidebarCollapsed()">
           <div class="user-avatar">
             <mat-icon>account_circle</mat-icon>
           </div>
@@ -81,7 +91,8 @@
             <span class="user-role">{{ authService.currentUser()?.role }}</span>
           </div>
         </div>
-        <button mat-icon-button color="warn" (click)="logout()" title="Terminar Sessão">
+        <button mat-icon-button color="warn" (click)="logout()" title="Terminar Sessão"
+                [matTooltip]="sidebarCollapsed() ? 'Terminar Sessão' : ''" matTooltipPosition="right">
           <mat-icon>logout</mat-icon>
         </button>
       </div>
@@ -91,6 +102,12 @@
     <div class="main-area">
       <header class="header">
         <div class="header-left">
+          <!-- Toggle Sidebar Button -->
+          <button class="sidebar-toggle-btn" (click)="toggleSidebar()"
+                  [matTooltip]="sidebarCollapsed() ? 'Expandir menu' : 'Recolher menu'"
+                  matTooltipPosition="below">
+            <mat-icon>{{ sidebarCollapsed() ? 'menu' : 'menu_open' }}</mat-icon>
+          </button>
           <h1>Painel de Controle</h1>
         </div>
         <!-- Intelligent Top-Bar School Active Status Pill -->
