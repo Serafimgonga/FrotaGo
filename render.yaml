@@ -1,0 +1,31 @@
+services:
+  - type: web
+    name: frotago-api
+    runtime: docker
+    dockerContext: backend/FrotaGo.Backend
+    dockerfilePath: backend/FrotaGo.Backend/Dockerfile
+    plan: free
+    region: frankfurt
+    healthCheckPath: /healthz
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: ConnectionStrings__DefaultConnection
+        fromDatabase:
+          name: frotago-db
+          property: connectionString
+      - key: JwtSettings__Secret
+        generateValue: true
+      - key: JwtSettings__Issuer
+        value: FrotaGoApi
+      - key: JwtSettings__Audience
+        value: FrotaGoApp
+      - key: EnableSwagger
+        value: "true"
+
+databases:
+  - name: frotago-db
+    databaseName: frotago
+    user: frotago_user
+    plan: free
+    region: frankfurt

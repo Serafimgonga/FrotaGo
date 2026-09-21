@@ -11,6 +11,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { AuthService } from '../authentication/services/auth.service';
 import * as signalR from '@microsoft/signalr';
+import { environment } from '../../../environments/environment';
 
 export interface MobileLesson {
   lessonId: string;
@@ -308,8 +309,9 @@ export class MobileInstructorComponent implements OnInit, OnDestroy {
   private connectSignalRHub(): void {
     const token = this.authService.token();
 
+    const hubUrl = environment.hubUrl || '/hubs/gps';
     this.hubConnection = new signalR.HubConnectionBuilder()
-      .withUrl('/hubs/gps', {
+      .withUrl(hubUrl, {
         accessTokenFactory: () => token || '',
         transport: signalR.HttpTransportType.WebSockets | signalR.HttpTransportType.ServerSentEvents | signalR.HttpTransportType.LongPolling
       })

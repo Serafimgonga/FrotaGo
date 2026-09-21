@@ -10,7 +10,11 @@ using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.WebHost.UseUrls(builder.Configuration["ASPNETCORE_URLS"] ?? "http://*:5073");
+var port = Environment.GetEnvironmentVariable("PORT");
+var bindUrls = !string.IsNullOrEmpty(port) 
+               ? $"http://0.0.0.0:{port}" 
+               : (builder.Configuration["ASPNETCORE_URLS"] ?? "http://*:5073");
+builder.WebHost.UseUrls(bindUrls);
 
 // Add services to the container.
 builder.Services.AddControllers();
@@ -88,7 +92,7 @@ app.UseForwardedHeaders(new ForwardedHeadersOptions
 
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment() || app.Configuration.GetValue<bool>("EnableSwagger", false))
 {
     app.UseSwagger();
     app.UseSwaggerUI();

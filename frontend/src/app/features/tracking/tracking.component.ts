@@ -8,6 +8,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { AuthService } from '../authentication/services/auth.service';
 import * as signalR from '@microsoft/signalr';
 import * as L from 'leaflet';
+import { environment } from '../../../environments/environment';
 
 interface VehicleTrackerState {
   vehicle: Vehicle;
@@ -212,8 +213,9 @@ export class TrackingComponent implements OnInit, OnDestroy, AfterViewInit {
     this.connectionStatus.set('Connecting');
     const token = this.authService.token();
 
+    const hubUrl = environment.hubUrl || '/hubs/gps';
     this.hubConnection = new signalR.HubConnectionBuilder()
-      .withUrl('/hubs/gps', {
+      .withUrl(hubUrl, {
         accessTokenFactory: () => token || '',
         transport: signalR.HttpTransportType.WebSockets | signalR.HttpTransportType.ServerSentEvents | signalR.HttpTransportType.LongPolling
       })
