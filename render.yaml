@@ -11,9 +11,7 @@ services:
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
       - key: ConnectionStrings__DefaultConnection
-        fromDatabase:
-          name: frotago-db
-          property: connectionString
+        sync: false
       - key: JwtSettings__Secret
         generateValue: true
       - key: JwtSettings__Issuer
@@ -22,10 +20,3 @@ services:
         value: FrotaGoApp
       - key: EnableSwagger
         value: "true"
-
-databases:
-  - name: frotago-db
-    databaseName: frotago
-    user: frotago_user
-    plan: free
-    region: frankfurt

@@ -12,9 +12,12 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
+        var rawConnection = configuration.GetConnectionString("DefaultConnection");
+        var connectionString = NormalizePostgresConnectionString(rawConnection);
+
         services.AddDbContext<ApplicationDbContext>(options =>
             options.UseNpgsql(
-                configuration.GetConnectionString("DefaultConnection"),
+                connectionString,
                 b => b.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName)));
 
         services.AddHttpContextAccessor();
@@ -35,5 +38,47 @@ public static class DependencyInjection
         services.AddHostedService<FrotaGo.Infrastructure.BackgroundServices.TrackingHeartbeatWorker>();
 
         return services;
+    }
+
+    private static string NormalizePostgresConnectionString(string? rawConnection)
+    {
+        if (string.IsNullOrWhiteSpace(rawConnection))
+            return string.Empty;
+
+        var trimmed = rawConnection.Trim().Trim('"', '\'');
+
+        if (trimmed.StartsWith("postgres://", StringComparison.OrdinalIgnoreCase) ||
+            trimmed.StartsWith("postgresql://", StringComparison.OrdinalIgnoreCase))
+        {
+            try
+            {
+                var uri = new Uri(trimmed);
+                var userInfo = uri.UserInfo.Split(':', 2);
+                var username = Uri.UnescapeDataString(userInfo[0]);
+                var password = userInfo.Length > 1 ? Uri.UnescapeDataString(userInfo[1]) : string.Empty;
+                var database = uri.AbsolutePath.TrimStart('/');
+                if (string.IsNullOrEmpty(database)) database = "postgres";
+                var port = uri.Port > 0 ? uri.Port : 5432;
+
+                var builder = new Npgsql.NpgsqlConnectionStringBuilder
+                {
+                    Host = uri.Host,
+                    Port = port,
+                    Database = database,
+                    Username = username,
+                    Password = password,
+                    SslMode = Npgsql.SslMode.Require,
+                    TrustServerCertificate = true
+                };
+
+                return builder.ConnectionString;
+            }
+            catch
+            {
+                return trimmed;
+            }
+        }
+
+        return trimmed;
     }
 }

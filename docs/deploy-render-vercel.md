@@ -27,20 +27,30 @@ Este guia orienta o processo passo a passo para migrar o **FrotaGo** da AWS para
 
 ---
 
-## 2. Passo 1: Deploy do Backend e Banco de Dados no Render
+### 2.1 Criar a Base de Dados no Supabase (Grátis e Permanente)
 
-O repositório já inclui o ficheiro de automação [`render.yaml`](file:///home/sgonga/Transferências/FrotaGo/render.yaml), o que permite criar a Base de Dados e a Web API automaticamente com apenas 1 clique.
+1. Aceda a [supabase.com](https://supabase.com) e crie uma conta gratuita (ou faça login com GitHub).
+2. Clique em **"New Project"**.
+3. Preencha:
+   - **Name:** `frotago-db`
+   - **Database Password:** Escolha uma senha segura (guarde-a bem).
+   - **Region:** Escolha uma região próxima (ex: `Central EU (Frankfurt)` ou `West EU (London)`).
+4. Clique em **"Create new project"** e aguarde 1 a 2 minutos até o banco inicializar.
+5. No painel do seu projeto no Supabase:
+   - Vá ao menu lateral **Project Settings** (ícone de engrenagem) → **Database**.
+   - Role até **Connection String** e selecione a aba **URI** (ou **ADO.NET**).
+   - Copie a string de conexão (substituindo `[YOUR-PASSWORD]` pela senha que você criou).
+   - Exemplo: `postgresql://postgres.[REF]:[SENHA]@aws-0-eu-central-1.pooler.supabase.com:6543/postgres`
 
-### Opção A: Deploy Automático via Blueprint (Recomendado)
+---
+
+### 2.2 Deploy do Web Service no Render (via Blueprint)
 
 1. Aceda ao seu painel em [dashboard.render.com](https://dashboard.render.com).
-2. Clique no botão **"New +"** no canto superior direito e selecione **"Blueprint"**.
-3. Conecte a sua conta GitHub e selecione o repositório do **FrotaGo**.
-4. O Render detectará automaticamente o ficheiro `render.yaml`:
-   - Irá criar o serviço web `frotago-api` (Docker).
-   - Irá criar a base de dados PostgreSQL `frotago-db`.
-   - Irá vincular a connection string automaticamente.
-5. Clique em **"Apply"** e aguarde a criação dos serviços.
+2. No Blueprint existente ou em **"New +"** → **"Blueprint"**, conecte o repositório do FrotaGo.
+3. O Render irá ler o [`render.yaml`](file:///home/sgonga/Transferências/FrotaGo/render.yaml) atualizado.
+4. No campo **`ConnectionStrings__DefaultConnection`**, cole a Connection String copiada do Supabase.
+5. Clique em **"Apply"**. O Render iniciará a compilação do container Docker e a API estará no ar em instantes!
 
 ---
 
