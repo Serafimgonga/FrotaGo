@@ -14,7 +14,12 @@ export class LandingComponent implements OnInit, OnDestroy, AfterViewInit {
   activeMockupTab = signal<'overview' | 'gps' | 'legal' | 'finance'>('overview');
   pricingPeriod = signal<'monthly' | 'annual'>('monthly');
   openFaqIndex = signal<number | null>(0);
+  selectedVehicle = signal<number>(0);
   countersStarted = false;
+
+  selectVehicle(index: number): void {
+    this.selectedVehicle.set(index);
+  }
 
   private observer?: IntersectionObserver;
 

@@ -36,24 +36,223 @@
     </div>
   </div>
 
-  <!-- Hero — foto real: instrutor e aluno dentro do carro -->
+  <!-- Hero — Frota em Movimento & Mapa ao Vivo -->
   <section id="hero" class="hero">
-    <div class="hero-bg" style="background-image: url('assets/images/landing/instructor_lesson.png')"></div>
-    <div class="hero-overlay"></div>
+    <div class="hero-tech-bg"></div>
 
-    <div class="hero-inner reveal-bottom">
+    <div class="hero-container">
+      <!-- Coluna Esquerda: Proposta de Valor e Ação -->
+      <div class="hero-content reveal-left">
+        <div class="hero-live-badge">
+          <span class="live-dot-pulse"></span>
+          <span class="badge-text">FROTA EM MOVIMENTO • LUANDA AO VIVO</span>
+        </div>
 
+        <h1>Controle a sua Frota <br /><span class="gradient-text">em Tempo Real.</span></h1>
+        
+        <p class="hero-description">
+          A plataforma tecnológica concebida para escolas de condução em Angola.
+          Rastreamento GPS ao segundo, controlo rigoroso de aulas práticas e conformidade automática com a DNVT.
+        </p>
 
-      <h1>Gestão De Frotas em tempo <span class="accent">Real</span></h1>
-      <p>Controle veículos, instrutores, aulas práticas e conformidade legal angolana numa só plataforma.</p>
-      <div class="hero-actions">
-        <button class="btn btn-solid btn-lg" (click)="navigateToRegister()">
-          Experimentar 30 Dias Grátis
-          <span class="material-icons">east</span>
-        </button>
-        <button class="btn btn-outline btn-lg" (click)="scrollTo('schools')">
-          Ver Escolas Parceiras
-        </button>
+        <div class="hero-actions">
+          <button class="btn btn-solid btn-lg" (click)="navigateToRegister()">
+            Começar 30 Dias Grátis
+            <span class="material-icons">arrow_forward</span>
+          </button>
+          <button class="btn btn-outline btn-lg" (click)="scrollTo('schools')">
+            <span class="material-icons">play_circle_outline</span>
+            Ver Demonstração
+          </button>
+        </div>
+
+        <div class="hero-kpis">
+          <div class="kpi-item">
+            <span class="kpi-num">12ms</span>
+            <span class="kpi-label">Latência SignalR</span>
+          </div>
+          <div class="kpi-divider"></div>
+          <div class="kpi-item">
+            <span class="kpi-num">100%</span>
+            <span class="kpi-label">Legalidade DNVT</span>
+          </div>
+          <div class="kpi-divider"></div>
+          <div class="kpi-item">
+            <span class="kpi-num">0</span>
+            <span class="kpi-label">Papel e Planilhas</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Coluna Direita: O Cockpit "Frota em Movimento" / Mapa Vivo Interativo -->
+      <div class="hero-map-cockpit reveal-right">
+        <div class="cockpit-card">
+          <!-- Top bar estilo software operacional -->
+          <div class="cockpit-header">
+            <div class="cockpit-dots">
+              <span class="dot red"></span>
+              <span class="dot yellow"></span>
+              <span class="dot green"></span>
+            </div>
+            <div class="cockpit-title">
+              <span class="material-icons">radar</span>
+              <span>MAPA AO VIVO — TELEMETRIA</span>
+            </div>
+            <div class="cockpit-badge">
+              <span class="live-indicator"></span> 3 VIATURAS EM ROTA
+            </div>
+          </div>
+
+          <!-- Área do Mapa SVG e Rotas em Tempo Real -->
+          <div class="cockpit-map-viewport">
+            <div class="map-grid-overlay"></div>
+
+            <!-- Mapa vetorial com ruas e rotas animadas de Luanda -->
+            <svg class="map-routes-svg" viewBox="0 0 540 380" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <!-- Vias principais de Luanda (tenues) -->
+              <path d="M20 70 C 120 70, 200 40, 320 60 C 420 80, 480 50, 520 50" stroke="rgba(255,255,255,0.06)" stroke-width="4" stroke-linecap="round"/>
+              <path d="M60 360 C 140 280, 220 220, 290 190 C 370 160, 440 220, 520 260" stroke="rgba(255,255,255,0.06)" stroke-width="3" stroke-linecap="round"/>
+              <path d="M180 20 C 190 120, 220 240, 280 360" stroke="rgba(255,255,255,0.06)" stroke-width="3" stroke-linecap="round"/>
+              <path d="M380 20 C 360 140, 330 250, 390 360" stroke="rgba(255,255,255,0.05)" stroke-width="2"/>
+
+              <!-- ROTA 1: Kinaxixi ➔ Mutamba ➔ Marginal de Luanda (Ativa Neon) -->
+              <path id="route1" class="route-line route-line-1"
+                d="M 50 280 C 130 260, 180 210, 220 150 C 260 90, 340 85, 460 110"
+                stroke="url(#route-gradient-1)" stroke-width="3.5" stroke-linecap="round"/>
+
+              <!-- ROTA 2: Talatona ➔ Samba (Ativa) -->
+              <path id="route2" class="route-line route-line-2"
+                d="M 120 40 C 170 90, 200 130, 250 230 C 290 300, 370 330, 480 320"
+                stroke="url(#route-gradient-2)" stroke-width="2.5" stroke-linecap="round"/>
+
+              <!-- Pontos de Interesse (Bairros) -->
+              <g class="poi-marker" transform="translate(50, 280)">
+                <circle r="4" fill="#3b82f6"/>
+                <text x="8" y="4" class="poi-label">Kinaxixi</text>
+              </g>
+              <g class="poi-marker" transform="translate(220, 150)">
+                <circle r="4" fill="#3b82f6"/>
+                <text x="8" y="4" class="poi-label">Mutamba</text>
+              </g>
+              <g class="poi-marker" transform="translate(460, 110)">
+                <circle r="4" fill="#10b981"/>
+                <text x="-65" y="4" class="poi-label">Marginal (Chegada)</text>
+              </g>
+              <g class="poi-marker" transform="translate(120, 40)">
+                <circle r="4" fill="#818cf8"/>
+                <text x="8" y="4" class="poi-label">Talatona</text>
+              </g>
+              <g class="poi-marker" transform="translate(480, 320)">
+                <circle r="4" fill="#818cf8"/>
+                <text x="-45" y="4" class="poi-label">Samba</text>
+              </g>
+
+              <!-- Definição de gradientes -->
+              <defs>
+                <linearGradient id="route-gradient-1" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stop-color="#3b82f6" />
+                  <stop offset="60%" stop-color="#60a5fa" />
+                  <stop offset="100%" stop-color="#10b981" />
+                </linearGradient>
+                <linearGradient id="route-gradient-2" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stop-color="#818cf8" />
+                  <stop offset="100%" stop-color="#4f46e5" />
+                </linearGradient>
+              </defs>
+            </svg>
+
+            <!-- Viatura 1 Animada em Movimento na Rota 1 -->
+            <div class="vehicle-marker vehicle-1" (click)="selectVehicle(0)" [class.active]="selectedVehicle() === 0">
+              <div class="pulse-ring"></div>
+              <div class="vehicle-icon-bubble">
+                <span class="material-icons">directions_car</span>
+              </div>
+              
+              <!-- Popover Flutuante com Dados Reais da Telemetria -->
+              <div class="telemetry-card" *ngIf="selectedVehicle() === 0">
+                <div class="telemetry-top">
+                  <span class="plate">LD-24-91-BA</span>
+                  <span class="speed-pill">42 km/h</span>
+                </div>
+                <div class="telemetry-body">
+                  <div class="telemetry-row">
+                    <span class="material-icons">badge</span>
+                    <span>Instrutor: Mateus K.</span>
+                  </div>
+                  <div class="telemetry-row">
+                    <span class="material-icons">school</span>
+                    <span>Aluno: Sandra M. (Aula #8)</span>
+                  </div>
+                  <div class="telemetry-row status-live">
+                    <span class="dot-online"></span>
+                    <span>Kinaxixi ➔ Marginal</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Viatura 2 Animada em Movimento na Rota 2 -->
+            <div class="vehicle-marker vehicle-2" (click)="selectVehicle(1)" [class.active]="selectedVehicle() === 1">
+              <div class="pulse-ring purple"></div>
+              <div class="vehicle-icon-bubble purple">
+                <span class="material-icons">directions_car</span>
+              </div>
+
+              <div class="telemetry-card small" *ngIf="selectedVehicle() === 1">
+                <div class="telemetry-top">
+                  <span class="plate">LD-18-42-CZ</span>
+                  <span class="speed-pill amber">31 km/h</span>
+                </div>
+                <div class="telemetry-body">
+                  <div class="telemetry-row">
+                    <span class="material-icons">school</span>
+                    <span>Aluno: José P. (Aula #3)</span>
+                  </div>
+                  <div class="telemetry-row status-live">
+                    <span class="dot-online"></span>
+                    <span>Talatona ➔ Samba</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Viatura 3 em Manobra / Baliza -->
+            <div class="vehicle-marker vehicle-3" (click)="selectVehicle(2)" [class.active]="selectedVehicle() === 2">
+              <div class="pulse-ring green"></div>
+              <div class="vehicle-icon-bubble green">
+                <span class="material-icons">local_parking</span>
+              </div>
+              <div class="telemetry-card small" *ngIf="selectedVehicle() === 2">
+                <div class="telemetry-top">
+                  <span class="plate">LD-07-55-AA</span>
+                  <span class="speed-pill green">Baliza</span>
+                </div>
+                <div class="telemetry-body">
+                  <div class="telemetry-row">
+                    <span class="material-icons">school</span>
+                    <span>Treino de Estacionamento</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Rodapé do Cockpit com Status da Frota em Tempo Real -->
+          <div class="cockpit-footer">
+            <div class="footer-stat">
+              <span class="stat-name">Sinal GPS</span>
+              <span class="stat-val text-green">● SignalR Ativo (12ms)</span>
+            </div>
+            <div class="footer-stat">
+              <span class="stat-name">Odómetro Hoje</span>
+              <span class="stat-val">1.284 km</span>
+            </div>
+            <div class="footer-stat">
+              <span class="stat-name">Consumo Médio</span>
+              <span class="stat-val">6.8 L / 100km</span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </section>

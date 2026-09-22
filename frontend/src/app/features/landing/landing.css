@@ -144,74 +144,510 @@
 .mobile-cta { display: flex; flex-direction: column; gap: .5rem; margin-top: .75rem; }
 
 /* ==========================================================================
-   HERO — foto real de fundo
+   HERO — Frota em Movimento & Mapa ao Vivo (Cockpit Interativo)
    ========================================================================== */
 .hero {
   position: relative;
-  min-height: 92vh;
+  min-height: 94vh;
   display: flex;
-  align-items: flex-end;
-  padding: 0 0 6rem;
-}
-.hero-bg {
-  position: absolute;
-  inset: 0;
-  background-size: cover;
-  background-position: center 30%;
-}
-.hero-overlay {
-  position: absolute;
-  inset: 0;
-  /* Overlay mais forte à esquerda/baixo para texto legível, foto visível à direita */
-  background: linear-gradient(
-    105deg,
-    rgba(11,15,25,.92) 0%,
-    rgba(11,15,25,.75) 45%,
-    rgba(11,15,25,.3) 100%
-  );
-}
-.hero-inner {
-  position: relative;
-  z-index: 2;
-  max-width: 580px;
-  padding: 0 2rem;
-  margin-left: 6%;
+  align-items: center;
+  padding: 7.5rem 0 4.5rem;
+  overflow: hidden;
+  background-color: #0b0f19;
 }
 
-/* Logo no hero */
-.hero-logo {
-  margin-bottom: 1.75rem;
+.hero-tech-bg {
+  position: absolute;
+  inset: 0;
+  background: 
+    radial-gradient(circle at 75% 30%, rgba(59, 130, 246, 0.12) 0%, transparent 50%),
+    radial-gradient(circle at 20% 70%, rgba(108, 115, 246, 0.10) 0%, transparent 45%);
+  pointer-events: none;
 }
-.hero-logo img {
-  height: 6rem;
-  width: auto;
-  filter: drop-shadow(0 4px 20px rgba(79,86,232,.45));
+
+.hero-container {
+  max-width: 1240px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 3.5rem;
+  align-items: center;
+  position: relative;
+  z-index: 2;
 }
-.hero-inner h1 {
+
+@media (min-width: 1024px) {
+  .hero-container {
+    grid-template-columns: 1.05fr 1.1fr;
+    gap: 3rem;
+  }
+}
+
+/* ─── Coluna Esquerda: Conteúdo ───────────────────────────── */
+.hero-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.hero-live-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.4rem 0.95rem;
+  background: rgba(16, 185, 129, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  border-radius: 9999px;
+  width: fit-content;
+  margin-bottom: 1.5rem;
+}
+
+.live-dot-pulse {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #10b981;
+  box-shadow: 0 0 10px #10b981;
+  animation: pulse-live 1.8s ease-in-out infinite;
+}
+
+@keyframes pulse-live {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.4); opacity: 0.6; }
+}
+
+.hero-live-badge .badge-text {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #34d399;
+  text-transform: uppercase;
+}
+
+.hero-content h1 {
   font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: 3.2rem;
+  font-size: 2.8rem;
   font-weight: 800;
-  color: #fff;
-  line-height: 1.1;
-  letter-spacing: -.04em;
-  margin-bottom: 1rem;
+  color: #ffffff;
+  line-height: 1.12;
+  letter-spacing: -0.035em;
+  margin-bottom: 1.25rem;
 }
-.hero-inner h1 .accent {
-  color: #6c73f6;
+
+@media (min-width: 768px) {
+  .hero-content h1 {
+    font-size: 3.4rem;
+  }
 }
-.hero-inner p {
+
+.gradient-text {
+  background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.hero-description {
   font-family: 'DM Sans', sans-serif;
-  color: #a0a8b8;
-  font-size: 1.1rem;
-  font-weight: 400;
-  max-width: 520px;
-  margin-bottom: 2rem;
+  color: #94a3b8;
+  font-size: 1.08rem;
   line-height: 1.65;
+  max-width: 520px;
+  margin-bottom: 2.2rem;
 }
+
 .hero-actions {
   display: flex;
   gap: 1rem;
   flex-wrap: wrap;
+  margin-bottom: 2.5rem;
+}
+
+.hero-kpis {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding-top: 1.75rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.kpi-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.kpi-num {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1.1;
+}
+
+.kpi-label {
+  font-size: 0.75rem;
+  color: #64748b;
+  font-weight: 500;
+  margin-top: 0.25rem;
+}
+
+.kpi-divider {
+  width: 1px;
+  height: 28px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* ─── Coluna Direita: Cockpit do Mapa ao Vivo ────────────── */
+.hero-map-cockpit {
+  width: 100%;
+  position: relative;
+}
+
+.cockpit-card {
+  background: rgba(17, 24, 39, 0.75);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 
+    0 25px 50px -12px rgba(0, 0, 0, 0.75),
+    0 0 35px rgba(59, 130, 246, 0.12);
+}
+
+.cockpit-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.85rem 1.25rem;
+  background: rgba(15, 23, 42, 0.85);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.cockpit-dots {
+  display: flex;
+  gap: 6px;
+}
+
+.cockpit-dots .dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+}
+.cockpit-dots .dot.red { background: #ef4444; }
+.cockpit-dots .dot.yellow { background: #f59e0b; }
+.cockpit-dots .dot.green { background: #10b981; }
+
+.cockpit-title {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #94a3b8;
+  letter-spacing: 0.06em;
+}
+
+.cockpit-title mat-icon,
+.cockpit-title .material-icons {
+  font-size: 0.95rem;
+  color: #3b82f6;
+}
+
+.cockpit-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #10b981;
+  background: rgba(16, 185, 129, 0.12);
+  padding: 0.2rem 0.55rem;
+  border-radius: 6px;
+}
+
+.live-indicator {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #10b981;
+  animation: pulse-live 1.5s infinite;
+}
+
+/* ─── Mapa Viewport ───────────────────────────────────────── */
+.cockpit-map-viewport {
+  position: relative;
+  height: 380px;
+  background: #0d1322;
+  overflow: hidden;
+}
+
+.map-grid-overlay {
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(to right, rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255,255,255,0.03) 1px, transparent 1px);
+  background-size: 32px 32px;
+  pointer-events: none;
+}
+
+.map-routes-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.poi-label {
+  fill: #64748b;
+  font-size: 9px;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 600;
+}
+
+/* Animação neon na rota 1 */
+.route-line-1 {
+  stroke-dasharray: 8 4;
+  animation: dash-flow 25s linear infinite;
+}
+
+@keyframes dash-flow {
+  from { stroke-dashoffset: 400; }
+  to { stroke-dashoffset: 0; }
+}
+
+/* ─── Viaturas Animadas em Movimento ──────────────────────── */
+.vehicle-marker {
+  position: absolute;
+  cursor: pointer;
+  z-index: 10;
+  transition: transform 0.3s ease;
+}
+
+.vehicle-icon-bubble {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #3b82f6;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.6);
+  border: 2px solid #ffffff;
+  position: relative;
+  z-index: 2;
+}
+
+.vehicle-icon-bubble .material-icons {
+  font-size: 1.1rem;
+}
+
+.vehicle-icon-bubble.purple {
+  background: #6366f1;
+  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.6);
+}
+
+.vehicle-icon-bubble.green {
+  background: #10b981;
+  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.6);
+}
+
+.pulse-ring {
+  position: absolute;
+  top: -6px;
+  left: -6px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 2px solid rgba(59, 130, 246, 0.6);
+  animation: radar-ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+  z-index: 1;
+}
+
+.pulse-ring.purple {
+  border-color: rgba(99, 102, 241, 0.6);
+}
+.pulse-ring.green {
+  border-color: rgba(16, 185, 129, 0.6);
+}
+
+@keyframes radar-ping {
+  75%, 100% {
+    transform: scale(1.8);
+    opacity: 0;
+  }
+}
+
+/* Posicionamento e Animação de Rota 1 (Kinaxixi ➔ Mutamba ➔ Marginal) */
+.vehicle-1 {
+  top: 42%;
+  left: 38%;
+  animation: move-v1 14s ease-in-out infinite alternate;
+}
+
+@keyframes move-v1 {
+  0% {
+    top: 68%;
+    left: 12%;
+  }
+  40% {
+    top: 42%;
+    left: 38%;
+  }
+  100% {
+    top: 26%;
+    left: 80%;
+  }
+}
+
+/* Posicionamento e Animação de Rota 2 (Talatona ➔ Samba) */
+.vehicle-2 {
+  top: 55%;
+  left: 52%;
+  animation: move-v2 18s ease-in-out infinite alternate;
+}
+
+@keyframes move-v2 {
+  0% {
+    top: 15%;
+    left: 24%;
+  }
+  60% {
+    top: 55%;
+    left: 52%;
+  }
+  100% {
+    top: 78%;
+    left: 82%;
+  }
+}
+
+/* Viatura 3 (Baliza estática pulsante) */
+.vehicle-3 {
+  top: 72%;
+  left: 28%;
+}
+
+/* ─── Popover Flutuante de Telemetria (HUD) ────────────────── */
+.telemetry-card {
+  position: absolute;
+  bottom: 42px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(15, 23, 42, 0.94);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  border-radius: 12px;
+  padding: 0.75rem 0.95rem;
+  width: 215px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.6);
+  pointer-events: none;
+  z-index: 20;
+}
+
+.telemetry-card.small {
+  width: 175px;
+  padding: 0.6rem 0.8rem;
+}
+
+.telemetry-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.45rem;
+  padding-bottom: 0.45rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.telemetry-top .plate {
+  font-family: monospace;
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: #ffffff;
+  background: #1e293b;
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+  letter-spacing: 0.04em;
+}
+
+.speed-pill {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #38bdf8;
+  background: rgba(56, 189, 248, 0.12);
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+}
+.speed-pill.amber {
+  color: #f59e0b;
+  background: rgba(245, 158, 11, 0.12);
+}
+.speed-pill.green {
+  color: #10b981;
+  background: rgba(16, 185, 129, 0.12);
+}
+
+.telemetry-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.telemetry-row {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.72rem;
+  color: #cbd5e1;
+}
+
+.telemetry-row .material-icons {
+  font-size: 0.85rem;
+  color: #64748b;
+}
+
+.telemetry-row.status-live {
+  color: #38bdf8;
+  font-weight: 600;
+  margin-top: 0.15rem;
+}
+
+.dot-online {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #38bdf8;
+}
+
+/* ─── Rodapé do Cockpit ───────────────────────────────────── */
+.cockpit-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1.25rem;
+  background: rgba(15, 23, 42, 0.95);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.footer-stat {
+  display: flex;
+  flex-direction: column;
+}
+
+.stat-name {
+  font-size: 0.68rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.stat-val {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #e2e8f0;
+}
+
+.stat-val.text-green {
+  color: #34d399;
 }
 
 /* ==========================================================================
