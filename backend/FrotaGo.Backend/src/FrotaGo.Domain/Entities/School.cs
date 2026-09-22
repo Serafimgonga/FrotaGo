@@ -11,8 +11,8 @@ public class School
     public string ShortName { get; set; } = string.Empty; // Nome Abreviado
     public string Slug { get; set; } = string.Empty; // slug.frotago.ao
     public string NIF { get; set; } = string.Empty;
-    public string LicenseNumber { get; set; } = string.Empty; // Número de licença INATRO
-    public string LicenseIssuer { get; set; } = "INATRO"; // Entidade emissora
+    public string LicenseNumber { get; set; } = string.Empty; // Número de alvará / licença
+    public string LicenseIssuer { get; set; } = "DNVT / ANTT"; // Entidade emissora (Angola)
     public DateTime? LicenseIssueDate { get; set; } // Data de emissão
     
     public string Phone { get; set; } = string.Empty;

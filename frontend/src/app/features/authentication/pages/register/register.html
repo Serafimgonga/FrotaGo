@@ -149,7 +149,7 @@
       </div>
     </form>
 
-    <!-- Step 2 — Dados da Escola & Licença INATRO -->
+    <!-- Step 2 — Dados da Escola & Licença / Alvará -->
     <form [formGroup]="step2Form" *ngIf="currentStep() === 2" class="step-form">
       <div class="step-title">
         <h3>Passo 2 — Dados da Escola de Condução</h3>
@@ -204,7 +204,7 @@
         </div>
 
         <div class="form-group-custom">
-          <label class="input-label">Número de Licença INATRO <span class="required-mark">*</span></label>
+          <label class="input-label">Número de Licença / Alvará <span class="required-mark">*</span></label>
           <mat-form-field appearance="outline" class="w-full">
             <mat-icon matPrefix class="input-icon">verified</mat-icon>
             <input matInput formControlName="licenseNumber" placeholder="Ex: LIC-2024-089" />
@@ -216,7 +216,7 @@
         <div class="form-group-custom">
           <label class="input-label">Entidade Emissora <span class="required-mark">*</span></label>
           <mat-form-field appearance="outline" class="w-full">
-            <input matInput formControlName="licenseIssuer" placeholder="INATRO" />
+            <input matInput formControlName="licenseIssuer" placeholder="DNVT / ANTT" />
             <mat-error *ngIf="hasError(step2Form, 'licenseIssuer', 'required')">A entidade emissora é obrigatória.</mat-error>
           </mat-form-field>
         </div>

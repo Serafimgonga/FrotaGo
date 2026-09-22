@@ -61,7 +61,7 @@ export class RegisterComponent {
       slug: ['', [Validators.required, Validators.pattern('^[a-z0-9-]+$'), Validators.minLength(3), Validators.maxLength(50)]],
       nif: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(20)]],
       licenseNumber: ['', [Validators.required, Validators.minLength(3)]],
-      licenseIssuer: ['INATRO', Validators.required],
+      licenseIssuer: ['DNVT / ANTT', Validators.required],
       licenseIssueDate: [''],
       schoolPhone: ['', [Validators.pattern(/^\+?[0-9\s]{9,15}$/)]],
       schoolEmail: ['', Validators.email],

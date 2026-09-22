@@ -19,7 +19,7 @@ export class LandingComponent implements OnInit, OnDestroy, AfterViewInit {
   private observer?: IntersectionObserver;
 
   stats = [
-    { value: 0, target: 99, suffix: '%', label: 'Conformidade INATRO', icon: 'gavel', color: '#10b981' },
+    { value: 0, target: 99, suffix: '%', label: 'Conformidade Legal', icon: 'gavel', color: '#10b981' },
     { value: 0, target: 5000, suffix: '+', label: 'Viaturas Monitorizadas', icon: 'directions_car', color: '#6366f1' },
     { value: 0, target: 350, suffix: '+', label: 'Escolas Parceiras', icon: 'school', color: '#3b82f6' },
     { value: 0, target: 45, suffix: '%', label: 'Redução de Custos', icon: 'trending_down', color: '#f59e0b' },
@@ -64,8 +64,8 @@ export class LandingComponent implements OnInit, OnDestroy, AfterViewInit {
     },
     {
       svgPath: 'M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z',
-      title: 'Conformidade INATRO',
-      description: 'Alertas automáticos de Seguros, Inspeções e DUA a expirar.',
+      title: 'Conformidade Legal Angolana',
+      description: 'Alertas automáticos de Seguros, Inspecções Periódicas e DUA a expirar.',
     },
     {
       svgPath: 'M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z',
@@ -147,7 +147,7 @@ export class LandingComponent implements OnInit, OnDestroy, AfterViewInit {
   faqs = [
     {
       question: 'Cumpre a legislação em Angola?',
-      answer: 'Sim, inclui controlo de DUA, seguros e inspeções periódicas do INATRO.'
+      answer: 'Sim, inclui controlo de DUA, seguros e inspecções periódicas obrigatórias em Angola (DNVT / ANTT).'
     },
     {
       question: 'Os dados da escola ficam isolados?',

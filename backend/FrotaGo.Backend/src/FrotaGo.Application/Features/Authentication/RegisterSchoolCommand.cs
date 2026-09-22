@@ -82,7 +82,7 @@ public class RegisterSchoolCommandHandler : IRequestHandler<RegisterSchoolComman
             Slug = string.IsNullOrWhiteSpace(request.Slug) ? request.SchoolName.ToLowerInvariant().Replace(" ", "-") : request.Slug.ToLowerInvariant(),
             NIF = request.NIF,
             LicenseNumber = request.LicenseNumber,
-            LicenseIssuer = string.IsNullOrWhiteSpace(request.LicenseIssuer) ? "INATRO" : request.LicenseIssuer,
+            LicenseIssuer = string.IsNullOrWhiteSpace(request.LicenseIssuer) ? "DNVT / ANTT" : request.LicenseIssuer,
             LicenseIssueDate = request.LicenseIssueDate,
             Phone = string.IsNullOrWhiteSpace(request.SchoolPhone) ? request.Phone : request.SchoolPhone,
             Email = string.IsNullOrWhiteSpace(request.SchoolEmail) ? request.Email : request.SchoolEmail,
